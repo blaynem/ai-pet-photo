@@ -9,28 +9,28 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigationContainerRef } from "@react-navigation/native";
 import { RootStackParamList } from "../types";
 
 export default function ModelsScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigationContainerRef<RootStackParamList>();
 
   const models = [
     {
       id: "1",
-      title: "Dog",
+      name: "Dog",
     },
     {
       id: "2",
-      title: "Cat",
+      name: "Cat",
     },
     {
       id: "3",
-      title: "Bird",
+      name: "Bird",
     },
     {
       id: "4",
-      title: "Fish",
+      name: "Fish",
     },
   ];
 
@@ -41,15 +41,13 @@ export default function ModelsScreen() {
         renderItem={({ item }) => (
           <TouchableOpacity
             style={styles.model}
-            /* TODO: Add a button to navigate to a screen to generate new photos for the model
-            onPress={() => navigation.navigate("Photos", { model: item })}
-            */
+            onPress={() => navigation.navigate("Generate", { ...item })}
           >
             <Image
               style={styles.image}
               source={{ uri: "https://picsum.photos/100/100" }}
             />
-            <Text style={styles.title}>{item.title}</Text>
+            <Text style={styles.title}>{item.name}</Text>
           </TouchableOpacity>
         )}
         keyExtractor={(item) => item.id}
