@@ -1,9 +1,6 @@
 # Photoshot
 
-Copied from an open-source AI avatar generator web app
-
-[![Photoshot](https://photoshot.app/og-cover.jpg)
-](https://user-images.githubusercontent.com/1102595/206658000-d349ef06-e4f2-4626-9deb-6c8a246f7553.mp4)
+Copied from Photoshot, an open-source AI avatar generator web app
 
 ## Stack
 
@@ -39,26 +36,26 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ## TODO:
 
+- Create business name, and LLC? kms
+- Decide on App name
+
 Create a bunch of templates like profilepicture.ai does.
+- Also create a cool builder tool for them to add their own templates. Throw that under customization or something paid.
 
 Change naming conventions:
 - `studio` to `model`
 - `shot` to `image`
+- `photoshot` to idk yet
 
 Setup these Accounts:
-- DATABASE_URL=
-- NEXTAUTH_URL=
-- NEXT_PUBLIC_URL=
-- S3_UPLOAD_KEY=
-- S3_UPLOAD_SECRET=
-- S3_UPLOAD_BUCKET=
-- S3_UPLOAD_REGION=
-- REPLICATE_API_TOKEN=
-- REPLICATE_USERNAME=
+- DATABASE_URL= Supabase Url
+- NEXTAUTH_URL= "When deploying your site set the NEXTAUTH_URL environment variable to the canonical URL of the website."
+- S3_UPLOAD_KEY=delete
+- S3_UPLOAD_SECRET=delete
+- S3_UPLOAD_BUCKET=delete
+- S3_UPLOAD_REGION=delete
 - SECRET=
 - EMAIL_FROM=
 - EMAIL_SERVER=smtp://localhost:1080
-- STRIPE_SECRET_KEY=
-- NEXT_PUBLIC_STRIPE_API_KEY=
-- NEXT_PUBLIC_STRIPE_STUDIO_PRICE=
-- NEXT_PUBLIC_STUDIO_SHOT_AMOUNT=
+- NEXT_PUBLIC_STRIPE_STUDIO_PRICE= Set to $14.99 for now.
+- NEXT_PUBLIC_STUDIO_SHOT_AMOUNT= Set to max of 50 for now.
