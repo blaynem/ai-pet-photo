@@ -17,7 +17,6 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import axios from "axios";
-import { useS3Upload } from "next-s3-upload";
 import { useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { MdCheckCircle, MdCloud } from "react-icons/md";
@@ -34,7 +33,6 @@ const Uploader = ({ handleOnAdd }: { handleOnAdd: () => void }) => {
   const [urls, setUrls] = useState<string[]>([]);
   const [instanceName, setInstanceName] = useState<string>("");
   const [instanceClass, setInstanceClass] = useState<string>("man");
-  const { uploadToS3 } = useS3Upload();
   const toast = useToast();
 
   const { getRootProps, getInputProps } = useDropzone({
@@ -75,9 +73,10 @@ const Uploader = ({ handleOnAdd }: { handleOnAdd: () => void }) => {
 
     for (let index = 0; index < filesToUpload.length; index++) {
       const file = await resizeImage(filesToUpload[index]);
-      const { url } = await uploadToS3(file);
+      // TODO: Replace this with an upload to supabase
+      // const { url } = await uploadToS3(file);
 
-      setUrls((current) => [...current, url]);
+      // setUrls((current) => [...current, url]);
     }
 
     setUploadState("uploaded");
