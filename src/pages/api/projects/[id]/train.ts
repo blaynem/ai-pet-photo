@@ -3,6 +3,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
 import replicateClient from "@/core/clients/replicate";
 import { getRefinedInstanceClass } from "@/core/utils/predictions";
+import supabase from "@/core/clients/supabase";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const projectId = req.query.id as string;
@@ -23,13 +24,21 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   const instanceClass = getRefinedInstanceClass(project.instanceClass);
 
+  // TODO: Check if this actually returns the data url for the bucket
+  const { data: data_url } = supabase.storage
+    .from(process.env.SUPABASE_UPLOAD_BUCKET_NAME!)
+    .getPublicUrl(`${project.id}.zip`);
+
+  console.log("----does this even return bucket data?", data_url);
+  return;
   const responseReplicate = await replicateClient.post(
     "/v1/trainings",
     {
       input: {
         instance_prompt: `a photo of a ${project.instanceName} ${instanceClass}`,
         class_prompt: `a photo of a ${instanceClass}`,
-        instance_data: `https://${process.env.S3_UPLOAD_BUCKET}.s3.amazonaws.com/${project.id}.zip`,
+        // TODO: See what the supabase url would be?
+        instance_data: data_url,
         max_train_steps: 800,
         num_class_images: 50,
         learning_rate: 1e-6,

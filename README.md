@@ -50,10 +50,6 @@ Change naming conventions:
 Setup these Accounts:
 - DATABASE_URL= Supabase Url
 - NEXTAUTH_URL= "When deploying your site set the NEXTAUTH_URL environment variable to the canonical URL of the website."
-- S3_UPLOAD_KEY=delete
-- S3_UPLOAD_SECRET=delete
-- S3_UPLOAD_BUCKET=delete
-- S3_UPLOAD_REGION=delete
 - SECRET=
 - EMAIL_FROM=
 - EMAIL_SERVER=smtp://localhost:1080

@@ -3,10 +3,9 @@ import { getSession } from "next-auth/react";
 import db from "@/core/db";
 import uniqid from "uniqid";
 import { createZipFolder } from "@/core/utils/assets";
-import s3Client from "@/core/clients/s3";
-import { PutObjectCommand } from "@aws-sdk/client-s3";
 import replicateClient from "@/core/clients/replicate";
 import urlSlug from "url-slug";
+import supabase from "@/core/clients/supabase";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getSession({ req });
@@ -34,13 +33,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const buffer = await createZipFolder(urls, project);
 
-    await s3Client.send(
-      new PutObjectCommand({
-        Bucket: process.env.S3_UPLOAD_BUCKET!,
-        Key: `${project.id}.zip`,
-        Body: buffer,
-      })
-    );
+    // TODO: Check if this actually uploads to the bucket
+    await supabase.storage
+      .from(process.env.SUPABASE_UPLOAD_BUCKET_NAME!)
+      .upload(`${project.id}.zip`, buffer, { contentType: "application/zip" });
 
     return res.json({ project });
   }
