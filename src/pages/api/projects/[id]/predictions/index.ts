@@ -24,7 +24,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     `https://api.replicate.com/v1/predictions`,
     {
       input: { prompt },
-      version: project.modelVersionId,
+      version: project.modelVersionId!,
     }
   );
 
