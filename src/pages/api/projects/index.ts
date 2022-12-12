@@ -23,7 +23,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       data: {
         imageUrls: urls,
         name: uniqid(),
-        userId: session.userId,
+        userId: session.user.id,
         modelStatus: "not_created",
         instanceClass: instanceClass || "person",
         instanceName: urlSlug(instanceName, { separator: "" }),
@@ -34,8 +34,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const buffer = await createZipFolder(urls, project);
 
     // TODO: Check if this actually uploads to the bucket
-    await supabase.storage
-      .from(process.env.SUPABASE_UPLOAD_BUCKET_NAME!)
+    await supabase(session.supabaseAccessToken!)
+      .storage.from(process.env.SUPABASE_UPLOAD_BUCKET_NAME!)
       .upload(`${project.id}.zip`, buffer, { contentType: "application/zip" });
 
     return res.json({ project });
@@ -43,7 +43,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (req.method === "GET") {
     const projects = await db.project.findMany({
-      where: { userId: session.userId },
+      where: { userId: session.user.id },
       include: { shots: { take: 10, orderBy: { createdAt: "desc" } } },
       orderBy: { createdAt: "desc" },
     });

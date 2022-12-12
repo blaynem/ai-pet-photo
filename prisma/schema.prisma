@@ -1,14 +1,16 @@
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  schemas  = ["public", "next_auth"]
 }
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
 }
 
 model Account {
-  id                String  @id @default(cuid())
+  id                String  @id @default(uuid())
   userId            String  @map("user_id")
   type              String
   provider          String
@@ -25,20 +27,22 @@ model Account {
 
   @@unique([provider, providerAccountId])
   @@map("accounts")
+  @@schema("next_auth")
 }
 
 model Session {
-  id           String   @id @default(cuid())
+  id           String   @id @default(uuid())
   sessionToken String   @unique @map("session_token")
   userId       String   @map("user_id")
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("sessions")
+  @@schema("next_auth")
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String    @id @default(uuid())
   name          String?
   email         String?   @unique
   emailVerified DateTime? @map("email_verified")
@@ -48,6 +52,7 @@ model User {
   projects      Project[]
 
   @@map("users")
+  @@schema("next_auth")
 }
 
 model VerificationToken {
@@ -57,10 +62,11 @@ model VerificationToken {
 
   @@unique([identifier, token])
   @@map("verification_tokens")
+  @@schema("next_auth")
 }
 
 model Project {
-  id               String   @id @default(cuid())
+  id               String   @id @default(uuid())
   name             String
   replicateModelId String?
   stripePaymentId  String?
@@ -75,11 +81,13 @@ model Project {
   User             User?    @relation(fields: [userId], references: [id])
   userId           String?
   shots            Shot[]
-  credits          Int @default(100)
+  credits          Int      @default(100)
+
+  @@schema("public")
 }
 
 model Shot {
-  id          String   @id @default(cuid())
+  id          String   @id @default(uuid())
   prompt      String
   replicateId String
   status      String
@@ -88,4 +96,6 @@ model Shot {
   Project     Project? @relation(fields: [projectId], references: [id])
   projectId   String?
   outputUrl   String?
+
+  @@schema("public")
 }
