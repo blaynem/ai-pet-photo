@@ -1,3 +1,4 @@
+import supabase from "@/core/clients/supabase";
 import { resizeImage } from "@/core/utils/upload";
 import {
   Box,
@@ -17,6 +18,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import axios from "axios";
+import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { MdCheckCircle, MdCloud } from "react-icons/md";
@@ -27,6 +29,7 @@ import UploadErrorMessages from "./UploadErrorMessages";
 type TUploadState = "not_uploaded" | "uploading" | "uploaded";
 
 const Uploader = ({ handleOnAdd }: { handleOnAdd: () => void }) => {
+  const { data: sessionData } = useSession();
   const [files, setFiles] = useState<(File & { preview: string })[]>([]);
   const [uploadState, setUploadState] = useState<TUploadState>("not_uploaded");
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
@@ -71,15 +74,32 @@ const Uploader = ({ handleOnAdd }: { handleOnAdd: () => void }) => {
     const filesToUpload = Array.from(files);
     setUploadState("uploading");
 
-    for (let index = 0; index < filesToUpload.length; index++) {
-      const file = await resizeImage(filesToUpload[index]);
-      // TODO: Replace this with an upload to supabase
-      // const { url } = await uploadToS3(file);
+    try {
+      for (let index = 0; index < filesToUpload.length; index++) {
+        const file = await resizeImage(filesToUpload[index]);
 
-      // setUrls((current) => [...current, url]);
+        const { data, error } = await supabase(
+          sessionData?.supabaseAccessToken!
+        )
+          .storage.from("model-images")
+          .upload(`test/${file.name}`, file);
+        // .upload(`018cba5e-9434-4164-ab17-da3af3e38c7c/${file.name}`, file);
+        // TODO: Replace this with an upload to supabase
+        // const { url } = await uploadToS3(file);
+        console.log({ data, error });
+        if (error) {
+          throw new Error(error.message);
+        }
+
+        setUrls((current) => [...current, data?.path!]);
+      }
+
+      setUploadState("uploaded");
+    } catch (error) {
+      console.error(error);
+      setUploadState("not_uploaded");
+      setErrorMessages(["Something went wrong, please try again"]);
     }
-
-    setUploadState("uploaded");
   };
 
   const { mutate: handleCreateProject, isLoading } = useMutation(

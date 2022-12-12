@@ -13,7 +13,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   const project = await db.project.findFirstOrThrow({
-    where: { id: projectId, userId: session.userId },
+    where: { id: projectId, userId: session.user.id },
   });
 
   if (project.credits < 1) {

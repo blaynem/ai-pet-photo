@@ -40,18 +40,28 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 - Decide on App name
 
 Create a bunch of templates like profilepicture.ai does.
+
 - Also create a cool builder tool for them to add their own templates. Throw that under customization or something paid.
 
 Change naming conventions:
+
 - `studio` to `model`
 - `shot` to `image`
 - `photoshot` to idk yet
 
-Setup these Accounts:
-- DATABASE_URL= Supabase Url
-- NEXTAUTH_URL= "When deploying your site set the NEXTAUTH_URL environment variable to the canonical URL of the website."
-- SECRET=
-- EMAIL_FROM=
-- EMAIL_SERVER=smtp://localhost:1080
+**Setup the Supabase magic link auth.** -https://next-auth.js.org/providers/email
+
+- Refactor the @core/db piece.
+  Upload.tsx needs to upload
+  api/projects needs to fetch the bucket
+  api/projects[id] needs to fetch the bucket too
+
+Need to set up Domain and DNS records before we can send emails
+
+- I AM SO BORED OF THIS, I WANT TO MAKE THE OTHER THINGS WORK FIRST. I WILL COME BACK
+- Use sendgrid once we have a domain name
+
+Setup Stripe Pricing:
+
 - NEXT_PUBLIC_STRIPE_STUDIO_PRICE= Set to $14.99 for now.
 - NEXT_PUBLIC_STUDIO_SHOT_AMOUNT= Set to max of 50 for now.

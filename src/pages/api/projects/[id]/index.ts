@@ -10,7 +10,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (session?.user) {
     const project = await db.project.findFirstOrThrow({
-      where: { id: projectId, userId: session.userId },
+      where: { id: projectId, userId: session.user.id },
     });
 
     if (project?.replicateModelId) {
