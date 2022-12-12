@@ -18,25 +18,28 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const urls = req.body.urls as string[];
     const instanceName = req.body.instanceName as string;
     const instanceClass = req.body.instanceClass as string;
+    const userId = session.user.id;
 
     const project = await db.project.create({
       data: {
         imageUrls: urls,
         name: uniqid(),
-        userId: session.user.id,
+        userId: userId,
         modelStatus: "not_created",
         instanceClass: instanceClass || "person",
         instanceName: urlSlug(instanceName, { separator: "" }),
+        // TODO: Create the actual number of credits
         credits: Number(process.env.NEXT_PUBLIC_STUDIO_SHOT_AMOUNT) || 50,
       },
     });
 
     const buffer = await createZipFolder(urls, project);
 
-    // TODO: Check if this actually uploads to the bucket
     await supabase.storage
-      .from(process.env.SUPABASE_UPLOAD_BUCKET_NAME!)
-      .upload(`${project.id}.zip`, buffer, { contentType: "application/zip" });
+      .from(process.env.NEXT_PUBLIC_UPLOAD_BUCKET_NAME!)
+      .upload(`${userId}/${project.id}.zip`, buffer, {
+        contentType: "application/zip",
+      });
 
     return res.json({ project });
   }

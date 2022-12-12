@@ -24,42 +24,40 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   const instanceClass = getRefinedInstanceClass(project.instanceClass);
 
-  // TODO: Check if this actually returns the data url for the bucket
   const { data: data_url } = supabase.storage
-    .from(process.env.SUPABASE_UPLOAD_BUCKET_NAME!)
-    .getPublicUrl(`${project.id}.zip`);
+    .from(process.env.NEXT_PUBLIC_UPLOAD_BUCKET_NAME!)
+    .getPublicUrl(`${session.user.id}/${project.id}.zip`);
+  console.log("---public url", data_url.publicUrl);
 
-  console.log("----does this even return bucket data?", data_url);
-  return;
-  const responseReplicate = await replicateClient.post(
-    "/v1/trainings",
-    {
-      input: {
-        instance_prompt: `a photo of a ${project.instanceName} ${instanceClass}`,
-        class_prompt: `a photo of a ${instanceClass}`,
-        // TODO: See what the supabase url would be?
-        instance_data: data_url,
-        max_train_steps: 800,
-        num_class_images: 50,
-        learning_rate: 1e-6,
-      },
-      model: `${process.env.REPLICATE_USERNAME}/${project.name}`,
-      webhook_completed: `${process.env.NEXTAUTH_URL}/api/webhooks/completed`,
-    },
-    {
-      headers: {
-        Authorization: `Token ${process.env.REPLICATE_API_TOKEN}`,
-        "Content-Type": "application/json",
-      },
-    }
-  );
+  // TODO: Uncomment this stuff.
+  // const responseReplicate = await replicateClient.post(
+  //   "/v1/trainings",
+  //   {
+  //     input: {
+  //       instance_prompt: `a photo of a ${project.instanceName} ${instanceClass}`,
+  //       class_prompt: `a photo of a ${instanceClass}`,
+  //       instance_data: data_url.publicUrl,
+  //       max_train_steps: 800,
+  //       num_class_images: 50,
+  //       learning_rate: 1e-6,
+  //     },
+  //     model: `${process.env.REPLICATE_USERNAME}/${project.name}`,
+  //     webhook_completed: `${process.env.NEXTAUTH_URL}/api/webhooks/completed`,
+  //   },
+  //   {
+  //     headers: {
+  //       Authorization: `Token ${process.env.REPLICATE_API_TOKEN}`,
+  //       "Content-Type": "application/json",
+  //     },
+  //   }
+  // );
 
-  const replicateModelId = responseReplicate.data.id as string;
+  // const replicateModelId = responseReplicate.data.id as string;
 
-  project = await db.project.update({
-    where: { id: project.id },
-    data: { replicateModelId: replicateModelId, modelStatus: "processing" },
-  });
+  // project = await db.project.update({
+  //   where: { id: project.id },
+  //   data: { replicateModelId: replicateModelId, modelStatus: "processing" },
+  // });
 
   return res.json({ project });
 };
