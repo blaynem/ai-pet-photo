@@ -4,11 +4,11 @@ import React, { createContext } from "react";
 import { Project } from "../../types";
 
 export interface ProjectState {
-  readonly project: Project | null;
+  readonly project: Project;
 }
 
 export const DefaultProjectState: ProjectState = {
-  project: null,
+  project: { id: "-1", name: "", images: [] },
 };
 
 export const ProjectContext = createContext<{

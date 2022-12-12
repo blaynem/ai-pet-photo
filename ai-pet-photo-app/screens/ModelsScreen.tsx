@@ -10,44 +10,55 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { navigate } from "../navigationConfig";
-import { RootStackParamList } from "../types";
+import { setProjectAction } from "../state/actions/Projects/setProjectAction";
+import { useProjectContext } from "../state/context/ProjectContext";
+import { Project, RootStackParamList } from "../types";
 
 export const ModelsScreen = ({ navigation }: any) => {
-  const models = [
+  const { state, dispatch } = useProjectContext();
+
+  const handleProjectPress = async (project: Project) => {
+    await dispatch(setProjectAction(project));
+    console.log("dispatched");
+    navigate("Generate");
+  };
+  const projects: Project[] = [
     {
       id: "1",
       name: "Dog",
+      images: ["swag"],
     },
     {
       id: "2",
       name: "Cat",
+      images: ["swag"],
     },
     {
       id: "3",
       name: "Bird",
+      images: ["swag"],
     },
     {
       id: "4",
       name: "Fish",
+      images: ["swag"],
     },
   ];
 
   return (
     <View style={styles.container}>
       <FlatList
-        data={models}
+        data={projects}
         renderItem={({ item }) => (
           <TouchableOpacity
             style={styles.model}
-            onPress={() => {
-              navigate("Root", { screen: "Generate", params: { model: item } });
-            }}
+            onPress={() => handleProjectPress(item)}
           >
             <Image
               style={styles.image}
               source={{ uri: "https://picsum.photos/100/100" }}
             />
-            <Text style={styles.title}>{item.name}</Text>
+            <Text style={styles.title}>{item.name} </Text>
           </TouchableOpacity>
         )}
         keyExtractor={(item) => item.id}
