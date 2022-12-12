@@ -1,6 +1,6 @@
 export type RootStackParamList = {
   Root: undefined;
-  Generate: Model;
+  Generate: undefined;
   Settings: undefined;
   Profile: undefined;
   Models: undefined;
@@ -13,4 +13,10 @@ export type RootStackParamList = {
 export type Model = {
   id: string;
   name: string;
+};
+
+export type Project = {
+  id: string;
+  name: string;
+  images: string[];
 };

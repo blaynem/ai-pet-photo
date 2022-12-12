@@ -9,12 +9,10 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-import { useNavigationContainerRef } from "@react-navigation/native";
+import { navigate } from "../navigationConfig";
 import { RootStackParamList } from "../types";
 
-export default function ModelsScreen() {
-  const navigation = useNavigationContainerRef<RootStackParamList>();
-
+export const ModelsScreen = ({ navigation }: any) => {
   const models = [
     {
       id: "1",
@@ -41,7 +39,9 @@ export default function ModelsScreen() {
         renderItem={({ item }) => (
           <TouchableOpacity
             style={styles.model}
-            onPress={() => navigation.navigate("Generate", { ...item })}
+            onPress={() => {
+              navigate("Root", { screen: "Generate", params: { model: item } });
+            }}
           >
             <Image
               style={styles.image}
@@ -55,7 +55,7 @@ export default function ModelsScreen() {
       />
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -82,3 +82,5 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
+
+export default ModelsScreen;
