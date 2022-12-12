@@ -86,7 +86,7 @@ const Uploader = ({ handleOnAdd }: { handleOnAdd: () => void }) => {
         // .upload(`018cba5e-9434-4164-ab17-da3af3e38c7c/${file.name}`, file);
         // TODO: Replace this with an upload to supabase
         // const { url } = await uploadToS3(file);
-        console.log({ data, error });
+        console.log("---handleUpload", { data, error });
         if (error) {
           throw new Error(error.message);
         }

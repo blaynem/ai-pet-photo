@@ -1,17 +1,19 @@
-import { SupabaseAdapter } from "@next-auth/supabase-adapter";
 import NextAuth, { NextAuthOptions } from "next-auth";
 import EmailProvider from "next-auth/providers/email";
 import jwt from "jsonwebtoken";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import db from "@/core/db";
 
 export const authOptions: NextAuthOptions = {
-  adapter: SupabaseAdapter({
-    secret: process.env.SUPABASE_PRIVATE_KEY!,
-    url: process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  }),
+  adapter: PrismaAdapter(db),
   providers: [
     EmailProvider({
       server: process.env.EMAIL_SERVER,
       from: process.env.EMAIL_FROM,
+      sendVerificationRequest: async ({ identifier: email, url }) => {
+        // Sending link to console for now, we comment this out and send to email later.
+        console.log("----sendVerificationRequest", { email, url });
+      },
     }),
   ],
   callbacks: {
