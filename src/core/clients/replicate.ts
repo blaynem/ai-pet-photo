@@ -1,6 +1,6 @@
 import axios from "axios";
 
-type AxiosPutRequest = {
+type TrainingRequest = {
   input: {
     /**
      * The prompt that you use to describe your training images, in the format a [identifier] [class noun],
@@ -44,9 +44,27 @@ type AxiosPutRequest = {
   webhook_completed?: string;
 };
 
+type PredictionRequest = {
+  input: {
+    /**
+     * The prompt that you use to describe the prediction request, in the format a [identifier] [class noun].
+     * Ex: Teddy dog, portrait photograph, 85mm medium format photo
+     */
+    prompt: string;
+  };
+  /**
+   * Version that comes back from replicate trainings.
+   */
+  version: string;
+};
+
 interface ReplicateClient {
   get: (url: string) => Promise<any>;
-  post: (url: string, data: AxiosPutRequest, headers: any) => Promise<any>;
+  post: (
+    url: string,
+    data: TrainingRequest | PredictionRequest,
+    headers?: any
+  ) => Promise<any>;
 }
 
 const replicateClient: ReplicateClient = axios.create({
