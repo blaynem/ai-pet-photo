@@ -3,7 +3,7 @@ export type RootStackParamList = {
   Generate: undefined;
   Settings: undefined;
   Profile: undefined;
-  Models: undefined;
+  Projects: undefined;
   Photos: undefined;
   NotFound: undefined;
   Landing: undefined;
