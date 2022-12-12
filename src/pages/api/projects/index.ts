@@ -34,8 +34,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const buffer = await createZipFolder(urls, project);
 
     // TODO: Check if this actually uploads to the bucket
-    await supabase(session.supabaseAccessToken!)
-      .storage.from(process.env.SUPABASE_UPLOAD_BUCKET_NAME!)
+    await supabase.storage
+      .from(process.env.SUPABASE_UPLOAD_BUCKET_NAME!)
       .upload(`${project.id}.zip`, buffer, { contentType: "application/zip" });
 
     return res.json({ project });

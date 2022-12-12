@@ -65,3 +65,9 @@ Setup Stripe Pricing:
 
 - NEXT_PUBLIC_STRIPE_STUDIO_PRICE= Set to $14.99 for now.
 - NEXT_PUBLIC_STUDIO_SHOT_AMOUNT= Set to max of 50 for now.
+
+Security:
+
+- Add row level security to the database's storage so people can't alter things!
+- There are under storage/policies in supabase
+- We need to only allow users to view their own bucket
