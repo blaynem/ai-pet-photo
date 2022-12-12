@@ -1,16 +1,14 @@
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  schemas  = ["public", "next_auth"]
 }
 
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["multiSchema"]
+  provider = "prisma-client-js"
 }
 
 model Account {
-  id                String  @id @default(uuid())
+  id                String  @id @default(cuid())
   userId            String  @map("user_id")
   type              String
   provider          String
@@ -27,22 +25,20 @@ model Account {
 
   @@unique([provider, providerAccountId])
   @@map("accounts")
-  @@schema("next_auth")
 }
 
 model Session {
-  id           String   @id @default(uuid())
+  id           String   @id @default(cuid())
   sessionToken String   @unique @map("session_token")
   userId       String   @map("user_id")
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("sessions")
-  @@schema("next_auth")
 }
 
 model User {
-  id            String    @id @default(uuid())
+  id            String    @id @default(cuid())
   name          String?
   email         String?   @unique
   emailVerified DateTime? @map("email_verified")
@@ -52,7 +48,6 @@ model User {
   projects      Project[]
 
   @@map("users")
-  @@schema("next_auth")
 }
 
 model VerificationToken {
@@ -62,11 +57,10 @@ model VerificationToken {
 
   @@unique([identifier, token])
   @@map("verification_tokens")
-  @@schema("next_auth")
 }
 
 model Project {
-  id               String   @id @default(uuid())
+  id               String   @id @default(cuid())
   name             String
   replicateModelId String?
   stripePaymentId  String?
@@ -82,12 +76,10 @@ model Project {
   userId           String?
   shots            Shot[]
   credits          Int      @default(100)
-
-  @@schema("public")
 }
 
 model Shot {
-  id          String   @id @default(uuid())
+  id          String   @id @default(cuid())
   prompt      String
   replicateId String
   status      String
@@ -96,6 +88,4 @@ model Shot {
   Project     Project? @relation(fields: [projectId], references: [id])
   projectId   String?
   outputUrl   String?
-
-  @@schema("public")
 }
