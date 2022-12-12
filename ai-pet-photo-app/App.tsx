@@ -1,6 +1,10 @@
 import * as React from "react";
 import { View, Text, Button } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
+import {
+  createNavigationContainerRef,
+  NavigationContainer,
+  StackActions,
+} from "@react-navigation/native";
 import {
   createNativeStackNavigator,
   NativeStackScreenProps,
@@ -25,6 +29,7 @@ import {
   faPlus,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
+import { navigationRef } from "./navigationConfig";
 
 type HomeScreenProps = NativeStackScreenProps<RootStackParamList, "Home">;
 
@@ -49,17 +54,19 @@ const HomeScreen: React.FC<HomeScreenProps> = (props) => {
 };
 
 const Tab = createBottomTabNavigator<RootStackParamList>();
+const Stack = createNativeStackNavigator<RootStackParamList>();
+function Root() {}
 
 function App() {
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {
             let iconName: IconDefinition = faHouse;
             switch (route.name) {
               case "Home":
-                iconName = faMugSaucer;
+                iconName = faHouse;
                 break;
               case "Models":
                 iconName = faUser;
@@ -85,6 +92,7 @@ function App() {
         <Tab.Screen name="Models" component={ModelsScreen} />
         <Tab.Screen name="Photos" component={PhotosScreen} />
         <Tab.Screen name="Settings" component={SettingsScreen} />
+        <Stack.Screen name="Generate" component={GenerateScreen} />
       </Tab.Navigator>
     </NavigationContainer>
   );

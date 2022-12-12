@@ -8,12 +8,8 @@ import { RouteProp } from "@react-navigation/native";
 
 type GenerateScreenRouteProp = RouteProp<RootStackParamList, "Generate">;
 
-type Props = {
-  route: GenerateScreenRouteProp;
-};
-
-export const GenerateScreen = ({ route }: Props) => {
-  const model = route.params;
+export const GenerateScreen = () => {
+  let model = { name: "dog" };
   return (
     <View style={styles.container}>
       <Text>Generate Screen</Text>
