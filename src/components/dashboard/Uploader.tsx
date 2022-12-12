@@ -79,7 +79,7 @@ const Uploader = ({ handleOnAdd }: { handleOnAdd: () => void }) => {
         const file = await resizeImage(filesToUpload[index]);
 
         const { data, error } = await supabase.storage
-          .from("model-images")
+          .from(process.env.NEXT_PUBLIC_UPLOAD_BUCKET_NAME!)
           .upload(`${sessionData?.user.id}/${file.name}`, file);
 
         if (error) {

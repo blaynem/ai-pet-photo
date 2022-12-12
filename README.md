@@ -36,8 +36,15 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ## TODO:
 
-- Create business name, and LLC? kms
-- Decide on App name
+Dreambooth:
+
+- We should also flip the images to the opposite view as this allows us to double the training for free.
+- Test how the frick it works?
+- Setup the webhook completion. See: `webhook_completed` in `api/projects/[id]/train.
+
+Bugs:
+
+- Under "My Studios" under "unlock now" button the images don't load.
 
 Create a bunch of templates like profilepicture.ai does.
 
@@ -49,20 +56,17 @@ Change naming conventions:
 - `shot` to `image`
 - `photoshot` to idk yet
 
-**Setup the Supabase magic link auth.** -https://next-auth.js.org/providers/email
-
-- Refactor the @core/db piece.
-  Upload.tsx needs to upload
-  api/projects needs to fetch the bucket
-  api/projects[id] needs to fetch the bucket too
-
 Need to set up Domain and DNS records before we can send emails
 
 - I AM SO BORED OF THIS, I WANT TO MAKE THE OTHER THINGS WORK FIRST. I WILL COME BACK
 - Use sendgrid once we have a domain name
+- Create business name, and LLC? kms
+- Decide on App name
 
 Setup Stripe Pricing:
 
+- Under api/checkout/session stripe lists the product descriptions, we will need to change those.
+- Once we determine "Credits" that should also be added to api/projects/index fetch where we create the entry with 'credits' set to 50.
 - NEXT_PUBLIC_STRIPE_STUDIO_PRICE= Set to $14.99 for now.
 - NEXT_PUBLIC_STUDIO_SHOT_AMOUNT= Set to max of 50 for now.
 
