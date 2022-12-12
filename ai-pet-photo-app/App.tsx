@@ -1,5 +1,12 @@
 import * as React from "react";
-import { View, Text, Button, StatusBar } from "react-native";
+import {
+  View,
+  Text,
+  Button,
+  StatusBar,
+  Touchable,
+  TouchableOpacity,
+} from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import {
   createNativeStackNavigator,
@@ -22,7 +29,7 @@ import {
 import { navigationRef } from "./navigationConfig";
 import { LandingScreen } from "./screens/LandingScreen";
 import { ProjectContextProvider } from "./state/context/ProjectContextProvider";
-import { ThemeProvider, createTheme } from "@rneui/themed";
+import { ThemeProvider, createTheme, Icon } from "@rneui/themed";
 import Constants from "expo-constants";
 
 const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -75,6 +82,16 @@ function Root() {
 
           return <FontAwesomeIcon icon={iconName} size={size} color={color} />;
         },
+        headerRight: () => (
+          <TouchableOpacity
+            onPress={() => {
+              navigationRef.current?.navigate("Settings");
+            }}
+            style={{ marginRight: 20 }}
+          >
+            <FontAwesomeIcon icon={faCog} size={20} color="#000" />
+          </TouchableOpacity>
+        ),
       })}
     >
       <Tab.Screen name="Home" component={HomeScreen} />
