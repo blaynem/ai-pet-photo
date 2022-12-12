@@ -25,8 +25,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const instanceClass = getRefinedInstanceClass(project.instanceClass);
 
   // TODO: Check if this actually returns the data url for the bucket
-  const { data: data_url } = supabase(session.supabaseAccessToken!)
-    .storage.from(process.env.SUPABASE_UPLOAD_BUCKET_NAME!)
+  const { data: data_url } = supabase.storage
+    .from(process.env.SUPABASE_UPLOAD_BUCKET_NAME!)
     .getPublicUrl(`${project.id}.zip`);
 
   console.log("----does this even return bucket data?", data_url);

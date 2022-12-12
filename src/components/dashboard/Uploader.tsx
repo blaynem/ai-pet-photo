@@ -78,15 +78,10 @@ const Uploader = ({ handleOnAdd }: { handleOnAdd: () => void }) => {
       for (let index = 0; index < filesToUpload.length; index++) {
         const file = await resizeImage(filesToUpload[index]);
 
-        const { data, error } = await supabase(
-          sessionData?.supabaseAccessToken!
-        )
-          .storage.from("model-images")
-          .upload(`test/${file.name}`, file);
-        // .upload(`018cba5e-9434-4164-ab17-da3af3e38c7c/${file.name}`, file);
-        // TODO: Replace this with an upload to supabase
-        // const { url } = await uploadToS3(file);
-        console.log("---handleUpload", { data, error });
+        const { data, error } = await supabase.storage
+          .from("model-images")
+          .upload(`${sessionData?.user.id}/${file.name}`, file);
+
         if (error) {
           throw new Error(error.message);
         }
