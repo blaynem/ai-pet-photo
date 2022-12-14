@@ -44,7 +44,10 @@ Dreambooth:
 
 Bugs:
 
+- Set image size limits + file types
 - Under "My Studios" under "unlock now" button the images don't load.
+- Enforce certain image files, unsure what they are but need to look.
+- Set different buckets for the initial upload of photos, and the final output of the model. This will allow us to delete the initial bucket after the model is trained.
 
 Create a bunch of templates like profilepicture.ai does.
 
@@ -75,3 +78,5 @@ Security:
 - Add row level security to the database's storage so people can't alter things!
 - There are under storage/policies in supabase
 - We need to only allow users to view their own bucket
+
+Replicate "train" modelStatus will have statuses "starting" of "pushing", and "succeeded"
