@@ -3,18 +3,33 @@
 import React from "react";
 import { View, Text, StyleSheet, TextInput } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { Model, RootStackParamList } from "../types";
+import { RootStackParamList } from "../../types";
 import { RouteProp } from "@react-navigation/native";
-import { useProjectContext } from "../state/context/ProjectContext";
+import { useProjectContext } from "../../state/context/ProjectContext";
 import { Input } from "@rneui/themed";
-
-type GenerateScreenRouteProp = RouteProp<RootStackParamList, "Generate">;
+import { useThemeContext } from "../../state/context/ThemeContext";
+import { theme } from "../../styles";
 
 export const GenerateScreen = () => {
   const { state, dispatch } = useProjectContext();
+  const theme = useThemeContext().state.theme;
+
   const project = state.project;
-  console.log(project);
   const input = React.createRef();
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: theme.colors.background,
+    },
+    input: {
+      height: 40,
+      margin: 12,
+      borderWidth: 1,
+    },
+  });
 
   return (
     <View style={styles.container}>
@@ -24,16 +39,3 @@ export const GenerateScreen = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  input: {
-    height: 40,
-    margin: 12,
-    borderWidth: 1,
-  },
-});

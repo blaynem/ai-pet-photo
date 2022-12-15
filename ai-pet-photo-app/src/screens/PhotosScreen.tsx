@@ -3,7 +3,7 @@
 import React from "react";
 import { View, Text, StyleSheet, FlatList, Image } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { RootStackParamList } from "../types";
+import { RootStackParamList } from "../../types";
 
 export default function PhotosScreen() {
   const navigation = useNavigation();

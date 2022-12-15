@@ -4,17 +4,16 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Switch } from "@rneui/base";
-import { useTheme, useThemeMode } from "@rneui/themed";
+import { useThemeContext } from "../../state/context/ThemeContext";
+import { toggleDarkModeAction } from "../../state/actions/Theme/toggleDarkModeAction";
 
 export default function SettingsScreen() {
   const navigation = useNavigation();
   const [isEnabled, setIsEnabled] = React.useState(false);
-  const { theme } = useTheme();
-  const { setMode } = useThemeMode();
-
+  const themeContext = useThemeContext();
   const toggleSwitch = () => {
+    themeContext.dispatch(toggleDarkModeAction(!isEnabled));
     setIsEnabled((previousState) => !previousState);
-    setMode(isEnabled ? "light" : "dark");
   };
 
   return (

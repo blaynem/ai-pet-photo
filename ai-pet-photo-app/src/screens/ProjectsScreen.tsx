@@ -13,10 +13,10 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-import { navigate } from "../navigationConfig";
-import { setProjectAction } from "../state/actions/Projects/setProjectAction";
-import { useProjectContext } from "../state/context/ProjectContext";
-import { Project } from "../types";
+import { navigate } from "../../navigationConfig";
+import { setProjectAction } from "../../state/actions/Projects/setProjectAction";
+import { useProjectContext } from "../../state/context/ProjectContext";
+import { Project } from "../../types";
 
 export const ProjectsScreen = ({ navigation }: any) => {
   const { state, dispatch } = useProjectContext();

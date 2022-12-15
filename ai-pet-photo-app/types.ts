@@ -10,13 +10,16 @@ export type RootStackParamList = {
   Home: undefined;
 };
 
-export type Model = {
-  id: string;
-  name: string;
-};
-
 export type Project = {
   id: string;
   name: string;
   images: string[];
+};
+
+export type Shot = {
+  id: string;
+  name: string;
+  image: string;
+  projectId: string;
+  projectName: string;
 };
