@@ -28,6 +28,8 @@ import UploadErrorMessages from "./UploadErrorMessages";
 
 type TUploadState = "not_uploaded" | "uploading" | "uploaded";
 
+const MAX_FILES = 25;
+
 const Uploader = ({ handleOnAdd }: { handleOnAdd: () => void }) => {
   const { data: sessionData } = useSession();
   const [files, setFiles] = useState<(File & { preview: string })[]>([]);
@@ -43,7 +45,7 @@ const Uploader = ({ handleOnAdd }: { handleOnAdd: () => void }) => {
       "image/png": [".png"],
       "image/jpeg": [".jpeg", ".jpg"],
     },
-    maxFiles: 15,
+    // maxFiles: MAX_FILES,
     maxSize: 10000000, // 10mo
     onDropRejected: (events) => {
       setErrorMessages([]);
@@ -58,15 +60,25 @@ const Uploader = ({ handleOnAdd }: { handleOnAdd: () => void }) => {
       setErrorMessages(Object.keys(messages).map((id) => messages[id]));
     },
     onDrop: (acceptedFiles) => {
-      setErrorMessages([]);
-      setFiles([
-        ...files,
-        ...acceptedFiles.map((file) =>
-          Object.assign(file, {
-            preview: URL.createObjectURL(file),
-          })
-        ),
-      ]);
+      if (files.length + acceptedFiles.length > MAX_FILES) {
+        toast({
+          title: `You can't upload more than ${MAX_FILES} images`,
+          duration: 3000,
+          isClosable: true,
+          position: "top-right",
+          status: "error",
+        });
+      } else {
+        setErrorMessages([]);
+        setFiles([
+          ...files,
+          ...acceptedFiles.map((file) =>
+            Object.assign(file, {
+              preview: URL.createObjectURL(file),
+            })
+          ),
+        ]);
+      }
     },
   });
 
@@ -164,7 +176,10 @@ const Uploader = ({ handleOnAdd }: { handleOnAdd: () => void }) => {
             </Box>
 
             {errorMessages?.length !== 0 && (
-              <UploadErrorMessages messages={errorMessages} />
+              <UploadErrorMessages
+                messages={errorMessages}
+                max_amt={MAX_FILES}
+              />
             )}
           </VStack>
         </Center>

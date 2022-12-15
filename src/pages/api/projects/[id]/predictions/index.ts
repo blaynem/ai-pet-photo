@@ -1,4 +1,4 @@
-import replicateClient from "@/core/clients/replicate";
+import replicateClient, { PredictionResponse } from "@/core/clients/replicate";
 import db from "@/core/db";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
@@ -21,7 +21,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(400).json({ message: "No credit" });
     }
 
-    const { data } = await replicateClient.post(
+    const { data } = await replicateClient.post<PredictionResponse>(
       `https://api.replicate.com/v1/predictions`,
       {
         input: { prompt },
