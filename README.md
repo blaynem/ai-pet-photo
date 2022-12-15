@@ -36,6 +36,21 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ## TODO:
 
+Replicate Client:
+
+- Actually split out the replicate API calls to the replicate class so we can call it easier.
+
+Pipeline:
+
+- Upload the image
+- Training Pipeline (major 🔑)
+- Prompt Pipeline (minor 🔑)
+
+Better User Flow:
+
+- Allow the naming of the studio, not only the subject.
+- Enable a debug mode to change the training settings
+
 Dreambooth:
 
 - We should also flip the images to the opposite view as this allows us to double the training for free.
@@ -44,6 +59,7 @@ Dreambooth:
 
 Bugs:
 
+- Let user press 'x' to delete image they don't want before they upload it.
 - Set image size limits + file types
 - Under "My Studios" under "unlock now" button the images don't load.
 - Enforce certain image files, unsure what they are but need to look.

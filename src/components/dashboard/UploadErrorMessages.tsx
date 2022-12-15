@@ -3,8 +3,10 @@ import React from "react";
 
 const UploadErrorMessages = ({
   messages,
+  max_amt,
 }: {
   messages: string[] | undefined;
+  max_amt: number;
 }) => {
   return (
     <Box mt={2} color="red.500">
@@ -13,7 +15,7 @@ const UploadErrorMessages = ({
         <Box key={errorMessage}>
           {errorMessage
             .replace("10000000 bytes", "10mo")
-            .replace("many files", "many files (max 15)")}
+            .replace("many files", `many files (max ${max_amt})`)}
         </Box>
       ))}
     </Box>

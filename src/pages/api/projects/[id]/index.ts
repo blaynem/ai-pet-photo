@@ -1,4 +1,4 @@
-import replicateClient from "@/core/clients/replicate";
+import replicateClient, { TrainingResponse } from "@/core/clients/replicate";
 import db from "@/core/db";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
@@ -14,7 +14,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     });
 
     if (project?.replicateModelId) {
-      const response = await replicateClient.get(
+      const response = await replicateClient.get<TrainingResponse>(
         `/v1/trainings/${project.replicateModelId}`
       );
 

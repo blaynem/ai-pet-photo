@@ -3,7 +3,7 @@ import { getSession } from "next-auth/react";
 import db from "@/core/db";
 import uniqid from "uniqid";
 import { createZipFolder } from "@/core/utils/assets";
-import replicateClient from "@/core/clients/replicate";
+import replicateClient, { TrainingResponse } from "@/core/clients/replicate";
 import urlSlug from "url-slug";
 import supabase from "@/core/clients/supabase";
 
@@ -53,7 +53,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     for (const project of projects) {
       if (project?.replicateModelId && project?.modelStatus !== "succeeded") {
-        const { data } = await replicateClient.get(
+        const { data } = await replicateClient.get<TrainingResponse>(
           `/v1/trainings/${project.replicateModelId}`
         );
 
