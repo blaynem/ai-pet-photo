@@ -3,9 +3,9 @@
 import React from "react";
 import { View, Text, StyleSheet, Button } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { RootStackParamList } from "../types";
+import { RootStackParamList } from "../../types";
 import { RouteProp } from "@react-navigation/native";
-import { navigate } from "../navigationConfig";
+import { navigate } from "../../navigationConfig";
 
 export const LandingScreen = () => {
   return (
