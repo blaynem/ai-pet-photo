@@ -6,19 +6,34 @@ import { useNavigation } from "@react-navigation/native";
 import { Switch } from "@rneui/base";
 import { useThemeContext } from "../../state/context/ThemeContext";
 import { toggleDarkModeAction } from "../../state/actions/Theme/toggleDarkModeAction";
+import { StatusBar } from "expo-status-bar";
 
 export default function SettingsScreen() {
   const navigation = useNavigation();
-  const [isEnabled, setIsEnabled] = React.useState(false);
   const themeContext = useThemeContext();
+  const [isEnabled, setIsEnabled] = React.useState(themeContext.state.darkMode);
+  const { theme, darkMode } = themeContext.state;
+
   const toggleSwitch = () => {
     themeContext.dispatch(toggleDarkModeAction(!isEnabled));
     setIsEnabled((previousState) => !previousState);
   };
 
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: theme.colors.background,
+    },
+    text: {
+      color: theme.colors.foreground,
+    },
+  });
+
   return (
     <View style={styles.container}>
-      <Text>Settings Screen</Text>
+      <Text style={styles.text}>Settings Screen</Text>
 
       <View
         style={{
@@ -28,17 +43,13 @@ export default function SettingsScreen() {
           flexDirection: "row",
         }}
       >
-        <Text>Dark mode:</Text>
-        <Switch value={isEnabled} onValueChange={toggleSwitch} />
+        <Text style={styles.text}>Dark mode:</Text>
+        <Switch
+          value={isEnabled}
+          onValueChange={toggleSwitch}
+          color={theme.colors.foreground}
+        />
       </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});

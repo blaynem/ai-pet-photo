@@ -16,128 +16,126 @@ import {
 import { navigate } from "../../navigationConfig";
 import { setProjectAction } from "../../state/actions/Projects/setProjectAction";
 import { useProjectContext } from "../../state/context/ProjectContext";
+import { useThemeContext } from "../../state/context/ThemeContext";
+import { theme } from "../../styles";
 import { Project } from "../../types";
+import { StatusBar } from "expo-status-bar";
 
 export const ProjectsScreen = ({ navigation }: any) => {
   const { state, dispatch } = useProjectContext();
-
+  const themeContext = useThemeContext();
+  const theme = themeContext.state.theme;
   const handleProjectPress = async (project: Project) => {
     await dispatch(setProjectAction(project));
-    console.log("dispatched");
     navigate("Generate");
   };
 
   const handleCreateNewProject = () => {
     navigate("CreateProject");
   };
-  const projects: Project[] = [
-    {
-      id: "1",
-      name: "Dog",
-      images: ["swag"],
+
+  const styles = StyleSheet.create({
+    container: {
+      backgroundColor: theme.colors.background,
+      margin: 0,
+      height: "100%",
+      width: "100%",
     },
-    {
-      id: "2",
-      name: "Cat",
-      images: ["swag"],
-    },
-    {
-      id: "3",
-      name: "Bird",
-      images: ["swag"],
-    },
-    {
-      id: "4",
-      name: "Fish",
-      images: ["swag"],
-    },
-    {
-      id: "new",
-      name: "Create New Project",
-      images: ["swag"],
-    },
-  ];
+  });
 
   return (
     <View style={styles.container}>
       <FlatList
+        contentContainerStyle={{
+          height: "10%",
+        }}
+        ItemSeparatorComponent={() => <View style={{ height: 10 }}></View>}
+        style={{ width: "100%", height: "100%" }}
         data={projects}
+        keyExtractor={(item) => item.id}
+        numColumns={1}
         renderItem={({ item }) => {
-          return item.id !== "new" ? (
-            <TouchableOpacity onPress={() => handleProjectPress(item)}>
-              <Card>
-                <Image
-                  style={styles.image}
-                  source={{ uri: "https://picsum.photos/100/100" }}
-                />
-                <Card.Divider />
-                <Card.Title style={{ marginBottom: 0, paddingBottom: 0 }}>
-                  {" "}
-                  {item.name}
-                </Card.Title>
-              </Card>
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity onPress={() => handleCreateNewProject()}>
-              <Card>
-                <View style={styles.newProj}>
-                  <Text>
-                    <FontAwesomeIcon icon={faPlus} />
-                  </Text>
-                </View>
-                <Card.Divider />
-                <Card.Title style={{ marginBottom: 0, paddingBottom: 0 }}>
-                  New Project
-                </Card.Title>
-              </Card>
-            </TouchableOpacity>
+          return (
+            <ProjectListItem
+              image={"https://picsum.photos/200"}
+              title={item.name}
+              onPress={() => handleProjectPress(item)}
+            ></ProjectListItem>
           );
         }}
-        keyExtractor={(item) => item.id}
-        numColumns={2}
       />
     </View>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingBottom: 40,
-  },
-  model: {
-    margin: 10,
-    width: 150,
-    height: 150,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#eee",
-  },
-  image: {
-    width: 100,
-    height: 100,
-    resizeMode: "contain",
-    borderRadius: 10,
-    marginBottom: 10,
-  },
-  newProj: {
-    width: 100,
-    height: 100,
-    marginRight: 0,
-    borderRadius: 10,
-    marginBottom: 10,
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#eee",
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-});
+const ProjectListItem = ({ image, title, onPress }: any) => {
+  const themeContext = useThemeContext();
+  const theme = themeContext.state.theme;
+  const styles = StyleSheet.create({
+    listItem: {
+      border: "1px solid black",
+      backgroundColor: theme.colors.background,
+      marginTop: 10,
+    },
+    listItemInner: {
+      width: "100%",
+      height: "100%",
+      flexDirection: "row",
+    },
+    image: {
+      height: "100%",
+      aspectRatio: 1,
+      resizeMode: "contain",
+      borderRadius: 10,
+      marginBottom: 10,
+      marginLeft: 10,
+    },
+    title: {
+      fontSize: 15,
+      paddingLeft: 10,
+      fontWeight: "bold",
+      color: theme.colors.foreground,
+    },
+  });
+
+  return (
+    <TouchableOpacity onPress={onPress} style={styles.listItem}>
+      <View style={styles.listItemInner}>
+        <Image style={styles.image} source={{ uri: image }} />
+        <View style={{ display: "flex" }}>
+          <Text style={styles.title}>{title}</Text>
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
+};
 
 export default ProjectsScreen;
+
+const projects: Project[] = [
+  {
+    id: "1",
+    name: "Dog",
+    images: ["swag"],
+  },
+  {
+    id: "2",
+    name: "Cat",
+    images: ["swag"],
+  },
+  {
+    id: "3",
+    name: "Bird",
+    images: ["swag"],
+  },
+  {
+    id: "4",
+    name: "Fish",
+    images: ["swag"],
+  },
+  {
+    id: "new",
+    name: "Create New",
+    images: ["swag"],
+  },
+];

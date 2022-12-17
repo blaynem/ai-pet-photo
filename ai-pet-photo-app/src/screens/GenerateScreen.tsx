@@ -1,7 +1,7 @@
 // Create a new screen that accepts a model and has an input for tags to generate new photos for the model
 
 import React from "react";
-import { View, Text, StyleSheet, TextInput } from "react-native";
+import { View, Text, StyleSheet, TextInput, StatusBar } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "../../types";
 import { RouteProp } from "@react-navigation/native";
@@ -28,6 +28,9 @@ export const GenerateScreen = () => {
       height: 40,
       margin: 12,
       borderWidth: 1,
+      backfaceVisibility: "visible",
+      backgroundColor: theme.colors.foreground,
+      color: theme.colors.primary,
     },
   });
 
@@ -36,6 +39,7 @@ export const GenerateScreen = () => {
       <Text>Generate Screen</Text>
       <Text>{project.name}</Text>
       <Input style={styles.input} placeholder="Tags" />
+      <StatusBar backgroundColor={theme.colors.background}></StatusBar>
     </View>
   );
 };
