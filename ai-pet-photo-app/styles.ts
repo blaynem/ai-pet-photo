@@ -1,19 +1,25 @@
 const palette = {
   purple: "#5A31F4",
+  lightBlue: "#B2DBFA",
+  blue: "#374785",
+  darkBlue: "#24305E",
+  yellow: "#F8E9A1",
+  redOrange: "#F76C6C",
   green: "#0ECD9D",
   red: "#CD0E61",
   black: "#0B0B0B",
   white: "#F0F2F3",
 };
 
-export const theme = {
+export const theme: Theme = {
   colors: {
-    background: palette.white,
-    foreground: palette.black,
-    primary: palette.purple,
+    background: palette.lightBlue,
+    foreground: palette.darkBlue,
+    primary: palette.yellow,
     success: palette.green,
-    danger: palette.red,
+    danger: palette.redOrange,
     failure: palette.red,
+    secondary: palette.blue,
   },
   spacing: {
     s: 8,
@@ -38,7 +44,7 @@ export const darkTheme = {
   ...theme,
   colors: {
     ...theme.colors,
-    background: palette.black,
+    background: palette.darkBlue,
     foreground: palette.white,
   },
 };
@@ -56,6 +62,7 @@ export interface Colors {
   success: string;
   danger: string;
   failure: string;
+  secondary: string;
 }
 
 export interface Spacing {

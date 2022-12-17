@@ -18,7 +18,14 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist":{
+        "NSCameraUsageDescription": "This app needs access to your camera to take photos.",
+        "NSPhotoLibraryUsageDescription": "This app needs access to your photo library to upload photos.",
+        "NSPhotoLibraryAddUsageDescription": "This app needs access to your photo library to upload photos.",
+        "NSMicrophoneUsageDescription": "This app needs access to your microphone to record audio.",
+        "NSLocationWhenInUseUsageDescription": "This app needs access to your location to find nearby pets."
+      }
     },
     "android": {
       "adaptiveIcon": {

@@ -11,10 +11,12 @@ interface ThemeContextProviderProps {
 
 export interface ThemeState {
   readonly theme: typeof theme;
+  readonly darkMode?: boolean;
 }
 
 export const DefaultThemeState: ThemeState = {
   theme: theme,
+  darkMode: false,
 };
 
 export const ThemeContext = createContext<{

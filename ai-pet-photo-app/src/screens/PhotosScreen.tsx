@@ -4,10 +4,13 @@ import React from "react";
 import { View, Text, StyleSheet, FlatList, Image } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { RootStackParamList } from "../../types";
+import { StatusBar } from "expo-status-bar";
+import { useThemeContext } from "../../state/context/ThemeContext";
 
 export default function PhotosScreen() {
   const navigation = useNavigation();
   const route = useRoute();
+  const { darkMode, theme } = useThemeContext().state;
 
   const photos = [
     {
