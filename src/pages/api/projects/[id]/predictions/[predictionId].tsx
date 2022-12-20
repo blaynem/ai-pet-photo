@@ -1,4 +1,4 @@
-import replicateClient from "@/core/clients/replicate";
+import replicateClient, { PredictionResponse } from "@/core/clients/replicate";
 import db from "@/core/db";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
@@ -14,7 +14,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       where: { projectId: projectId, id: predictionId },
     });
 
-    const { data: prediction } = await replicateClient.get(
+    const { data: prediction } = await replicateClient.get<PredictionResponse>(
       `https://api.replicate.com/v1/predictions/${shot.replicateId}`
     );
 
