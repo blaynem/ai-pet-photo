@@ -13,10 +13,15 @@ export default function Home() {
     data: projects,
     refetch: refetchProjects,
     isLoading,
-  } = useQuery(`projects`, () =>
-    axios
-      .get<ProjectWithShots[]>("/api/projects")
-      .then((response) => response.data)
+  } = useQuery(
+    `projects`,
+    () =>
+      axios
+        .get<ProjectWithShots[]>("/api/projects")
+        .then((response) => response.data),
+    {
+      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000), // 1s, 2s, 4s, 8s, 16s, 30s
+    }
   );
 
   return (

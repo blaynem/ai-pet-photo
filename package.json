@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "postinstall": "prisma generate",
-    "vercel-build": "prisma generate && prisma migrate deploy && next build"
+    "vercel-build": "prisma generate && prisma db push && next build"
   },
   "dependencies": {
     "@chakra-ui/react": "^2.4.2",
@@ -32,9 +32,10 @@
     "eslint-config-next": "13.0.6",
     "framer-motion": "^7.6.19",
     "image-blob-reduce": "^4.1.0",
+    "jsonwebtoken": "^8.5.1",
     "jszip": "^3.10.1",
     "next": "13.0.6",
-    "next-auth": "^4.18.0",
+    "next-auth": "^4.18.5",
     "nodemailer": "^6.8.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -52,6 +53,7 @@
     "windups": "^1.2.1"
   },
   "devDependencies": {
+    "@types/jsonwebtoken": "^8.5.9",
     "@types/sharp": "^0.31.0",
     "prisma": "^4.7.1"
   }
