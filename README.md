@@ -32,6 +32,40 @@ npm run dev
 yarn dev
 ```
 
+Let's figure out the 'MVP List' that we want to complete by x date.
+
+- Homepage
+  - General UI Colors should change for the homepage.
+  - Phrases need to be changed, there shouldn't be a "typing" input suggestion thing, even though it is neat.
+  - Change the "1,2,3" steps to be a idk more clear somehow
+  - The boxes can stay the same at the bottom, but clean up what they say.
+- Navbar
+  - Display the "tokens" they have.
+  - Dashboard link
+  - Log out / Log in
+- Login / Sign in page
+- Purchase Token Page
+  - Explain what tokens do
+  - First time buyer discount
+  - buy more tokens
+- Dashboard
+  - 2 "Phases"
+    - 1. If there are NO "studios", then we show the "create new studio" page
+    - 2. Otherwise, we should only the studios + a button on top that says "Create new studio"
+- Upload
+  - Upload photos + subject name + type of jubject (create studio in db)
+  - Studio "Overview" component
+    - refactor this flow
+- Studio Page
+  - When studio is being "trained", we need a "waiting" message.
+    - Send notification? (MVP ???)
+  - "Generate Image" prompt at the top
+  - Photo example of any filter that has been used to generate an image. (so that can easily see previous results)
+    - Whatever flow that page is
+- Backend
+  - Way to save the "prompts" for each "filter"
+  - Include a version of the prompt so they can't change? Or just a new id?
+
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 ## TODO:
