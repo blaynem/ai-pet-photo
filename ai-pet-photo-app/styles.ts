@@ -7,15 +7,19 @@ const palette = {
   redOrange: "#F76C6C",
   green: "#0ECD9D",
   red: "#CD0E61",
-  black: "#0B0B0B",
-  white: "#F0F2F3",
+  black: "#161616",
+  white: "#FBFBFB",
+  discordGray: "#36393F",
+  lightGray: "#EFEFEF",
+  pastelBlue: "#A7C7E7",
 };
 
 export const theme: Theme = {
   colors: {
-    background: palette.lightBlue,
-    foreground: palette.darkBlue,
-    primary: palette.yellow,
+    background: palette.lightGray,
+    foreground: palette.white,
+    text: palette.black,
+    primary: palette.pastelBlue,
     success: palette.green,
     danger: palette.redOrange,
     failure: palette.red,
@@ -29,12 +33,12 @@ export const theme: Theme = {
   },
   textVariants: {
     header: {
-      fontFamily: "Raleway",
+      fontFamily: "System",
       fontSize: 36,
       fontWeight: "bold",
     },
     body: {
-      fontFamily: "Merriweather",
+      fontFamily: "System",
       fontSize: 16,
     },
   },
@@ -44,8 +48,9 @@ export const darkTheme = {
   ...theme,
   colors: {
     ...theme.colors,
-    background: palette.darkBlue,
-    foreground: palette.white,
+    background: palette.discordGray,
+    foreground: palette.black,
+    text: palette.white,
   },
 };
 
@@ -63,6 +68,7 @@ export interface Colors {
   danger: string;
   failure: string;
   secondary: string;
+  text: string;
 }
 
 export interface Spacing {
