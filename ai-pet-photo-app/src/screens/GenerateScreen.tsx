@@ -15,7 +15,6 @@ export const GenerateScreen = () => {
   const theme = useThemeContext().state.theme;
 
   const project = state.project;
-  const input = React.createRef();
 
   const styles = StyleSheet.create({
     container: {
@@ -39,7 +38,6 @@ export const GenerateScreen = () => {
       <Text>Generate Screen</Text>
       <Text>{project.name}</Text>
       <Input style={styles.input} placeholder="Tags" />
-      <StatusBar backgroundColor={theme.colors.background}></StatusBar>
     </View>
   );
 };

@@ -6,12 +6,15 @@ import {
   TouchableOpacity,
   Text,
   StyleSheet,
+  ScrollView,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 
+/* TODO: create submit button to submit images to the API*/
+
 export default function SelectImages() {
-  const [image, setImage] = useState("");
+  const [images, setImages] = useState([] as string[]);
 
   const addImage = async () => {
     let _image: ImagePicker.ImagePickerResult =
@@ -20,51 +23,88 @@ export default function SelectImages() {
         aspect: [4, 3],
         quality: 1,
         allowsMultipleSelection: true,
+        selectionLimit: 5,
       });
 
-    setImage(_image.assets ? _image?.assets[0].uri : "");
+    setImages(_image.assets ? _image?.assets.map((asset) => asset.uri) : []);
   };
+
+  const handleSubmit = async () => {
+    const formData = new FormData();
+    images.forEach((image, i) => {
+      formData.append("images", {
+        name: `image${i}`,
+        type: "image/jpg",
+        uri: image,
+      } as any);
+    });
+    const response = await fetch("http://localhost:3000/api/images", {
+      method: "POST",
+      body: formData,
+    });
+    const data = await response.json();
+    console.log(data);
+  };
+
   return (
-    <View style={imageUploaderStyles.container}>
-      {image && (
-        // eslint-disable-next-line jsx-a11y/alt-text
-        <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />
-      )}
-      <View style={imageUploaderStyles.uploadBtnContainer}>
-        <TouchableOpacity
-          onPress={addImage}
-          style={imageUploaderStyles.uploadBtn}
-        >
-          <Text>{image ? "Edit" : "Upload"} Image</Text>
-          <AntDesign name="camera" size={20} color="black" />
-        </TouchableOpacity>
+    <ScrollView contentContainerStyle={imageUploaderStyles.container}>
+      <TouchableOpacity
+        onPress={addImage}
+        style={imageUploaderStyles.uploadBtn}
+      >
+        <AntDesign name="plus" size={24} color="black" />
+        <Text style={imageUploaderStyles.uploadBtnText}>Upload Images</Text>
+      </TouchableOpacity>
+      <View
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          flexWrap: "wrap",
+          alignItems: "center",
+          justifyContent: "space-around",
+        }}
+      >
+        {images
+          ? images.map((image) => (
+              <Image
+                source={{ uri: image }}
+                style={imageUploaderStyles.image}
+              />
+            ))
+          : null}
       </View>
-    </View>
+      <TouchableOpacity
+        style={imageUploaderStyles.uploadBtn}
+        onPress={handleSubmit}
+      >
+        <Text>Submit</Text>
+      </TouchableOpacity>
+    </ScrollView>
   );
 }
 
 const imageUploaderStyles = StyleSheet.create({
   container: {
-    elevation: 2,
-    height: 200,
-    width: 200,
-    backgroundColor: "#efefef",
-    position: "relative",
-    borderRadius: 999,
-    overflow: "hidden",
-  },
-  uploadBtnContainer: {
-    opacity: 0.7,
-    position: "absolute",
-    right: 0,
-    bottom: 0,
-    backgroundColor: "lightgrey",
-    width: "100%",
-    height: "25%",
-  },
-  uploadBtn: {
-    display: "flex",
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
+  },
+  uploadBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#fff",
+    borderRadius: 5,
+    padding: 10,
+    margin: 20,
+  },
+  uploadBtnText: {
+    marginLeft: 10,
+  },
+  image: {
+    width: 200,
+    height: 200,
+    marginTop: 10,
+    borderRadius: 8,
   },
 });

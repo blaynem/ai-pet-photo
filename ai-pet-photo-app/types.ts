@@ -4,6 +4,7 @@ export type RootStackParamList = {
   Settings: undefined;
   Profile: undefined;
   Projects: undefined;
+  NewProject: undefined;
   Photos: undefined;
   NotFound: undefined;
   Landing: undefined;
@@ -14,6 +15,7 @@ export type Project = {
   id: string;
   name: string;
   images: string[];
+  type: string;
 };
 
 export type Shot = {

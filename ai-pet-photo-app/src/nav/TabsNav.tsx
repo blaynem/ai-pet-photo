@@ -4,6 +4,10 @@ import {
   faUser,
   faImages,
   faCog,
+  faPaw,
+  faBurger,
+  faList,
+  faBars,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -27,10 +31,10 @@ export function Root() {
           backgroundColor: theme.colors.background,
         }}
         screenOptions={({ route }) => ({
-          tabBarActiveTintColor: theme.colors.danger,
+          tabBarActiveTintColor: theme.colors.secondary,
           tabBarInactiveTintColor: theme.colors.background,
           tabBarStyle: {
-            backgroundColor: theme.colors.foreground,
+            backgroundColor: theme.colors.text,
           },
           headerStyle: { backgroundColor: theme.colors.background },
 
@@ -39,12 +43,12 @@ export function Root() {
               <View style={{ backgroundColor: theme.colors.background }}></View>
             );
           },
-          headerTintColor: theme.colors.foreground,
+          headerTintColor: theme.colors.text,
           tabBarIcon: ({ color, size }) => {
             let iconName: IconDefinition = faHouse;
             switch (route.name) {
               case "Projects":
-                iconName = faUser;
+                iconName = faPaw;
                 break;
               case "Photos":
                 iconName = faImages;
@@ -59,12 +63,12 @@ export function Root() {
               onPress={() => {
                 navigationRef.current?.navigate("Settings");
               }}
-              style={{ marginRight: 20 }}
+              style={{ marginRight: 20, padding: 15 }}
             >
               <FontAwesomeIcon
-                icon={faCog}
-                size={20}
-                color={theme.colors.foreground}
+                icon={faBars}
+                size={30}
+                color={theme.colors.text}
               />
             </TouchableOpacity>
           ),
@@ -78,7 +82,7 @@ export function Root() {
               backgroundColor: theme.colors.background,
             },
             headerTitleStyle: {
-              color: theme.colors.foreground,
+              color: theme.colors.text,
             },
           }}
         />
@@ -90,7 +94,7 @@ export function Root() {
               backgroundColor: theme.colors.background,
             },
             headerTitleStyle: {
-              color: theme.colors.foreground,
+              color: theme.colors.text,
             },
           }}
         />

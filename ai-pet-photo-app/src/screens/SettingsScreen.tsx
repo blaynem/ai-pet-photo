@@ -27,7 +27,7 @@ export default function SettingsScreen() {
       backgroundColor: theme.colors.background,
     },
     text: {
-      color: theme.colors.foreground,
+      color: theme.colors.text,
     },
   });
 
@@ -47,7 +47,7 @@ export default function SettingsScreen() {
         <Switch
           value={isEnabled}
           onValueChange={toggleSwitch}
-          color={theme.colors.foreground}
+          color={theme.colors.text}
         />
       </View>
     </View>

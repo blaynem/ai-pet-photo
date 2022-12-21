@@ -4,6 +4,7 @@ import { useThemeContext } from "../../state/context/ThemeContext";
 import { RootStackParamList } from "../../types";
 import { GenerateScreen } from "../screens/GenerateScreen";
 import { LandingScreen } from "../screens/LandingScreen";
+import { NewProjectScreen } from "../screens/NewProjectScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 import { Root } from "./TabsNav";
 
@@ -45,7 +46,7 @@ export function OverLays() {
               backgroundColor: theme.colors.background,
             },
             headerTitleStyle: {
-              color: theme.colors.foreground,
+              color: theme.colors.text,
             },
             statusBarColor: theme.colors.background,
           }}
@@ -58,7 +59,22 @@ export function OverLays() {
               backgroundColor: theme.colors.background,
             },
             headerTitleStyle: {
-              color: theme.colors.foreground,
+              color: theme.colors.text,
+            },
+
+            statusBarColor: theme.colors.background,
+          }}
+        />
+        <Stack.Screen
+          name="NewProject"
+          component={NewProjectScreen}
+          options={{
+            title: "New Project",
+            headerStyle: {
+              backgroundColor: theme.colors.background,
+            },
+            headerTitleStyle: {
+              color: theme.colors.text,
             },
 
             statusBarColor: theme.colors.background,
