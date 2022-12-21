@@ -31,7 +31,7 @@ export function Root() {
           backgroundColor: theme.colors.background,
         }}
         screenOptions={({ route }) => ({
-          tabBarActiveTintColor: theme.colors.secondary,
+          tabBarActiveTintColor: theme.colors.primary,
           tabBarInactiveTintColor: theme.colors.background,
           tabBarStyle: {
             backgroundColor: theme.colors.text,
