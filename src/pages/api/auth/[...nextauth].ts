@@ -1,8 +1,7 @@
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import NextAuth, { NextAuthOptions, Session } from "next-auth";
+import NextAuth, { NextAuthOptions } from "next-auth";
 import EmailProvider from "next-auth/providers/email";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import db from "@/core/db";
-import supabase from "@/core/clients/supabase";
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(db),
@@ -11,17 +10,14 @@ export const authOptions: NextAuthOptions = {
       server: process.env.EMAIL_SERVER,
       from: process.env.EMAIL_FROM,
       sendVerificationRequest: async ({ identifier: email, url }) => {
-        // Send magic link to user from Supabase.
-        await supabase.auth.signInWithOtp({
-          email,
-          options: { emailRedirectTo: url },
-        });
+        // Sending link to console for now, we comment this out and send to email later.
+        console.log("----sendVerificationRequest", { email, url });
       },
     }),
   ],
   callbacks: {
     async session({ session, user }) {
-      session.userId = user.id;
+      session.user = user;
       return session;
     },
   },
