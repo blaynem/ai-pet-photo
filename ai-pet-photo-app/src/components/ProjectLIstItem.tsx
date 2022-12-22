@@ -42,12 +42,12 @@ export const ProjectListItem = ({
   return (
     <TouchableOpacity onPress={onPress} style={containerStyle}>
       <View style={styles.listItemInner}>
-        <View>
+        <View style={styles.imageContainer}>
           <Image style={styles.image} source={{ uri: image }} />
         </View>
         <View style={styles.textContainer}>
           <Text style={styles.title}>{title}</Text>
-          <Text style={styles.text}> Created: 12/17/22</Text>
+          <Text style={styles.text}>Created: 12/17/22</Text>
         </View>
       </View>
     </TouchableOpacity>
@@ -57,90 +57,83 @@ export const ProjectListItem = ({
 const createStyles = (theme: Theme) => {
   return StyleSheet.create({
     listItem: {
-      height: 60,
+      height: 128,
       width: "90%",
       marginBottom: theme.spacing.s,
-      alignItems: "center",
-      justifyContent: "center",
       backgroundColor: theme.colors.foreground,
       display: "flex",
-      padding: theme.spacing.m,
-      paddingBottom: theme.spacing.xl,
+      alignItems: "center",
+      justifyContent: "center",
     },
     firstItem: {
-      height: 60,
+      height: 128,
       width: "90%",
       marginBottom: theme.spacing.s,
-      alignItems: "center",
-      justifyContent: "center",
       backgroundColor: theme.colors.foreground,
       display: "flex",
-      padding: theme.spacing.m,
-      paddingBottom: theme.spacing.xl,
-      marginTop: 20,
+      alignItems: "center",
+      justifyContent: "center",
       borderTopStartRadius: 10,
       borderTopEndRadius: 10,
     },
     onlyItem: {
-      height: 60,
+      height: 64,
       width: "90%",
-      marginBottom: 3,
-      alignItems: "center",
-      justifyContent: "center",
+      marginBottom: theme.spacing.s,
       backgroundColor: theme.colors.foreground,
       display: "flex",
-      padding: 10,
-      paddingBottom: 40,
-      marginTop: 20,
+      alignItems: "center",
+      justifyContent: "center",
       borderRadius: 10,
     },
     lastItem: {
-      height: 60,
+      height: 128,
       width: "90%",
-      marginBottom: 3,
-      alignItems: "center",
-      justifyContent: "center",
+      marginBottom: theme.spacing.s,
       backgroundColor: theme.colors.foreground,
       display: "flex",
-      padding: 10,
-      paddingBottom: 40,
+      alignItems: "center",
+      justifyContent: "center",
       borderBottomStartRadius: 10,
       borderBottomEndRadius: 10,
     },
     textContainer: {
       display: "flex",
       flexDirection: "column",
-      justifyContent: "flex-start",
+      justifyContent: "space-around",
       alignItems: "flex-start",
-      marginLeft: 10,
+      marginLeft: theme.spacing.s,
+    },
+    imageContainer: {
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      alignItems: "center",
+      marginLeft: theme.spacing.m,
     },
     listItemInner: {
-      width: "100%",
       height: "100%",
-      paddingBottom: 30,
+      width: "100%",
       flexDirection: "row",
     },
     image: {
-      height: theme.spacing.xl,
+      height: 96,
       aspectRatio: 1,
       resizeMode: "contain",
       borderRadius: 10,
-      margin: theme.spacing.s,
     },
     title: {
-      height: 25,
       fontSize: 15,
-      paddingLeft: 10,
+      paddingLeft: theme.spacing.s,
       fontFamily: theme.textVariants.header.fontFamily,
-      paddingTop: 5,
+      paddingTop: theme.spacing.s,
       color: theme.colors.text,
     },
     text: {
-      height: 20,
       fontSize: 11,
-      paddingLeft: 10,
+      paddingLeft: theme.spacing.s,
       fontFamily: theme.textVariants.body.fontFamily,
-      paddingTop: 5,
+      paddingTop: theme.spacing.s,
       color: theme.colors.text,
     },
   });

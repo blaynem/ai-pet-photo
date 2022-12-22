@@ -3452,11 +3452,6 @@ react-medium-image-zoom@^5.1.2:
   resolved "https://registry.yarnpkg.com/react-medium-image-zoom/-/react-medium-image-zoom-5.1.2.tgz#ff13b8cf37e3348c36a2fc6deade84912fdad8ce"
   integrity sha512-Lk9TDqd+vUpQVP77p45jXgh1LGjClLfyLJnTemCfpI+5Zp3X7MX7iGP5VmSdLGXy9mhdlZiByHOyp4Irf4N8vg==
 
-react-native-image-picker@^4.10.2:
-  version "4.10.2"
-  resolved "https://registry.yarnpkg.com/react-native-image-picker/-/react-native-image-picker-4.10.2.tgz#75b356c9eea70c2c4f5c1089f8758e2fa32f88a8"
-  integrity sha512-3h9PrA1dQ84rVeipzQE4eWTELvflSHNtJZN6rz7NkZyaxo9YZV8H/TswBpHwiS5YWlyu+zlLzSoWVa1opSu7GA==
-
 react-query@^3.39.2:
   version "3.39.2"
   resolved "https://registry.yarnpkg.com/react-query/-/react-query-3.39.2.tgz#9224140f0296f01e9664b78ed6e4f69a0cc9216f"

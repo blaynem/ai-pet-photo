@@ -29,7 +29,8 @@ export const theme: Theme = {
     s: 8,
     m: 16,
     l: 24,
-    xl: 40,
+    xl: 32,
+    xxl: 40,
   },
   textVariants: {
     header: {
@@ -76,6 +77,7 @@ export interface Spacing {
   m: number;
   l: number;
   xl: number;
+  xxl: number;
 }
 
 export interface TextVariants {
