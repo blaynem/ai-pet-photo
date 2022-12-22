@@ -1,38 +1,48 @@
 import { Project } from "@prisma/client";
-import axios, { AxiosResponse } from "axios";
 import JSZip from "jszip";
 import sharp from "sharp";
 import smartcrop from "smartcrop-sharp";
+import supabase from "../clients/supabase";
 
 const zip = new JSZip();
 
 const WIDTH = 512;
 const HEIGHT = 512;
 
+type RequestType = { data: Blob; error: null } | { data: null; error: any };
+
 export const createZipFolder = async (urls: string[], project: Project) => {
-  const requests = [];
+  const requests: Promise<RequestType>[] = [];
 
   for (let i = 0; i < urls.length; i++) {
-    requests.push(axios(urls[i], { responseType: "arraybuffer" }));
+    const dataFetch = supabase.storage
+      .from(process.env.NEXT_PUBLIC_UPLOAD_BUCKET_NAME!)
+      .download(urls[i]);
+    requests.push(dataFetch);
   }
 
-  const responses = await Promise.all<AxiosResponse<Buffer>>(requests);
-  const buffersPromises = responses.map((response) => {
-    const buffer = response.data;
-    return smartcrop
-      .crop(buffer, { width: WIDTH, height: HEIGHT })
-      .then(function (result) {
-        const crop = result.topCrop;
-        return sharp(buffer)
-          .extract({
-            width: crop.width,
-            height: crop.height,
-            left: crop.x,
-            top: crop.y,
-          })
-          .resize(WIDTH, HEIGHT)
-          .toBuffer();
-      });
+  const responses = await Promise.all<RequestType>(requests);
+  const buffersPromises = responses.map(async (response) => {
+    if (!response.data) {
+      return Promise.reject();
+    }
+    return response.data?.arrayBuffer().then((b) => {
+      const buffer = Buffer.from(b);
+      return smartcrop
+        .crop(buffer, { width: WIDTH, height: HEIGHT })
+        .then(function (result) {
+          const crop = result.topCrop;
+          return sharp(buffer)
+            .extract({
+              width: crop.width,
+              height: crop.height,
+              left: crop.x,
+              top: crop.y,
+            })
+            .resize(WIDTH, HEIGHT)
+            .toBuffer();
+        });
+    });
   });
 
   const buffers = await Promise.all(buffersPromises);
