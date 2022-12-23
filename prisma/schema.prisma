@@ -46,6 +46,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   projects      Project[]
+  credits       Int       @default(0)
 
   @@map("users")
 }
@@ -88,4 +89,21 @@ model Shot {
   Project     Project? @relation(fields: [projectId], references: [id])
   projectId   String?
   outputUrl   String?
+  // This is the name of the filter that was used to generate this shot
+  filterName  String?
+  // The filter id that was used to generate this shot
+  filterId    String?
+  Filters     Filters? @relation(fields: [filterId], references: [id])
+}
+
+model Filters {
+  id         String   @id @default(uuid())
+  // Name of the filter
+  name       String
+  // What the filter's prediction string actually is
+  prediction String
+  createdAt  DateTime @default(now())
+  exampleUrl String
+
+  Shot Shot[]
 }

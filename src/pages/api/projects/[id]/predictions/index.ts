@@ -1,12 +1,33 @@
-import replicateClient, { PredictionResponse } from "@/core/clients/replicate";
+import replicateClient, {
+  PredictionResponse as ReplicatePredictResponse,
+} from "@/core/clients/replicate";
 import db from "@/core/db";
+import { Shot } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+export interface PredictionsBody {
+  prompt: string;
+  filterId: string;
+  filterName: string;
+  projectId: string;
+}
+
+export interface PredictionsResponse {
+  shot?: Shot;
+  message?: string;
+}
+
+interface PredictionRequest extends NextApiRequest {
+  body: PredictionsBody;
+}
+
+const handler = async (
+  req: PredictionRequest,
+  res: NextApiResponse<PredictionsResponse>
+) => {
   try {
-    const prompt = req.body.prompt as string;
-    const projectId = req.query.id as string;
+    const { filterId, filterName, prompt, projectId } = req.body;
     const session = await getSession({ req });
 
     if (!session?.user) {
@@ -21,7 +42,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(400).json({ message: "No credit" });
     }
 
-    const { data } = await replicateClient.post<PredictionResponse>(
+    const { data } = await replicateClient.post<ReplicatePredictResponse>(
       `https://api.replicate.com/v1/predictions`,
       {
         input: { prompt },
@@ -35,6 +56,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         replicateId: data.id,
         status: "starting",
         projectId: project.id,
+        filterId,
+        filterName,
       },
     });
 
