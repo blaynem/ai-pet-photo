@@ -84,7 +84,7 @@ const ShotCard = ({
         >
           <Box>
             <Text fontWeight="600" fontSize="lg">
-              {shot.prompt}
+              {shot.filterName}
             </Text>
             <Text fontSize="sm">
               {formatRelative(new Date(shot.createdAt), new Date())}
