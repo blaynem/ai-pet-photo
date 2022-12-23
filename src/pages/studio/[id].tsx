@@ -129,6 +129,9 @@ const StudioPage = ({ project, filters }: IStudioPageProps) => {
           width="100%"
         >
           <Box>
+            {filters.length === 0 && (
+              <Box>No filters available. There was a possible error.</Box>
+            )}
             {filters?.map((filter) => (
               <PredictionFilter
                 {...filter}
@@ -139,16 +142,18 @@ const StudioPage = ({ project, filters }: IStudioPageProps) => {
             ))}
           </Box>
         </Flex>
-        <Button
-          type="submit"
-          size="lg"
-          variant="brand"
-          rightIcon={<FaMagic />}
-          isLoading={isLoading}
-          onClick={generateClick}
-        >
-          Generate
-        </Button>
+        {filters.length >= 1 && (
+          <Button
+            type="submit"
+            size="lg"
+            variant="brand"
+            rightIcon={<FaMagic />}
+            isLoading={isLoading}
+            onClick={generateClick}
+          >
+            Generate
+          </Button>
+        )}
         {generateError && (
           <Box mt={4} color={"red.400"}>
             {generateError}
@@ -184,7 +189,9 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     };
   }
 
-  const filters = await db.filters.findMany();
+  const filters = await db.filters.findMany({
+    where: { enabled: true },
+  });
 
   const project = await db.project.findFirstOrThrow({
     where: { id: projectId, userId: session.user.id, modelStatus: "succeeded" },

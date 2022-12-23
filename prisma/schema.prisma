@@ -104,6 +104,8 @@ model Filters {
   prediction String
   createdAt  DateTime @default(now())
   exampleUrl String
+  // Whether or not this filter is enabled for users
+  enabled    Boolean  @default(true)
 
   Shot Shot[]
 }
