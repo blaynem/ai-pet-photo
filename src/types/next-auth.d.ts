@@ -8,6 +8,11 @@ declare module "next-auth" {
     user: {
       // The user's id.
       id: string;
+      // The user's credits balance for training models and running predictions.
+      credits: number;
     } & DefaultSession["user"];
+  }
+  interface User {
+    credits: number;
   }
 }
