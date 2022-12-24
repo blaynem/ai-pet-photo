@@ -8,7 +8,7 @@ export interface ProjectState {
 }
 
 export const DefaultProjectState: ProjectState = {
-  project: { id: "-1", name: "", images: [] },
+  project: { id: "-1", name: "", images: [], type: "" },
 };
 
 export const ProjectContext = createContext<{

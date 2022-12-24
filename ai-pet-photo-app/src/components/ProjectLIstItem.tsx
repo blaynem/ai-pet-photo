@@ -126,14 +126,12 @@ const createStyles = (theme: Theme) => {
       fontSize: 15,
       paddingLeft: theme.spacing.s,
       fontFamily: theme.textVariants.header.fontFamily,
-      paddingTop: theme.spacing.s,
       color: theme.colors.text,
     },
     text: {
       fontSize: 11,
       paddingLeft: theme.spacing.s,
       fontFamily: theme.textVariants.body.fontFamily,
-      paddingTop: theme.spacing.s,
       color: theme.colors.text,
     },
   });
