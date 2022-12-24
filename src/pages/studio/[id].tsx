@@ -7,55 +7,90 @@ import {
   Button,
   Divider,
   Flex,
-  Icon,
-  Input,
   Text,
-  Textarea,
   VStack,
 } from "@chakra-ui/react";
-import { Project, Shot } from "@prisma/client";
+import { Filters, Project, Shot } from "@prisma/client";
 import axios from "axios";
 import { GetServerSidePropsContext } from "next";
 import { getSession } from "next-auth/react";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useMutation } from "react-query";
 import superjson from "superjson";
 import { FaMagic } from "react-icons/fa";
 import { formatRelative } from "date-fns";
 import Link from "next/link";
 import { HiArrowLeft } from "react-icons/hi";
-import { BsLightbulb } from "react-icons/bs";
-import { getRefinedInstanceClass } from "@/core/utils/predictions";
+import {
+  PredictionsBody,
+  PredictionsResponse,
+} from "../api/projects/[id]/predictions";
+import PredictionFilter from "@/components/studio/PredictionFilter";
 
 export type ProjectWithShots = Project & {
-  shots: Shot[];
+  shots: Omit<Shot, "prompt">[];
 };
 
 interface IStudioPageProps {
   project: ProjectWithShots;
+  // The available filters to be used to generate an image
+  filters: Filters[];
 }
 
-const StudioPage = ({ project }: IStudioPageProps) => {
+const StudioPage = ({ project, filters }: IStudioPageProps) => {
   const [shots, setShots] = useState(project.shots);
   const [shotCredits, setShotCredits] = useState(project.credits);
-  const promptInputRef = useRef<HTMLTextAreaElement>(null);
+  const [selectedFilter, setSelectedFilter] = useState<Filters | null>(null);
+  const [generateError, setGenerateError] = useState<string | null>(null);
 
   const { mutate: createPrediction, isLoading } = useMutation(
     "create-prediction",
-    (project: Project) =>
-      axios.post<{ shot: Shot }>(`/api/projects/${project.id}/predictions`, {
-        prompt: promptInputRef.current!.value,
-      }),
+    (body: PredictionsBody) =>
+      axios.post<PredictionsResponse>(
+        `/api/projects/${project.id}/predictions`,
+        body
+      ),
     {
       onSuccess: (response) => {
-        const shot = response.data.shot;
+        const shot = response.data.shot!;
 
         setShots([shot, ...shots]);
         setShotCredits(shotCredits - 1);
-        promptInputRef.current!.value = "";
       },
     }
   );
+
+  // Generate a new prediction only if a filter is selected
+  const generateClick = () => {
+    if (!selectedFilter) {
+      setGenerateError("Select a filter first!");
+      return;
+    }
+
+    const body = {
+      filterId: selectedFilter.id,
+      filterName: selectedFilter.name,
+      projectId: project.id,
+    };
+
+    createPrediction(body);
+  };
+
+  // When a filter is clicked, we want to set it as the selected filter
+  const handleFilterClick = (filterId: string) => {
+    // Find the filter by its id
+    const filter = filters.find((filter) => filter.id === filterId);
+    if (!filter) return;
+
+    // If the filter is already selected, we want to deselect it
+    if (selectedFilter?.id === filter.id) {
+      setSelectedFilter(null);
+      return;
+    }
+
+    setSelectedFilter(filter);
+    setGenerateError(null);
+  };
 
   return (
     <PageContainer>
@@ -84,55 +119,47 @@ const StudioPage = ({ project }: IStudioPageProps) => {
           gap={2}
           mt={10}
           mb={4}
-          as="form"
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (promptInputRef.current!.value) {
-              createPrediction(project);
-            }
-          }}
           width="100%"
         >
-          <Textarea
-            ref={promptInputRef}
-            backgroundColor="white"
-            isRequired
-            size="lg"
-            shadow="lg"
-            focusBorderColor="gray.400"
-            _focus={{ shadow: "md" }}
-            mr={2}
-            placeholder={`painting of ${
-              project.instanceName
-            } ${getRefinedInstanceClass(project.instanceClass)} by Andy Warhol`}
-          />
+          <Box>
+            {filters.length === 0 && (
+              <Box>No filters available. There was a possible error.</Box>
+            )}
+            {filters?.map((filter) => (
+              <PredictionFilter
+                {...filter}
+                key={filter.id}
+                selected={selectedFilter?.id === filter.id}
+                onClick={handleFilterClick}
+              />
+            ))}
+          </Box>
+        </Flex>
+        {filters.length >= 1 && (
           <Button
             type="submit"
             size="lg"
             variant="brand"
             rightIcon={<FaMagic />}
             isLoading={isLoading}
+            onClick={generateClick}
           >
             Generate
           </Button>
-        </Flex>
-        <Text fontSize="md">
-          <Icon as={BsLightbulb} /> Use the keyword{" "}
-          <b>
-            {project.instanceName}{" "}
-            {getRefinedInstanceClass(project.instanceClass)}
-          </b>{" "}
-          as the subject in your prompt. First prompt can be slow, but following
-          prompts will be faster.
-        </Text>
-        <Divider mt={10} mb={4} />
+        )}
+        {generateError && (
+          <Box mt={4} color={"red.400"}>
+            {generateError}
+          </Box>
+        )}
+        <Divider mt={4} mb={4} />
         {shots.length === 0 ? (
           <Box textAlign="center" fontSize="lg">
-            {`You don't have any prompt yet. It's time to be creative!`}
+            {`You haven't generated any shots yet. Select a filter and click generate to create!`}
           </Box>
         ) : (
           <VStack spacing={4} divider={<Divider />} alignItems="flex-start">
-            {shots.map((shot: Shot) => (
+            {shots.map((shot) => (
               <ShotCard key={shot.id} projectId={project.id} shot={shot} />
             ))}
           </VStack>
@@ -155,9 +182,36 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     };
   }
 
+  const filters = await db.filters.findMany({
+    where: { enabled: true },
+    select: {
+      id: true,
+      name: true,
+      exampleUrl: true,
+    },
+  });
+
   const project = await db.project.findFirstOrThrow({
     where: { id: projectId, userId: session.user.id, modelStatus: "succeeded" },
-    include: { shots: { orderBy: { createdAt: "desc" } } },
+    select: {
+      credits: true,
+      createdAt: true,
+      id: true,
+      instanceName: true,
+      shots: {
+        // Not selecting the `prompt` so user doesn't have info on that.
+        select: {
+          createdAt: true,
+          filterId: true,
+          filterName: true,
+          id: true,
+          outputUrl: true,
+          projectId: true,
+          status: true,
+        },
+        orderBy: { createdAt: "desc" },
+      },
+    },
     orderBy: { createdAt: "desc" },
   });
 
@@ -168,9 +222,11 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   }
 
   const { json: serializedProject } = superjson.serialize(project);
+  const { json: serializedFilters } = superjson.serialize(filters);
 
   return {
     props: {
+      filters: serializedFilters,
       project: serializedProject,
     },
   };
