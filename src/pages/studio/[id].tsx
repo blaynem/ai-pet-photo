@@ -28,7 +28,7 @@ import {
 import PredictionFilter from "@/components/studio/PredictionFilter";
 
 export type ProjectWithShots = Project & {
-  shots: Shot[];
+  shots: Omit<Shot, "prompt">[];
 };
 
 interface IStudioPageProps {
@@ -67,14 +67,7 @@ const StudioPage = ({ project, filters }: IStudioPageProps) => {
       return;
     }
 
-    // Make sure to replace the instance name and class in the prompt
-    // with the actual values
-    const prompt = selectedFilter.prediction
-      .replaceAll("{instanceName}", project.instanceName)
-      .replaceAll("{instanceClass}", project.instanceClass);
-
     const body = {
-      prompt,
       filterId: selectedFilter.id,
       filterName: selectedFilter.name,
       projectId: project.id,
@@ -166,7 +159,7 @@ const StudioPage = ({ project, filters }: IStudioPageProps) => {
           </Box>
         ) : (
           <VStack spacing={4} divider={<Divider />} alignItems="flex-start">
-            {shots.map((shot: Shot) => (
+            {shots.map((shot) => (
               <ShotCard key={shot.id} projectId={project.id} shot={shot} />
             ))}
           </VStack>
@@ -191,11 +184,34 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
   const filters = await db.filters.findMany({
     where: { enabled: true },
+    select: {
+      id: true,
+      name: true,
+      exampleUrl: true,
+    },
   });
 
   const project = await db.project.findFirstOrThrow({
     where: { id: projectId, userId: session.user.id, modelStatus: "succeeded" },
-    include: { shots: { orderBy: { createdAt: "desc" } } },
+    select: {
+      credits: true,
+      createdAt: true,
+      id: true,
+      instanceName: true,
+      shots: {
+        // Not selecting the `prompt` so user doesn't have info on that.
+        select: {
+          createdAt: true,
+          filterId: true,
+          filterName: true,
+          id: true,
+          outputUrl: true,
+          projectId: true,
+          status: true,
+        },
+        orderBy: { createdAt: "desc" },
+      },
+    },
     orderBy: { createdAt: "desc" },
   });
 
