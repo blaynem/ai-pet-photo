@@ -100,8 +100,8 @@ model Filters {
   id         String   @id @default(uuid())
   // Name of the filter
   name       String
-  // What the filter's prediction string actually is
-  prediction String
+  // What the filter's prompt string actually is
+  prompt     String
   createdAt  DateTime @default(now())
   exampleUrl String
   // Whether or not this filter is enabled for users

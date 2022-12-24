@@ -26,7 +26,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       },
     });
 
-    return res.json({ shot });
+    // Remove the `prompt` from the shot, so users don't see it.
+    const { prompt, ...shotWithoutPrompt } = shot;
+    return res.json({ shot: shotWithoutPrompt });
   }
 
   res.status(401).json({ message: "Not authenticated" });

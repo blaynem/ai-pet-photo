@@ -21,16 +21,14 @@ const ShotCard = ({
   shot: initialShot,
   projectId,
 }: {
-  shot: Shot;
+  shot: Omit<Shot, "prompt">;
   projectId: string;
 }) => {
-  const { onCopy, hasCopied } = useClipboard(initialShot.prompt);
-
   const { data } = useQuery(
     `shot-${initialShot.id}`,
     () =>
       axios
-        .get<{ shot: Shot }>(
+        .get<{ shot: Omit<Shot, "prompt"> }>(
           `/api/projects/${projectId}/predictions/${initialShot.id}`
         )
         .then((res) => res.data),
@@ -57,7 +55,7 @@ const ShotCard = ({
           >
             <Zoom>
               <NextImage
-                alt={shot.prompt}
+                alt={shot.filterName || "Stylized image of your pet"}
                 src={shot.outputUrl}
                 width="512"
                 height="512"
@@ -92,17 +90,8 @@ const ShotCard = ({
           </Box>
 
           <HStack mt={4}>
-            <Button
-              size="sm"
-              color="blackAlpha.600"
-              variant="link"
-              onClick={onCopy}
-            >
-              {hasCopied ? "Copied" : "Copy prompt"}
-            </Button>
             {shot.outputUrl && (
               <>
-                <Box>-</Box>
                 <Button
                   size="sm"
                   as={Link}
@@ -110,7 +99,6 @@ const ShotCard = ({
                   color="blackAlpha.600"
                   target="_blank"
                   variant="link"
-                  onClick={onCopy}
                 >
                   Download
                 </Button>
