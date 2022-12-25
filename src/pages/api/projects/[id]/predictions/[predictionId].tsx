@@ -18,13 +18,18 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       `https://api.replicate.com/v1/predictions/${shot.replicateId}`
     );
 
-    await db.shot.update({
-      where: { id: shot.id },
-      data: {
-        status: prediction.status,
-        outputUrl: prediction.output?.[0] || null,
-      },
-    });
+    // If the initial shot status changes from the prediction, update the shot in database.
+    if (shot.status !== prediction.status) {
+      await db.shot.update({
+        where: { id: shot.id },
+        data: {
+          status: prediction.status,
+          outputUrl: prediction.output?.[0] || null,
+        },
+      });
+    }
+
+    // todo: Probably need to save these images in our database as well instead of replicate storage.
 
     // Remove the `prompt` from the shot, so users don't see it.
     const { prompt, ...shotWithoutPrompt } = shot;

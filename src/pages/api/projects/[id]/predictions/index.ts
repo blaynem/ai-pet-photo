@@ -10,10 +10,14 @@ export interface PredictionsBody {
   filterId: string;
   filterName: string;
   projectId: string;
+  /**
+   * Amount of predictions to make
+   */
+  predictionAmount?: number;
 }
 
 export interface PredictionsResponse {
-  shot?: Omit<Shot, "prompt">;
+  shots?: Omit<Shot, "prompt">[];
   message?: string;
 }
 
@@ -26,7 +30,7 @@ const handler = async (
   res: NextApiResponse<PredictionsResponse>
 ) => {
   try {
-    const { filterId, filterName, projectId } = req.body;
+    const { filterId, filterName, projectId, predictionAmount } = req.body;
     const session = await getSession({ req });
 
     if (!session?.user) {
@@ -52,26 +56,40 @@ const handler = async (
       .replaceAll("{instanceName}", project.instanceName)
       .replaceAll("{instanceClass}", project.instanceClass);
 
-    // Create a prediction on Replicate
-    const { data } = await replicateClient.post<ReplicatePredictResponse>(
-      `https://api.replicate.com/v1/predictions`,
-      {
-        input: { prompt },
-        version: project.modelVersionId!,
-      }
+    // Assure amount of predictions is between 1 and 10
+    const predictionsToMake = Math.min(Math.max(predictionAmount || 1, 1), 10);
+
+    // Send batched fetch requests to replicate
+    const batchedFetches = await Promise.all(
+      Array.from({ length: predictionsToMake }).map(async () => {
+        // Create a prediction on Replicate
+        const { data } = await replicateClient.post<ReplicatePredictResponse>(
+          `https://api.replicate.com/v1/predictions`,
+          {
+            input: { prompt },
+            version: project.modelVersionId!,
+          }
+        );
+        return data;
+      })
     );
 
-    // Create a shot in the database
-    const shot = await db.shot.create({
-      data: {
-        prompt: data.input.prompt,
-        replicateId: data.id,
-        status: "starting",
-        projectId: project.id,
-        filterId,
-        filterName,
-      },
-    });
+    const batchedData = batchedFetches.map((data) => ({
+      prompt: data.input.prompt,
+      replicateId: data.id,
+      status: "starting",
+      projectId: project.id,
+      filterId,
+      filterName,
+    }));
+
+    const shots = await db.$transaction(
+      batchedData.map((shotData) =>
+        db.shot.create({
+          data: shotData,
+        })
+      )
+    );
 
     // Update the project credits
     await db.project.update({
@@ -81,10 +99,13 @@ const handler = async (
       },
     });
 
-    // remove the prompt from the shot
-    const { prompt: _, ...shotWithoutPrompt } = shot;
+    // remove the prompt field from all shots
+    const shotsWithoutPromp = shots.map((shot) => {
+      const { prompt: _, ...shotWithoutPrompt } = shot;
+      return shotWithoutPrompt;
+    });
 
-    return res.json({ shot: shotWithoutPrompt });
+    return res.json({ shots: shotsWithoutPromp });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Internal server error" });
