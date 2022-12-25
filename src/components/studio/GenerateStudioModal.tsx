@@ -36,6 +36,10 @@ interface GenerateProps {
    * Modal close callback
    */
   onClose: () => void;
+  /**
+   * Callback to be fired after a new prediction is generated
+   */
+  onGenerate: () => void;
 }
 
 const FiltersGrid = ({
@@ -78,7 +82,12 @@ const FiltersGrid = ({
   );
 };
 
-const GenerateStudioModal = ({ projectId, isOpen, onClose }: GenerateProps) => {
+const GenerateStudioModal = ({
+  projectId,
+  isOpen,
+  onClose,
+  onGenerate,
+}: GenerateProps) => {
   const [selectedFilterId, setSelectedFilterId] = useState<string | null>(null);
   const [generateError, setGenerateError] = useState<string | null>(null);
 
@@ -101,6 +110,7 @@ const GenerateStudioModal = ({ projectId, isOpen, onClose }: GenerateProps) => {
     {
       onSuccess: () => {
         onClose();
+        onGenerate();
       },
     }
   );
@@ -117,7 +127,7 @@ const GenerateStudioModal = ({ projectId, isOpen, onClose }: GenerateProps) => {
       filterId: filter.id,
       filterName: filter.name,
       projectId,
-      predictionAmount: 5,
+      predictionAmount: 4,
     };
 
     createPrediction(body);

@@ -19,6 +19,7 @@ import Link from "next/link";
 import { HiArrowLeft } from "react-icons/hi";
 import ShotCardGrid from "@/components/studio/ShotCardGrid";
 import GenerateStudioModal from "@/components/studio/GenerateStudioModal";
+import { useRouter } from "next/router";
 
 export type ProjectWithShots = Project & {
   shots: Omit<Shot, "prompt">[];
@@ -30,6 +31,12 @@ interface IStudioPageProps {
 
 const StudioPage = ({ project }: IStudioPageProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const router = useRouter();
+
+  // Call this function to refresh data on the page.
+  const refreshData = () => {
+    router.replace(router.asPath);
+  };
 
   return (
     <PageContainer>
@@ -77,6 +84,7 @@ const StudioPage = ({ project }: IStudioPageProps) => {
         isOpen={isOpen}
         onClose={onClose}
         projectId={project.id}
+        onGenerate={refreshData}
       />
     </PageContainer>
   );
