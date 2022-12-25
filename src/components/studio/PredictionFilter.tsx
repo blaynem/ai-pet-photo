@@ -1,6 +1,7 @@
 import React from "react";
-import { Box, Image } from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 import { Filters } from "@prisma/client";
+import NextImage from "next/image";
 
 /**
  * The thumbnail representation of the prediction filter card in the studio page.
@@ -14,19 +15,18 @@ const PredictionFilter = ({
 }: {
   selected: boolean;
   onClick: (filterId: string) => void;
-} & Filters) => {
+} & Pick<Filters, "id" | "name" | "exampleUrl">) => {
   if (!exampleUrl) return null;
   return (
     <Box
       onClick={() => onClick(id)}
-      borderRadius="xl"
-      border={selected ? "2px" : "0px"}
-      borderColor="brand.500"
+      border={"2px"}
+      borderColor={selected ? "brand.500" : "transparent"}
       boxShadow={selected ? "lg" : "none"}
       cursor="pointer"
     >
-      <Image alt={name} src={exampleUrl} width={100} height={100} />
-      <p>{name}</p>
+      <NextImage alt={name} src={exampleUrl} width={512} height={512} />
+      <Text fontSize="sm">{name}</Text>
     </Box>
   );
 };

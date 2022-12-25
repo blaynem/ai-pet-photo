@@ -14,7 +14,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       orderBy: { name: "desc" },
     });
 
-    return res.json(filters);
+    // Remove the prompt from the filter
+    const parsedFilters = filters.map((filter) => {
+      const { prompt, ...rest } = filter;
+      return rest;
+    });
+
+    return res.json(parsedFilters);
   }
 };
 
