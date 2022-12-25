@@ -1,6 +1,14 @@
 import PageContainer from "@/components/layout/PageContainer";
 import db from "@/core/db";
-import { Box, Button, Divider, Flex, Spacer, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Divider,
+  Flex,
+  Spacer,
+  Text,
+  useDisclosure,
+} from "@chakra-ui/react";
 import { Project, Shot } from "@prisma/client";
 import { GetServerSidePropsContext } from "next";
 import { getSession } from "next-auth/react";
@@ -9,8 +17,8 @@ import { FaMagic } from "react-icons/fa";
 import { formatRelative } from "date-fns";
 import Link from "next/link";
 import { HiArrowLeft } from "react-icons/hi";
-import { useRouter } from "next/router";
 import ShotCardGrid from "@/components/studio/ShotCardGrid";
+import GenerateStudioModal from "@/components/studio/GenerateStudioModal";
 
 export type ProjectWithShots = Project & {
   shots: Omit<Shot, "prompt">[];
@@ -21,7 +29,7 @@ interface IStudioPageProps {
 }
 
 const StudioPage = ({ project }: IStudioPageProps) => {
-  const router = useRouter();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
     <PageContainer>
@@ -51,7 +59,7 @@ const StudioPage = ({ project }: IStudioPageProps) => {
             size="lg"
             variant="brand"
             rightIcon={<FaMagic />}
-            onClick={() => router.push(`/studio/${project.id}/generate`)}
+            onClick={onOpen}
           >
             Generate
           </Button>
@@ -65,6 +73,11 @@ const StudioPage = ({ project }: IStudioPageProps) => {
           <ShotCardGrid projectId={project.id} shots={project.shots} />
         )}
       </Box>
+      <GenerateStudioModal
+        isOpen={isOpen}
+        onClose={onClose}
+        projectId={project.id}
+      />
     </PageContainer>
   );
 };

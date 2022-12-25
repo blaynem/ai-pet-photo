@@ -1,33 +1,41 @@
-import PageContainer from "@/components/layout/PageContainer";
 import {
   Box,
   Button,
   Divider,
   Flex,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   SimpleGrid,
-  Spacer,
   Text,
 } from "@chakra-ui/react";
 import { Filters } from "@prisma/client";
 import axios from "axios";
-import { GetServerSidePropsContext } from "next";
-import { getSession } from "next-auth/react";
 import { useState } from "react";
 import { useMutation, useQuery } from "react-query";
 import { FaMagic } from "react-icons/fa";
-import Link from "next/link";
-import { HiArrowLeft } from "react-icons/hi";
 import {
   PredictionsBody,
   PredictionsResponse,
-} from "../../api/projects/[id]/predictions";
+} from "../../pages/api/projects/[id]/predictions";
 import PredictionFilter from "@/components/studio/PredictionFilter";
 import { useRouter } from "next/router";
 
 type PickFilters = Pick<Filters, "id" | "name" | "exampleUrl">;
 
-interface IStudioPageProps {
+interface GenerateProps {
   projectId: string;
+  /**
+   * Whether modal is open
+   */
+  isOpen: boolean;
+  /**
+   * Modal close callback
+   */
+  onClose: () => void;
 }
 
 const FiltersGrid = ({
@@ -48,7 +56,6 @@ const FiltersGrid = ({
     <Flex
       flexDirection={{ base: "column", sm: "row" }}
       gap={2}
-      mt={10}
       mb={4}
       width="100%"
     >
@@ -56,7 +63,7 @@ const FiltersGrid = ({
         {filters?.length === 0 && (
           <Box>No filters available. There was a possible error.</Box>
         )}
-        <SimpleGrid columns={[3, 4, 6]} spacing={4}>
+        <SimpleGrid columns={[3, 4]} spacing={1}>
           {filters?.map((filter) => (
             <PredictionFilter
               {...filter}
@@ -71,8 +78,7 @@ const FiltersGrid = ({
   );
 };
 
-const GenerateStudio = ({ projectId }: IStudioPageProps) => {
-  const router = useRouter();
+const GenerateStudioModal = ({ projectId, isOpen, onClose }: GenerateProps) => {
   const [selectedFilterId, setSelectedFilterId] = useState<string | null>(null);
   const [generateError, setGenerateError] = useState<string | null>(null);
 
@@ -94,8 +100,7 @@ const GenerateStudio = ({ projectId }: IStudioPageProps) => {
       ),
     {
       onSuccess: () => {
-        // on success, let's push the user to the studio page
-        router.push(`/studio/${projectId}`);
+        onClose();
       },
     }
   );
@@ -104,7 +109,7 @@ const GenerateStudio = ({ projectId }: IStudioPageProps) => {
   const generateClick = () => {
     const filter = filters?.find((filter) => filter.id === selectedFilterId);
     if (!selectedFilterId || !filter) {
-      setGenerateError("Select a filter first!");
+      setGenerateError("Must select a filter");
       return;
     }
 
@@ -129,26 +134,34 @@ const GenerateStudio = ({ projectId }: IStudioPageProps) => {
   };
 
   return (
-    <PageContainer>
-      <Box mb={4}>
-        <Button
-          color="blackAlpha.500"
-          leftIcon={<HiArrowLeft />}
-          variant="link"
-          href={`/studio/${projectId}`}
-          as={Link}
-        >
-          Back to Studio
-        </Button>
-      </Box>
-      <Box borderRadius="xl" p={{ base: 5, md: 10 }} backgroundColor="white">
-        <Flex alignItems="center">
-          <Box>
-            <Text fontSize="2xl" fontWeight="semibold">
-              {"Let's create some magic!"}
-            </Text>
-          </Box>
-          <Spacer />
+    <Modal
+      scrollBehavior="inside"
+      size="xl"
+      isOpen={isOpen}
+      onClose={() => {
+        setSelectedFilterId(null);
+        setGenerateError(null);
+        onClose();
+      }}
+    >
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>{"Select a filter"}</ModalHeader>
+        <ModalBody>
+          <FiltersGrid
+            loading={filtersLoading}
+            onClick={handleFilterClick}
+            selectedFilterId={selectedFilterId}
+            filters={filters!}
+          />
+          {generateError && (
+            <>
+              <Divider mb={4} />
+              <Box color={"red.400"}>{generateError}</Box>
+            </>
+          )}
+        </ModalBody>
+        <ModalFooter>
           <Button
             size="lg"
             variant="brand"
@@ -157,42 +170,10 @@ const GenerateStudio = ({ projectId }: IStudioPageProps) => {
           >
             Create
           </Button>
-        </Flex>
-        <FiltersGrid
-          loading={filtersLoading}
-          onClick={handleFilterClick}
-          selectedFilterId={selectedFilterId}
-          filters={filters!}
-        />
-        {generateError && (
-          <>
-            <Divider mt={4} mb={4} />
-            <Box color={"red.400"}>{generateError}</Box>
-          </>
-        )}
-      </Box>
-    </PageContainer>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
   );
 };
 
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const session = await getSession({ req: context.req });
-  const projectId = context.query.id as string;
-
-  if (!session) {
-    return {
-      redirect: {
-        permanent: false,
-        destination: "/login",
-      },
-    };
-  }
-
-  return {
-    props: {
-      projectId: projectId,
-    },
-  };
-}
-
-export default GenerateStudio;
+export default GenerateStudioModal;
