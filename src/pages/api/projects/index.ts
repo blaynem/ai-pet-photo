@@ -1,13 +1,23 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
 import db from "@/core/db";
-import uniqid from "uniqid";
 import { createZipFolder } from "@/core/utils/assets";
 import replicateClient, { TrainingResponse } from "@/core/clients/replicate";
 import urlSlug from "url-slug";
 import supabase from "@/core/clients/supabase";
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+export type CreateProjectBody = {
+  name: string;
+  instanceName: string;
+  instanceClass: string;
+  urls: string[];
+};
+
+interface ProjectRequest extends NextApiRequest {
+  body: CreateProjectBody;
+}
+
+const handler = async (req: ProjectRequest, res: NextApiResponse) => {
   const session = await getSession({ req });
 
   if (!session?.user) {
@@ -16,17 +26,18 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (req.method === "POST") {
     const urls = req.body.urls as string[];
+    const name = req.body.name as string;
     const instanceName = req.body.instanceName as string;
     const instanceClass = req.body.instanceClass as string;
     const userId = session.user.id;
 
     const project = await db.project.create({
       data: {
+        name,
         imageUrls: urls,
-        name: uniqid(),
         userId: userId,
         modelStatus: "not_created",
-        instanceClass: instanceClass || "person",
+        instanceClass: instanceClass,
         instanceName: urlSlug(instanceName, { separator: "" }),
         // TODO: Create the actual number of credits
         credits: Number(process.env.NEXT_PUBLIC_STUDIO_SHOT_AMOUNT) || 50,
