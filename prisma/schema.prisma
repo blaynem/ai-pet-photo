@@ -42,10 +42,10 @@ model User {
   email         String?   @unique
   emailVerified DateTime? @map("email_verified")
   image         String?
-  credits       Int       @default(0)
-  projects      Project[]
   accounts      Account[]
   sessions      Session[]
+  projects      Project[]
+  credits       Int       @default(0)
 
   @@map("users")
 }
@@ -87,16 +87,24 @@ model Shot {
   updatedAt   DateTime @updatedAt
   projectId   String?
   outputUrl   String?
+  // This is the name of the filter that was used to generate this shot
+  filterName  String?
+  // The filter id that was used to generate this shot
   filterId    String?
   Filters     Filters? @relation(fields: [filterId], references: [id])
   Project     Project? @relation(fields: [projectId], references: [id])
 }
 
 model Filters {
-  id         String   @id
+  id         String   @id @default(uuid())
+  // Name of the filter
   name       String
-  prediction String
+  // What the filter's prompt string actually is
+  prompt     String
   createdAt  DateTime @default(now())
   exampleUrl String
-  Shot       Shot[]
+  // Whether or not this filter is enabled for users
+  enabled    Boolean  @default(true)
+
+  Shot Shot[]
 }
