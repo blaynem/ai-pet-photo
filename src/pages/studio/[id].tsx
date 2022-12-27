@@ -1,34 +1,28 @@
 import PageContainer from "@/components/layout/PageContainer";
-import ShotCard from "@/components/projects/ShotCard";
 import db from "@/core/db";
 import {
-  Badge,
   Box,
   Button,
   Divider,
   Flex,
-  Icon,
-  Input,
+  Spacer,
   Text,
-  Textarea,
-  VStack,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { Project, Shot } from "@prisma/client";
-import axios from "axios";
 import { GetServerSidePropsContext } from "next";
 import { getSession } from "next-auth/react";
-import { useRef, useState } from "react";
-import { useMutation } from "react-query";
 import superjson from "superjson";
 import { FaMagic } from "react-icons/fa";
 import { formatRelative } from "date-fns";
 import Link from "next/link";
 import { HiArrowLeft } from "react-icons/hi";
-import { BsLightbulb } from "react-icons/bs";
-import { getRefinedInstanceClass } from "@/core/utils/predictions";
+import ShotCardGrid from "@/components/studio/ShotCardGrid";
+import GenerateStudioModal from "@/components/studio/GenerateStudioModal";
+import { useRouter } from "next/router";
 
 export type ProjectWithShots = Project & {
-  shots: Shot[];
+  shots: Omit<Shot, "prompt">[];
 };
 
 interface IStudioPageProps {
@@ -36,26 +30,13 @@ interface IStudioPageProps {
 }
 
 const StudioPage = ({ project }: IStudioPageProps) => {
-  const [shots, setShots] = useState(project.shots);
-  const [shotCredits, setShotCredits] = useState(project.credits);
-  const promptInputRef = useRef<HTMLTextAreaElement>(null);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const router = useRouter();
 
-  const { mutate: createPrediction, isLoading } = useMutation(
-    "create-prediction",
-    (project: Project) =>
-      axios.post<{ shot: Shot }>(`/api/projects/${project.id}/predictions`, {
-        prompt: promptInputRef.current!.value,
-      }),
-    {
-      onSuccess: (response) => {
-        const shot = response.data.shot;
-
-        setShots([shot, ...shots]);
-        setShotCredits(shotCredits - 1);
-        promptInputRef.current!.value = "";
-      },
-    }
-  );
+  // Call this function to refresh data on the page.
+  const refreshData = () => {
+    router.replace(router.asPath);
+  };
 
   return (
     <PageContainer>
@@ -71,73 +52,40 @@ const StudioPage = ({ project }: IStudioPageProps) => {
         </Button>
       </Box>
       <Box borderRadius="xl" p={{ base: 5, md: 10 }} backgroundColor="white">
-        <Text fontSize="2xl" fontWeight="semibold">
-          Studio <b>{project.instanceName}</b>{" "}
-          <Badge colorScheme="teal">{shotCredits} shots left</Badge>
-        </Text>
-        <Text textTransform="capitalize" fontSize="sm">
-          {formatRelative(new Date(project.createdAt), new Date())}
-        </Text>
-
-        <Flex
-          flexDirection={{ base: "column", sm: "row" }}
-          gap={2}
-          mt={10}
-          mb={4}
-          as="form"
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (promptInputRef.current!.value) {
-              createPrediction(project);
-            }
-          }}
-          width="100%"
-        >
-          <Textarea
-            ref={promptInputRef}
-            backgroundColor="white"
-            isRequired
-            size="lg"
-            shadow="lg"
-            focusBorderColor="gray.400"
-            _focus={{ shadow: "md" }}
-            mr={2}
-            placeholder={`painting of ${
-              project.instanceName
-            } ${getRefinedInstanceClass(project.instanceClass)} by Andy Warhol`}
-          />
+        <Flex alignItems="center">
+          <Box>
+            <Text fontSize="2xl" fontWeight="semibold">
+              Studio <b>{project.instanceName}</b>
+            </Text>
+            <Text textTransform="capitalize" fontSize="sm">
+              {formatRelative(new Date(project.createdAt), new Date())}
+            </Text>
+          </Box>
+          <Spacer />
           <Button
-            type="submit"
             size="lg"
             variant="brand"
             rightIcon={<FaMagic />}
-            isLoading={isLoading}
+            onClick={onOpen}
           >
             Generate
           </Button>
         </Flex>
-        <Text fontSize="md">
-          <Icon as={BsLightbulb} /> Use the keyword{" "}
-          <b>
-            {project.instanceName}{" "}
-            {getRefinedInstanceClass(project.instanceClass)}
-          </b>{" "}
-          as the subject in your prompt. First prompt can be slow, but following
-          prompts will be faster.
-        </Text>
-        <Divider mt={10} mb={4} />
-        {shots.length === 0 ? (
+        <Divider mt={4} mb={4} />
+        {project.shots.length === 0 ? (
           <Box textAlign="center" fontSize="lg">
-            {`You don't have any prompt yet. It's time to be creative!`}
+            {`You haven't generated any shots yet. Select a filter and click generate to create!`}
           </Box>
         ) : (
-          <VStack spacing={4} divider={<Divider />} alignItems="flex-start">
-            {shots.map((shot: Shot) => (
-              <ShotCard key={shot.id} projectId={project.id} shot={shot} />
-            ))}
-          </VStack>
+          <ShotCardGrid projectId={project.id} shots={project.shots} />
         )}
       </Box>
+      <GenerateStudioModal
+        isOpen={isOpen}
+        onClose={onClose}
+        projectId={project.id}
+        onGenerate={refreshData}
+      />
     </PageContainer>
   );
 };
@@ -157,7 +105,25 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
   const project = await db.project.findFirstOrThrow({
     where: { id: projectId, userId: session.user.id, modelStatus: "succeeded" },
-    include: { shots: { orderBy: { createdAt: "desc" } } },
+    select: {
+      credits: true,
+      createdAt: true,
+      id: true,
+      instanceName: true,
+      shots: {
+        // Not selecting the `prompt` so user doesn't have info on that.
+        select: {
+          createdAt: true,
+          filterId: true,
+          filterName: true,
+          id: true,
+          outputUrl: true,
+          projectId: true,
+          status: true,
+        },
+        orderBy: { createdAt: "desc" },
+      },
+    },
     orderBy: { createdAt: "desc" },
   });
 
