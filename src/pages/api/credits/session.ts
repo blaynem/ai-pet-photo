@@ -13,13 +13,15 @@ export default async function handler(
     const session = await stripe.checkout.sessions.create({
       allow_promotion_codes: true,
       metadata: {
-        projectId: req.query.ppi as string,
+        userId: req.query.ppi as string,
       },
       line_items: [
         {
           price_data: {
             currency: "usd",
-            unit_amount: Number(process.env.NEXT_PUBLIC_STRIPE_STUDIO_PRICE),
+            unit_amount:
+              Number(process.env.NEXT_PUBLIC_CREDIT_PRICE) *
+              Number(req.query.credits),
             product_data: {
               name: "Studio model training + 100 shots",
             },
@@ -28,7 +30,7 @@ export default async function handler(
         },
       ],
       mode: "payment",
-      success_url: `${process.env.NEXTAUTH_URL}/dashboard?session_id={CHECKOUT_SESSION_ID}&ppi=${req.query.ppi}`,
+      success_url: `${process.env.NEXTAUTH_URL}/dashboard?session_id={CHECKOUT_SESSION_ID}&ppi=${req.query.ppi}&credits=${req.query.credits}`,
       cancel_url: `${process.env.NEXTAUTH_URL}/dashboard`,
     });
 

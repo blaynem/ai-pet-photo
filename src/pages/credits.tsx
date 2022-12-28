@@ -1,91 +1,76 @@
-import ProjectCard from "@/components/projects/ProjectCard";
-import Uploader from "@/components/dashboard/Uploader";
-import { Box, Center, Heading, Spinner, Text, VStack } from "@chakra-ui/react";
-import axios from "axios";
-import { GetServerSidePropsContext } from "next";
-import { getSession } from "next-auth/react";
-import { useQuery } from "react-query";
-import PageContainer from "@/components/layout/PageContainer";
-import { ProjectWithShots } from "./studio/[id]";
-import { prisma } from "@prisma/client";
+import { formatStudioPrice } from "@/core/utils/prices";
+import {
+  Box,
+  Button,
+  Divider,
+  Flex,
+  Icon,
+  Image,
+  Link,
+  SimpleGrid,
+  Text,
+} from "@chakra-ui/react";
+import { useSession } from "next-auth/react";
+import React from "react";
+import { IconType } from "react-icons/lib";
+import { RiCopperCoinFill } from "react-icons/ri";
 
-export default function Home() {
-  const {
-    data: projects,
-    refetch: refetchProjects,
-    isLoading,
-  } = useQuery(
-    `projects`,
-    () =>
-      axios
-        .get<ProjectWithShots[]>("/api/projects")
-        .then((response) => response.data),
-    {
-      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000), // 1s, 2s, 4s, 8s, 16s, 30s
-    }
-  );
+interface ItemProps {
+  iconName: IconType;
+  price: string;
+  children?: React.ReactNode;
+}
 
+const Item = ({ iconName, price, children }: ItemProps) => {
+  const session = useSession();
+  const user = session.data?.user;
+  const userId = user?.id;
   return (
-    <PageContainer>
-      <Box>
-        <Heading as="h2" mb={4} fontWeight="semibold" fontSize="2xl">
-          Buy Credits
-        </Heading>
-      </Box>
-
-      <Box mt={10}>
-        <Heading as="h2" mb={4} fontWeight="semibold" fontSize="2xl">
-          My Studios
-        </Heading>
-
-        {isLoading && (
-          <Center width="100%" textAlign="center">
-            <Spinner mr={3} size="sm" speed="1s" />
-            <Text>Loading studios</Text>
-          </Center>
-        )}
-
-        {!isLoading && projects?.length === 0 && (
-          <Center
-            p={10}
-            borderRadius="xl"
-            backgroundColor="white"
-            width="100%"
-            color="blackAlpha.700"
-            textAlign="center"
+    <Box borderWidth="2px" borderRadius="10px" margin="1em">
+      <Flex alignItems="center" direction="column" p={4}>
+        <Icon as={iconName} boxSize="2em" color={"gold"} />
+        <Text textAlign="center" fontWeight="900" fontSize="2xl" mt={3}>
+          {price}
+        </Text>
+        <Text
+          maxWidth={{ base: "20rem", lg: "13rem" }}
+          mt={2}
+          textAlign="center"
+          fontSize="lg"
+        >
+          {children}
+          <Button
+            as={Link}
+            variant="brand"
+            href={`/api/credits/session?ppi=${userId}&credits=${price}`}
           >
-            <Text backgroundColor="white">No studio available yet</Text>
-          </Center>
-        )}
-
-        <VStack spacing={10} width="100%">
-          {projects?.map((project) => (
-            <ProjectCard
-              key={project.id}
-              project={project}
-              handleRefreshProjects={() => {
-                refetchProjects();
-              }}
-            />
-          ))}
-        </VStack>
-      </Box>
-    </PageContainer>
+            Buy
+          </Button>
+        </Text>
+      </Flex>
+    </Box>
   );
-}
+};
 
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const session = await getSession({ req: context.req });
+const BuyCredits = () => {
+  return (
+    <Flex width="100%" backgroundColor="whiteAlpha.900" py={10} flex="1">
+      <Flex
+        px={{ base: 4, lg: 0 }}
+        py={4}
+        width="100%"
+        flexDirection="column"
+        margin="auto"
+        maxWidth="container.lg"
+      >
+        <SimpleGrid mb={10} columns={{ base: 1, md: 3 }}>
+          <Item iconName={RiCopperCoinFill} price="5"></Item>
+          <Item iconName={RiCopperCoinFill} price="10"></Item>
+          <Item iconName={RiCopperCoinFill} price="15"></Item>
+        </SimpleGrid>
+      </Flex>
+    </Flex>
+  );
+};
 
-  if (!session) {
-    return {
-      redirect: {
-        permanent: false,
-        destination: "/login",
-      },
-      props: {},
-    };
-  }
-
-  return { props: {} };
-}
+export default BuyCredits;
