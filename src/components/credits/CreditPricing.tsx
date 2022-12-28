@@ -41,19 +41,8 @@ const CreditPricing = () => {
         padding={8}
         transition="all 250ms"
       >
-        <Tag
-          py={1}
-          px={3}
-          shadow="semibold"
-          border="2px solid black"
-          color="black"
-          backgroundColor="brand.500"
-        >
-          1 Studio + {process.env.NEXT_PUBLIC_STUDIO_SHOT_AMOUNT} shots
-        </Tag>
-
-        <Box mt={2} fontWeight="black" fontSize="3.5rem">
-          {formatStudioPrice()}
+        <Box fontWeight="black" fontSize="1.5rem">
+          5 Credits
           <Box
             ml={1}
             as="span"
@@ -61,20 +50,32 @@ const CreditPricing = () => {
             color="coolGray.400"
             fontSize="1.2rem"
           >
-            / studio
+            / Project
+          </Box>
+        </Box>
+        <Box fontWeight="black" fontSize="1.5rem">
+          1 Credit
+          <Box
+            ml={1}
+            as="span"
+            fontWeight="500"
+            color="coolGray.400"
+            fontSize="1.2rem"
+          >
+            / 10 Shots
           </Box>
         </Box>
 
         <List mt={2} mb={4} spacing={1}>
-          <PriceItem>
-            <b>1</b> Studio with a <b>custom trained model</b>
-          </PriceItem>
-          <PriceItem>
-            <b>{process.env.NEXT_PUBLIC_STUDIO_SHOT_AMOUNT}</b> images
-            generation
-          </PriceItem>
-          <PriceItem>Craft your own prompt</PriceItem>
-          <PriceItem>Sponsorship development 🖤</PriceItem>
+          <Text>
+            A <b>Project</b> is a <b>custom trained model</b>
+          </Text>
+          <Text>
+            <b>Each credit</b> will get <b>10 images</b> generated from your
+            selected prompt
+          </Text>
+          <Text>Craft your own prompt? could be good?</Text>
+          <Text>Sponsorship development 🖤</Text>
         </List>
       </Box>
     </SimpleGrid>

@@ -23,7 +23,7 @@ export default async function handler(
               Number(process.env.NEXT_PUBLIC_CREDIT_PRICE) *
               Number(req.query.credits),
             product_data: {
-              name: "Studio model training + 100 shots",
+              name: `${req.query.credits} Credits`,
             },
           },
           quantity: 1,
