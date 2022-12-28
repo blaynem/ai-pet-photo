@@ -13,10 +13,16 @@ const Header = () => {
     required: true,
   });
   const user = session?.user;
-  const { query } = useRouter();
+  const { query, ...router } = useRouter();
   const [waitingPayment, setWaitingPayment] = React.useState(false);
   const [credits, setCredits] = React.useState(session?.user.credits || 0);
 
+  useEffect(() => {
+    if (query.ppi && query.session_id && query.price) {
+      setCredits((credits) => credits - Number(query.price));
+      router.replace(router.asPath.split("?")[0], undefined, { shallow: true });
+    }
+  }, [query]);
   useQuery(
     "check-payment",
     () =>
