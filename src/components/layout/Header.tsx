@@ -1,11 +1,38 @@
-import { Button, Flex, HStack, Icon, Text } from "@chakra-ui/react";
+import { Button, Flex, HStack, Icon, IconButton, Text } from "@chakra-ui/react";
+import axios from "axios";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
-import React from "react";
+import { useRouter } from "next/router";
+import React, { useEffect } from "react";
 import { IoIosFlash } from "react-icons/io";
+import { RiCopperCoinFill } from "react-icons/ri";
+import { useQuery } from "react-query";
 
 const Header = () => {
-  const { data: session } = useSession();
+  const { data: session } = useSession({
+    required: true,
+  });
+  const user = session?.user;
+  const { query } = useRouter();
+  const [waitingPayment, setWaitingPayment] = React.useState(false);
+  const [credits, setCredits] = React.useState(session?.user.credits || 0);
+
+  useQuery(
+    "check-payment",
+    () =>
+      axios.get(
+        `/api/credits/check/${query.ppi}/${query.session_id}/${query.price}`
+      ),
+    {
+      cacheTime: 0,
+      refetchInterval: 10,
+      enabled: waitingPayment,
+      onSuccess: () => {
+        setCredits((credits) => credits + Number(query.price));
+        setWaitingPayment(false);
+      },
+    }
+  );
 
   return (
     <Flex
@@ -33,6 +60,16 @@ const Header = () => {
         </Flex>
         {session ? (
           <HStack>
+            <Button href="/credits" as={Link} variant="transparent" size="sm">
+              {credits}
+              {"   "}
+              <Icon
+                as={RiCopperCoinFill}
+                boxSize="1.2em"
+                color={"gold"}
+                margin=".5em"
+              />
+            </Button>
             <Button href="/dashboard" as={Link} variant="brand" size="sm">
               Dashboard
             </Button>
