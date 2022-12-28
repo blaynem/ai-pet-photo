@@ -20,14 +20,20 @@ import CreditPricing from "@/components/credits/CreditPricing";
 import PageContainer from "@/components/layout/PageContainer";
 interface ItemProps {
   iconName: IconType;
-  price: string;
+  creditCount: string;
   children?: React.ReactNode;
 }
 
-const Item = ({ iconName, price, children }: ItemProps) => {
+const Item = ({ iconName, creditCount, children }: ItemProps) => {
   const session = useSession();
   const user = session.data?.user;
   const userId = user?.id;
+  const priceInUSD = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  }).format(
+    (Number(creditCount) * Number(process.env.NEXT_PUBLIC_CREDIT_PRICE)) / 100
+  );
   return (
     <Box borderWidth="2px" borderRadius="10px" margin="1em">
       <Flex alignItems="center" direction="column" p={4}>
@@ -40,7 +46,7 @@ const Item = ({ iconName, price, children }: ItemProps) => {
         >
           <Icon as={iconName} color={"gold"} boxSize="3em"></Icon>
           <Text textAlign="center" fontWeight="900" fontSize="xl" mt={3}>
-            {price}
+            {creditCount}
           </Text>
         </Box>
         <Text
@@ -51,9 +57,7 @@ const Item = ({ iconName, price, children }: ItemProps) => {
           fontSize="xl"
           mt={3}
         >
-          USD{" "}
-          {(Number(price) * Number(process.env.NEXT_PUBLIC_CREDIT_PRICE)) / 100}
-          .00
+          {priceInUSD}
         </Text>
         <Text
           maxWidth={{ base: "20rem", lg: "13rem" }}
@@ -65,7 +69,7 @@ const Item = ({ iconName, price, children }: ItemProps) => {
           <Button
             as={Link}
             variant="brand"
-            href={`/api/credits/session?ppi=${userId}&credits=${price}`}
+            href={`/api/credits/session?ppi=${userId}&credits=${creditCount}`}
           >
             Buy
           </Button>
@@ -106,9 +110,9 @@ const BuyCredits = () => {
           maxWidth="container.lg"
         >
           <SimpleGrid mb={10} columns={{ base: 1, md: 3 }}>
-            <Item iconName={RiCopperCoinFill} price="5"></Item>
-            <Item iconName={GiTwoCoins} price="10"></Item>
-            <Item iconName={FaCoins} price="15"></Item>
+            <Item iconName={RiCopperCoinFill} creditCount="5"></Item>
+            <Item iconName={GiTwoCoins} creditCount="10"></Item>
+            <Item iconName={FaCoins} creditCount="15"></Item>
           </SimpleGrid>
         </Flex>
       </Flex>

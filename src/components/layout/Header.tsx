@@ -1,5 +1,6 @@
+import { StripeCheckoutSession } from "@/pages/api/credits/check/[ppi]/[sessionId]";
 import { Button, Flex, HStack, Icon, IconButton, Text } from "@chakra-ui/react";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -12,33 +13,40 @@ const Header = () => {
   const { data: session } = useSession({
     required: true,
   });
-  const user = session?.user;
-  const { query, ...router } = useRouter();
+  const router = useRouter();
   const [waitingPayment, setWaitingPayment] = React.useState(false);
-  const [credits, setCredits] = React.useState(session?.user.credits || 0);
+  const [creditAmount, setCreditAmount] = React.useState(0);
 
-  useEffect(() => {
-    if (query.ppi && query.session_id && query.price) {
-      setCredits((credits) => credits - Number(query.price));
-      router.replace(router.asPath.split("?")[0], undefined, { shallow: true });
-    }
-  }, [query]);
   useQuery(
     "check-payment",
     () =>
       axios.get(
-        `/api/credits/check/${query.ppi}/${query.session_id}/${query.price}`
+        `/api/credits/check/${router.query.ppi}/${router.query.session_id}`
       ),
     {
       cacheTime: 0,
       refetchInterval: 10,
       enabled: waitingPayment,
-      onSuccess: () => {
-        setCredits((credits) => credits + Number(query.price));
+      onSuccess: (data: AxiosResponse<StripeCheckoutSession>) => {
+        setCreditAmount(data.data.total_credits!);
         setWaitingPayment(false);
+        router.replace(router.asPath.split("?")[0], undefined, {
+          shallow: true,
+        });
       },
     }
   );
+
+  useEffect(() => {
+    setCreditAmount(session?.user.credits || 0);
+  }, [session]);
+
+  useEffect(() => {
+    const { ppi, session_id, credits } = router.query;
+    if (ppi && session_id && credits) {
+      setWaitingPayment(true);
+    }
+  }, [router]);
 
   return (
     <Flex
@@ -67,7 +75,7 @@ const Header = () => {
         {session ? (
           <HStack>
             <Button href="/credits" as={Link} variant="transparent" size="sm">
-              {credits}
+              {creditAmount}
               {"   "}
               <Icon
                 as={RiCopperCoinFill}

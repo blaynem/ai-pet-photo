@@ -5,6 +5,10 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2022-11-15",
 });
 
+// Takes credits, multiples by the price per credit, and returns the total price.
+export const unitPrice = (credits: number) =>
+  Number(process.env.NEXT_PUBLIC_CREDIT_PRICE) * Number(credits);
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -14,14 +18,13 @@ export default async function handler(
       allow_promotion_codes: true,
       metadata: {
         userId: req.query.ppi as string,
+        purchased_credits: req.query.credits as string,
       },
       line_items: [
         {
           price_data: {
             currency: "usd",
-            unit_amount:
-              Number(process.env.NEXT_PUBLIC_CREDIT_PRICE) *
-              Number(req.query.credits),
+            unit_amount: unitPrice(Number(req.query.credits)),
             product_data: {
               name: `${req.query.credits} Credits`,
             },
