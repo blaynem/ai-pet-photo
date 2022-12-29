@@ -46,6 +46,7 @@ model User {
   sessions      Session[]
   projects      Project[]
   credits       Int       @default(0)
+  Payment       Payment[]
 
   @@map("users")
 }
@@ -107,4 +108,24 @@ model Filters {
   enabled    Boolean  @default(true)
 
   Shot Shot[]
+}
+
+model Payment {
+  id              String       @id @default(uuid())
+  stripePaymentId String
+  amount          Int
+  currency        String
+  purchaseType    PurchaseType
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  userId          String?
+  User            User?        @relation(fields: [userId], references: [id])
+}
+
+enum PurchaseType {
+  STUDIO_CREATE
+  STUDIO_CREATE_FREE_CREDITS
+  CREDIT_PURCHASE
+  PROMOTION_CREDIT_PURCHASE
+  PROMOTION_STUDIO_CREATE
 }

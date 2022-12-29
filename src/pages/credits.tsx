@@ -111,9 +111,9 @@ const BuyCredits = () => {
           maxWidth="container.lg"
         >
           <SimpleGrid mb={10} columns={{ base: 1, md: 3 }}>
-            <Item iconName={RiCopperCoinFill} creditCount="5"></Item>
-            <Item iconName={GiTwoCoins} creditCount="10"></Item>
-            <Item iconName={FaCoins} creditCount="15"></Item>
+            <Item iconName={RiCopperCoinFill} creditCount="50" />
+            <Item iconName={GiTwoCoins} creditCount="100" />
+            <Item iconName={FaCoins} creditCount="150" />
           </SimpleGrid>
         </Flex>
       </Flex>
