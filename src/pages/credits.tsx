@@ -69,6 +69,7 @@ const Item = ({ iconName, creditCount, children }: ItemProps) => {
           <Button
             as={Link}
             variant="brand"
+            textDecoration={"none"}
             href={`/api/credits/session?ppi=${userId}&credits=${creditCount}`}
           >
             Buy

@@ -67,9 +67,6 @@ const ProjectCard = ({
         <Box>
           <Text fontSize="2xl" fontWeight="semibold">
             Studio <b>{project.instanceName}</b>{" "}
-            {isReady && (
-              <Badge colorScheme="teal">{project.credits} shots left</Badge>
-            )}
           </Text>
           <Text textTransform="capitalize" fontSize="sm">
             {formatRelative(new Date(project.createdAt), new Date())}
