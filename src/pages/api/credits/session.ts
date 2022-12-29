@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import Stripe from "stripe";
+import { CREDIT_PRICE } from "../../../core/constants";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2022-11-15",
@@ -7,7 +8,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 // Takes credits, multiples by the price per credit, and returns the total price.
 export const unitPrice = (credits: number) =>
-  Number(process.env.NEXT_PUBLIC_CREDIT_PRICE) * Number(credits);
+  Number(CREDIT_PRICE) * Number(credits);
 
 export default async function handler(
   req: NextApiRequest,

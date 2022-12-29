@@ -1,1 +1,1 @@
-export const CREDIT_COST = 10;
+export const CREDIT_PRICE = 10;

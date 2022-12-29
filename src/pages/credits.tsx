@@ -18,6 +18,7 @@ import { GiTwoCoins } from "react-icons/gi";
 import { FaCoins } from "react-icons/fa";
 import CreditPricing from "@/components/credits/CreditPricing";
 import PageContainer from "@/components/layout/PageContainer";
+import { CREDIT_PRICE } from "@/core/constants";
 interface ItemProps {
   iconName: IconType;
   creditCount: string;
@@ -31,9 +32,7 @@ const Item = ({ iconName, creditCount, children }: ItemProps) => {
   const priceInUSD = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
-  }).format(
-    (Number(creditCount) * Number(process.env.NEXT_PUBLIC_CREDIT_PRICE)) / 100
-  );
+  }).format((Number(creditCount) * Number(CREDIT_PRICE)) / 100);
   return (
     <Box borderWidth="2px" borderRadius="10px" margin="1em">
       <Flex alignItems="center" direction="column" p={4}>

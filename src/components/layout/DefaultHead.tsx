@@ -2,12 +2,12 @@ import Head from "next/head";
 import React from "react";
 
 const description = "Create awesome AI avatars";
-const title = "Photoshot - AI Avatar generator";
-const image = "https://photoshot.app/og-cover.jpg";
+const title = "PetPics - Create awesome AI art of your pets";
+const image = "/PawPrint.png";
 
 const DefaultHead = () => (
   <Head>
-    <link rel="shortcut icon" href="/favicon.png" />
+    <link rel="shortcut icon" href="/PawPrint.png" />
     <title>{title}</title>
     <meta name="description" content="" />
     <meta charSet="utf-8" />
