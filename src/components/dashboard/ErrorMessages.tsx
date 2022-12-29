@@ -1,16 +1,22 @@
 import { Box, Text } from "@chakra-ui/react";
 import React from "react";
 
-const UploadErrorMessages = ({
+export enum ErrorMessageHeader {
+  UPLOADER = "There are some errors with your images:",
+}
+
+const ErrorMessages = ({
+  header,
   messages,
   max_amt,
 }: {
+  header?: string;
   messages: string[] | undefined;
   max_amt: number;
 }) => {
   return (
     <Box mt={2} color="red.500">
-      <Text fontWeight="bold">There are some errors with your images:</Text>
+      {header && <Text fontWeight="bold">{header}</Text>}
       {messages?.map((errorMessage) => (
         <Box key={errorMessage}>
           {errorMessage
@@ -22,4 +28,4 @@ const UploadErrorMessages = ({
   );
 };
 
-export default UploadErrorMessages;
+export default ErrorMessages;

@@ -66,7 +66,10 @@ const ProjectCard = ({
       <VStack spacing={4} alignItems="flex-start">
         <Box>
           <Text fontSize="2xl" fontWeight="semibold">
-            Studio <b>{project.instanceName}</b>{" "}
+            Studio <b>{project.name}</b>{" "}
+            {isReady && (
+              <Badge colorScheme="teal">{project.credits} shots left</Badge>
+            )}
           </Text>
           <Text textTransform="capitalize" fontSize="sm">
             {formatRelative(new Date(project.createdAt), new Date())}

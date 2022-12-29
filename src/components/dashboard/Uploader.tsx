@@ -1,5 +1,6 @@
 import supabase from "@/core/clients/supabase";
 import { resizeImage } from "@/core/utils/upload";
+import { CreateProjectBody } from "@/pages/api/projects";
 import {
   Box,
   Button,
@@ -24,11 +25,26 @@ import { useDropzone } from "react-dropzone";
 import { MdCheckCircle, MdCloud } from "react-icons/md";
 import { useMutation } from "react-query";
 import AvatarsPlaceholder from "../home/AvatarsPlaceholder";
-import UploadErrorMessages from "./UploadErrorMessages";
+import ErrorMessages, { ErrorMessageHeader } from "./ErrorMessages";
 
 type TUploadState = "not_uploaded" | "uploading" | "uploaded";
 
-const MAX_FILES = 25;
+const MAX_FILES = 15;
+
+type SubjectClassOptions = {
+  value: string;
+  label: string;
+  /**
+   * Qualifier for the subject class, this will be used to generate
+   * the instanceName for training.
+   */
+  qualifier: string;
+};
+
+const subjectClassOptions: SubjectClassOptions[] = [
+  { value: "dog", label: "Dog", qualifier: "pup" },
+  { value: "cat", label: "Cat", qualifier: "kitty" },
+];
 
 const Uploader = ({ handleOnAdd }: { handleOnAdd: () => void }) => {
   const { data: sessionData } = useSession();
@@ -36,8 +52,10 @@ const Uploader = ({ handleOnAdd }: { handleOnAdd: () => void }) => {
   const [uploadState, setUploadState] = useState<TUploadState>("not_uploaded");
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
   const [urls, setUrls] = useState<string[]>([]);
-  const [instanceName, setInstanceName] = useState<string>("");
-  const [instanceClass, setInstanceClass] = useState<string>("man");
+  const [projectName, setProjectName] = useState<string>("");
+  const [instanceClass, setInstanceClass] = useState<SubjectClassOptions>(
+    subjectClassOptions[0]
+  );
   const toast = useToast();
 
   const { getRootProps, getInputProps } = useDropzone({
@@ -45,7 +63,6 @@ const Uploader = ({ handleOnAdd }: { handleOnAdd: () => void }) => {
       "image/png": [".png"],
       "image/jpeg": [".jpeg", ".jpg"],
     },
-    // maxFiles: MAX_FILES,
     maxSize: 10000000, // 10mo
     onDropRejected: (events) => {
       setErrorMessages([]);
@@ -109,14 +126,9 @@ const Uploader = ({ handleOnAdd }: { handleOnAdd: () => void }) => {
     }
   };
 
-  const { mutate: handleCreateProject, isLoading } = useMutation(
+  const { mutate: createProjectMutation, isLoading } = useMutation(
     "create-project",
-    () =>
-      axios.post("/api/projects", {
-        urls,
-        instanceName,
-        instanceClass,
-      }),
+    (body: CreateProjectBody) => axios.post("/api/projects", body),
     {
       onSuccess: () => {
         handleOnAdd();
@@ -124,8 +136,8 @@ const Uploader = ({ handleOnAdd }: { handleOnAdd: () => void }) => {
         // Reset
         setFiles([]);
         setUrls([]);
-        setInstanceName("");
-        setInstanceClass("");
+        setProjectName("");
+        setInstanceClass(subjectClassOptions[0]);
         setUploadState("not_uploaded");
 
         toast({
@@ -138,6 +150,43 @@ const Uploader = ({ handleOnAdd }: { handleOnAdd: () => void }) => {
       },
     }
   );
+
+  const createProject = () => {
+    if (projectName.length < 4) {
+      setErrorMessages(["Studio name must be at least 4 characters long"]);
+      return;
+    }
+
+    if (!projectName || !instanceClass) return;
+
+    if (errorMessages.length > 0) {
+      return;
+    }
+
+    // We lowercase the project name and remove all non-alphabetical characters
+    const parsedProjectName = projectName.toLowerCase().replace(/[^a-z]/g, "");
+
+    const body: CreateProjectBody = {
+      urls,
+      // We create a unique name by taking the first 4 letters of the project name
+      // and adding the instance class qualifier to the end.
+      // Note: This does not have to be unique, as all training data will be separated.
+      instanceName: `${parsedProjectName.slice(0, 4)}${
+        instanceClass.qualifier
+      }`,
+      instanceClass: instanceClass.value,
+      name: projectName,
+    };
+
+    createProjectMutation(body);
+  };
+
+  const onProjectNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.currentTarget.value.length >= 4) {
+      setErrorMessages([]);
+    }
+    setProjectName(e.currentTarget.value);
+  };
 
   return (
     <Box>
@@ -176,7 +225,8 @@ const Uploader = ({ handleOnAdd }: { handleOnAdd: () => void }) => {
             </Box>
 
             {errorMessages?.length !== 0 && (
-              <UploadErrorMessages
+              <ErrorMessages
+                header={ErrorMessageHeader.UPLOADER}
                 messages={errorMessages}
                 max_amt={MAX_FILES}
               />
@@ -251,7 +301,7 @@ const Uploader = ({ handleOnAdd }: { handleOnAdd: () => void }) => {
           as="form"
           onSubmit={(e) => {
             e.preventDefault();
-            handleCreateProject();
+            createProject();
           }}
           mt={4}
           alignItems="flex-start"
@@ -260,28 +310,28 @@ const Uploader = ({ handleOnAdd }: { handleOnAdd: () => void }) => {
             <Input
               isRequired
               backgroundColor="white"
-              placeholder="Subject name"
-              value={instanceName}
-              onChange={(e) => setInstanceName(e.currentTarget.value)}
+              placeholder="Teddy"
+              value={projectName}
+              onChange={onProjectNameChange}
             />
-            <FormHelperText color="blackAlpha.600">
-              This name will be use to name your person in your prompt:{" "}
-              <b>{`Painting of ${instanceName || "Alice"} by Andy Warhol`}</b>.
-              {` Don't use spaces or special characters.`}
-            </FormHelperText>
+            <FormHelperText color="blackAlpha.600">Studio Name</FormHelperText>
           </FormControl>
           <FormControl>
             <Select
-              value={instanceClass}
-              onChange={(e) => setInstanceClass(e.currentTarget.value)}
+              value={instanceClass.value}
+              onChange={(e) => {
+                const selectedClass = subjectClassOptions.find(
+                  (option) => option.value === e.currentTarget.value
+                );
+                setInstanceClass(selectedClass!);
+              }}
               backgroundColor="white"
             >
-              <option value="man">Man</option>
-              <option value="woman">Woman</option>
-              <option value="child">Child</option>
-              <option value="dog">Dog</option>
-              <option value="cat">Cat</option>
-              <option value="couple">Couple</option>
+              {subjectClassOptions.map(({ value, label }) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
             </Select>
             <FormHelperText color="blackAlpha.600">
               Type of the subject
@@ -289,20 +339,25 @@ const Uploader = ({ handleOnAdd }: { handleOnAdd: () => void }) => {
           </FormControl>
           <Box>
             <Button
-              disabled={!Boolean(instanceName)}
+              disabled={!Boolean(projectName)}
               isLoading={isLoading}
               variant="brand"
               rightIcon={<MdCheckCircle />}
               onClick={() => {
-                if (instanceName && instanceClass) {
-                  handleCreateProject();
-                }
+                createProject();
               }}
             >
               Create your Studio
             </Button>
           </Box>
         </SimpleGrid>
+      )}
+      {errorMessages?.length !== 0 && (
+        <ErrorMessages
+          header="Please fix the following errors:"
+          messages={errorMessages}
+          max_amt={MAX_FILES}
+        />
       )}
     </Box>
   );
