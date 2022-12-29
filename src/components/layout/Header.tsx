@@ -10,9 +10,7 @@ import { RiCopperCoinFill } from "react-icons/ri";
 import { useQuery } from "react-query";
 
 const Header = () => {
-  const { data: session } = useSession({
-    required: true,
-  });
+  const { data: session } = useSession();
   const router = useRouter();
   const [waitingPayment, setWaitingPayment] = React.useState(false);
   const [creditAmount, setCreditAmount] = React.useState(0);
