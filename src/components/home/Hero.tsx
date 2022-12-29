@@ -33,9 +33,7 @@ const Hero = () => {
               lineHeight={{ base: "2.6rem", sm: "4rem" }}
               fontSize={{ base: "2.6rem", sm: "4rem" }}
               fontWeight="black"
-            >
-              Your AI avatars Studio
-            </Box>
+            ></Box>
             <Box
               as="h2"
               maxWidth="30rem"

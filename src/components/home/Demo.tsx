@@ -6,19 +6,17 @@ import AvatarsPlaceholder from "./AvatarsPlaceholder";
 
 const examples = [
   {
-    label: "illustration of Tom in the style of Charles Burns",
-    imageUrl: "/shots/crumb.png",
+    label: "Yet another painting of Ted by Andy Warhol",
+    imageUrl: "out-0.jpg",
   },
-  { label: "Painting of Tom by Edvard Munch", imageUrl: "/shots/munch.png" },
-  { label: "Portrait of Tom as Pixar character", imageUrl: "/shots/pixar.png" },
-  { label: "Portrait of Tom as Spiderman", imageUrl: "/shots/spiderman.jpg" },
-  { label: "Painting of Tom by Van Gogh", imageUrl: "/shots/vangogh.png" },
-  { label: "Portrait of Tom as a warrior", imageUrl: "/shots/warrior.png" },
-  { label: "Painting of Tom by Andy Warhol", imageUrl: "/shots/wharol.png" },
-  { label: "Portrait of Tom as Santa Claus", imageUrl: "/shots/santa.jpg" },
+  { label: "Painting of Ted by Andy Warhol", imageUrl: "out-2.jpg" },
   {
-    label: "painting of Tom by Gustav Klimt",
-    imageUrl: "/shots/klimt.png",
+    label: "Another Painting of Ted by Andy Warhol",
+    imageUrl: "out-1.jpg",
+  },
+  {
+    label: "Ted as the brain of an astronaut dog",
+    imageUrl: "out-3.png",
   },
 ];
 
@@ -36,7 +34,7 @@ const Demo = () => {
         width="100%"
         marginX="auto"
         fontSize="md"
-        shadow="0 14px 40px 10px #B5FFD9, 0 5px 10px -7px black"
+        shadow="0 14px 40px 10px brand.500, 0 5px 10px -7px black"
         borderRadius="md"
         py={2}
         px={3}

@@ -48,11 +48,8 @@ export default function Footer() {
         <Text></Text>
         <Stack alignItems="center" direction="row" spacing={6}>
           <Text fontSize="lg" fontWeight="bold">
-            Photoshot.
+            PetPics
           </Text>
-          <SocialButton href="https://github.com/shinework/photoshot">
-            <FaGithub />
-          </SocialButton>
           <SocialButton href="https://twitter.com/photoshot_ai">
             <FaTwitter />
           </SocialButton>

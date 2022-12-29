@@ -25,6 +25,7 @@ const Pricing = () => {
         border="4px solid black"
         borderRadius={10}
         padding={8}
+        borderColor="brand.500"
         transition="all 250ms"
       >
         <Text mt={2} fontWeight="black" fontSize="4xl">
@@ -35,11 +36,12 @@ const Pricing = () => {
         </Text>
       </Box>
       <Box
-        backgroundColor="white"
-        border="4px solid black"
+        backgroundColor="brand.300"
+        border="4px solid"
         borderRadius={10}
         padding={8}
         transition="all 250ms"
+        borderColor="brand.500"
       >
         <Tag
           py={1}

@@ -5,7 +5,7 @@ import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
-import { IoIosFlash } from "react-icons/io";
+import { IoIosFlash, IoIosPaw } from "react-icons/io";
 import { RiCopperCoinFill } from "react-icons/ri";
 import { useQuery } from "react-query";
 
@@ -66,20 +66,27 @@ const Header = () => {
           <Icon
             transition="200ms all"
             _groupHover={{ color: "brand.500" }}
-            as={IoIosFlash}
+            as={IoIosPaw}
+            marginRight={1}
           />
-          <Text>Photoshot.</Text>
+          <Text>PetPics</Text>
         </Flex>
         {session ? (
-          <HStack>
-            <Button href="/credits" as={Link} variant="transparent" size="sm">
+          <HStack marginRight={".5rem"}>
+            <Button
+              href="/credits"
+              as={Link}
+              variant="transparent"
+              size="sm"
+              paddingRight={".1rem"}
+            >
               {creditAmount}
               {"   "}
               <Icon
                 as={RiCopperCoinFill}
                 boxSize="1.2em"
                 color={"gold"}
-                margin=".5em"
+                margin=".1rem"
               />
             </Button>
             <Button href="/dashboard" as={Link} variant="brand" size="sm">
@@ -92,6 +99,7 @@ const Header = () => {
               onClick={() => {
                 signOut({ callbackUrl: "/" });
               }}
+              marginRight=".1rem"
             >
               Log out
             </Button>
