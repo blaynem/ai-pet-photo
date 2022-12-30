@@ -1,6 +1,7 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import EmailProvider from "next-auth/providers/email";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import GoogleProvider from "next-auth/providers/google";
 import db from "@/core/db";
 
 export const authOptions: NextAuthOptions = {
@@ -14,11 +15,32 @@ export const authOptions: NextAuthOptions = {
         console.log("----sendVerificationRequest", { email, url });
       },
     }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID
+        ? process.env.GOOGLE_CLIENT_ID
+        : "",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET
+        ? process.env.GOOGLE_CLIENT_SECRET
+        : "",
+      authorization: {
+        params: {
+          prompt: "consent",
+          access_type: "offline",
+          response_type: "code",
+        },
+      },
+    }),
   ],
   callbacks: {
     async session({ session, user }) {
       session.user = user;
       return session;
+    },
+    async signIn({ account, profile }) {
+      if (account?.provider === "google") {
+        return profile?.email !== undefined;
+      }
+      return true;
     },
   },
   pages: {

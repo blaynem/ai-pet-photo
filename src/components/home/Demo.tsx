@@ -20,7 +20,7 @@ const examples = [
   },
 ];
 
-const prompts = examples.sort((a, b) => 0.5 - Math.random());
+const prompts = examples;
 
 const MotionImage = motion(Image);
 const MotionBox = motion(Box);
@@ -33,7 +33,7 @@ const Demo = () => {
       setStep((step) => (step + 1) % prompts.length);
     }, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [step]);
 
   return (
     <Box ml={{ base: 0, lg: 10 }} width="100%">
@@ -52,18 +52,15 @@ const Demo = () => {
       >
         <Box mr={2}>Filter: </Box>
 
-        <motion.div
-          onAnimationIteration={async () =>
-            setStep((step) => (step + 1) % prompts.length)
-          }
-          key={prompts[step].label + "motion.div"}
+        <MotionBox
+          key={prompts[step].label}
           initial={{ y: -10, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 50, opacity: 0 }}
-          transition={{ duration: 0.3 }}
+          transition={{ duration: 0.3, delay: 0.2 }}
         >
-          {prompts[step].label}
-        </motion.div>
+          <p>{prompts[step].label}</p>
+        </MotionBox>
       </Box>
       <Flex justifyContent="space-between" mt={6} pr={6}>
         <Box width="100%" position="relative" ml={10}>
