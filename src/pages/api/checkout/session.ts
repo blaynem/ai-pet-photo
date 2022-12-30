@@ -1,4 +1,7 @@
+import { getPackageInfo } from "@/core/utils/getPackageInfo";
+import { PurchaseType } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
+import { getSession } from "next-auth/react";
 import Stripe from "stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -10,18 +13,43 @@ export default async function handler(
   res: NextApiResponse
 ) {
   try {
+    const userSession = await getSession({ req });
+    const packageId = req.query.packageId as string;
+    const selectedPackage = getPackageInfo(packageId);
+
+    // Check the db to see if the user has already used a promotional code
+    const hasPromotionalPurchase = await db?.payment.findFirst({
+      where: {
+        userId: userSession?.user?.id,
+        purchaseType: PurchaseType.PROMOTION_STUDIO_PURCHASE,
+      },
+    });
+
+    // If the user has already used a promotional code, return an error
+    if (hasPromotionalPurchase) {
+      return res
+        .status(400)
+        .json("You have already used your promotional code");
+    }
+
     const session = await stripe.checkout.sessions.create({
       allow_promotion_codes: true,
       metadata: {
+        userId: userSession?.user?.id as string,
         projectId: req.query.ppi as string,
+        packageId,
       },
       line_items: [
         {
           price_data: {
             currency: "usd",
-            unit_amount: Number(process.env.NEXT_PUBLIC_STRIPE_STUDIO_PRICE),
+            unit_amount: selectedPackage?.price,
             product_data: {
-              name: "Studio model training + 100 shots",
+              name: `Studio model training ${
+                selectedPackage?.totalCredits
+                  ? `+ ${selectedPackage.totalCredits} credits`
+                  : ""
+              }`,
             },
           },
           quantity: 1,
@@ -36,6 +64,4 @@ export default async function handler(
   } catch (err: any) {
     return res.status(400).json(err.message);
   }
-
-  return res.status(400).json({});
 }

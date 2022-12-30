@@ -46,7 +46,7 @@ model User {
   sessions      Session[]
   projects      Project[]
   credits       Int       @default(0)
-  Payment       Payment[]
+  payments      Payment[]
 
   @@map("users")
 }
@@ -74,7 +74,6 @@ model Project {
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
   userId           String?
-  credits          Int      @default(100)
   User             User?    @relation(fields: [userId], references: [id])
   shots            Shot[]
 }
@@ -112,9 +111,13 @@ model Filters {
 
 model Payment {
   id              String       @id @default(uuid())
-  stripePaymentId String
+  // Payment id for stripe
+  stripePaymentId String?
+  // Amount of credits purchased
   amount          Int
-  currency        String
+  // Amount of credits purchased in USD
+  paid_amount     Int
+  // Type of purchase that was made
   purchaseType    PurchaseType
   createdAt       DateTime     @default(now())
   updatedAt       DateTime     @updatedAt
@@ -123,9 +126,8 @@ model Payment {
 }
 
 enum PurchaseType {
-  STUDIO_CREATE
-  STUDIO_CREATE_FREE_CREDITS
+  STUDIO_PURCHASE
   CREDIT_PURCHASE
-  PROMOTION_CREDIT_PURCHASE
-  PROMOTION_STUDIO_CREATE
+  PROMOTION_STUDIO_PURCHASE
+  PROMOTION_CREDIT_GIFT
 }

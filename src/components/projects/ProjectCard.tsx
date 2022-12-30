@@ -22,9 +22,11 @@ import FormPayment from "./FormPayment";
 const ProjectCard = ({
   project,
   handleRefreshProjects,
+  showPromotionalPricing,
 }: {
   project: ProjectWithShots;
   handleRefreshProjects: () => void;
+  showPromotionalPricing?: boolean;
 }) => {
   const {
     mutate: trainModel,
@@ -75,6 +77,7 @@ const ProjectCard = ({
 
         {isWaitingPayment && (
           <FormPayment
+            showPromotionalPricing={showPromotionalPricing}
             handlePaymentSuccess={() => {
               handleRefreshProjects();
             }}

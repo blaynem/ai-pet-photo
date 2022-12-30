@@ -1,126 +1,96 @@
-import { formatStudioPrice } from "@/core/utils/prices";
-import {
-  Box,
-  Button,
-  Divider,
-  Flex,
-  Icon,
-  Image,
-  Link,
-  SimpleGrid,
-  Text,
-} from "@chakra-ui/react";
-import { useSession } from "next-auth/react";
+import { List, ListIcon, ListItem, SimpleGrid, Text } from "@chakra-ui/react";
 import React from "react";
-import { IconType } from "react-icons/lib";
 import { RiCopperCoinFill } from "react-icons/ri";
-import { GiTwoCoins } from "react-icons/gi";
-import { FaCoins } from "react-icons/fa";
-import CreditPricing from "@/components/credits/CreditPricing";
 import PageContainer from "@/components/layout/PageContainer";
-interface ItemProps {
-  iconName: IconType;
-  creditCount: string;
-  children?: React.ReactNode;
-}
+import {
+  FIFTY_CREDIT_PACKAGE,
+  GENERATE_PHOTO_AMOUNT_PER_CREDIT,
+  HUNDRED_CREDIT_PACKAGE,
+  STUDIO_COST_IN_CREDITS,
+} from "@/core/constants";
+import Item from "@/components/credits/Item";
 
-const Item = ({ iconName, creditCount, children }: ItemProps) => {
-  const session = useSession();
-  const user = session.data?.user;
-  const userId = user?.id;
-  const priceInUSD = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-  }).format(
-    (Number(creditCount) * Number(process.env.NEXT_PUBLIC_CREDIT_PRICE)) / 100
-  );
-  return (
-    <Box borderWidth="2px" borderRadius="10px" margin="1em">
-      <Flex alignItems="center" direction="column" p={4}>
-        <Box
-          height={"10em"}
-          justifyContent="center"
-          alignItems="center"
-          display="flex"
-          flexDirection={"column"}
-        >
-          <Icon as={iconName} color={"gold"} boxSize="3em"></Icon>
-          <Text textAlign="center" fontWeight="900" fontSize="xl" mt={3}>
-            {creditCount}
-          </Text>
-        </Box>
-        <Text
-          alignItems="center"
-          display="flex"
-          textAlign="center"
-          fontWeight="600"
-          fontSize="xl"
-          mt={3}
-        >
-          {priceInUSD}
-        </Text>
-        <Text
-          maxWidth={{ base: "20rem", lg: "13rem" }}
-          mt={2}
-          textAlign="center"
-          fontSize="lg"
-        >
-          {children}
-          <Button
-            as={Link}
-            variant="brand"
-            textDecoration={"none"}
-            href={`/api/credits/session?ppi=${userId}&credits=${creditCount}`}
-          >
-            Buy
-          </Button>
-        </Text>
-      </Flex>
-    </Box>
-  );
+const CustomListItem = ({ children }: { children: React.ReactNode }) => (
+  <ListItem>
+    <ListIcon color={"gold"} fontSize="xl" as={RiCopperCoinFill} /> {children}
+  </ListItem>
+);
+
+const calcLeftoverCredits = (totalCredits: number, creditsUsed: number) => {
+  return totalCredits - creditsUsed;
 };
 
 const BuyCredits = () => {
   return (
-    <>
-      <Flex
-        width="100%"
-        backgroundColor="whiteAlpha.900"
-        py={1}
-        display="flex"
-        justifyContent={"center"}
-      >
-        <Flex
-          maxWidth="container.lg"
-          display="flex"
-          justifyContent="left"
-          flex="1"
-        >
-          <Text textAlign="center" fontWeight="700" fontSize="2xl" mt={3}>
-            Buy Credits
-          </Text>
-        </Flex>
-      </Flex>
-      <Flex width="100%" backgroundColor="whiteAlpha.900" py={10} flex="1">
-        <Flex
-          px={{ base: 4, lg: 0 }}
-          py={4}
-          width="100%"
-          flexDirection="column"
-          margin="auto"
-          maxWidth="container.lg"
-        >
-          <SimpleGrid mb={10} columns={{ base: 1, md: 3 }}>
-            <Item iconName={RiCopperCoinFill} creditCount="50" />
-            <Item iconName={GiTwoCoins} creditCount="100" />
-            <Item iconName={FaCoins} creditCount="150" />
-          </SimpleGrid>
-        </Flex>
-      </Flex>
-      <Flex px={4} py={10} maxWidth="container.lg" width="100%" marginX="auto">
-        <CreditPricing />
-      </Flex>
-    </>
+    <PageContainer>
+      <Text fontWeight="700" fontSize="4xl" mt={8} mb={8}>
+        Purchase Credits
+      </Text>
+
+      <SimpleGrid columns={[1, 2]}>
+        <Item pricingPackage={FIFTY_CREDIT_PACKAGE}>
+          <>
+            <Text fontWeight="900" fontSize="md">
+              Example usage of credits:
+            </Text>
+            <List mt={2} mb={4} spacing={1}>
+              <CustomListItem>
+                {/* This is 40 credits in studio + 10 credits in generated image */}
+                <b>1</b> studio ({STUDIO_COST_IN_CREDITS} credits) +{" "}
+                <b>
+                  {calcLeftoverCredits(
+                    FIFTY_CREDIT_PACKAGE.totalCredits,
+                    STUDIO_COST_IN_CREDITS
+                  ) * GENERATE_PHOTO_AMOUNT_PER_CREDIT}
+                </b>{" "}
+                generated images
+              </CustomListItem>
+              <CustomListItem>
+                {/* This is 50 credits in generated image */}
+                generate{" "}
+                <b>
+                  {FIFTY_CREDIT_PACKAGE.totalCredits *
+                    GENERATE_PHOTO_AMOUNT_PER_CREDIT}
+                </b>{" "}
+                images using up to <b>{FIFTY_CREDIT_PACKAGE.totalCredits}</b>{" "}
+                different filters
+              </CustomListItem>
+            </List>
+          </>
+        </Item>
+        <Item pricingPackage={HUNDRED_CREDIT_PACKAGE}>
+          <>
+            <Text fontWeight="900" fontSize="md">
+              Example usage of credits:
+            </Text>
+            <List mt={2} mb={4} spacing={1}>
+              <CustomListItem>
+                {/* This is 40 credits in studio + 60 credits in generated image */}
+                <b>1</b> studio ({STUDIO_COST_IN_CREDITS} credits) +{" "}
+                <b>
+                  {calcLeftoverCredits(
+                    HUNDRED_CREDIT_PACKAGE.totalCredits,
+                    STUDIO_COST_IN_CREDITS
+                  ) * GENERATE_PHOTO_AMOUNT_PER_CREDIT}
+                </b>{" "}
+                generated images
+              </CustomListItem>
+              <CustomListItem>
+                {/* This is 100 credits in generated image */}
+                generate{" "}
+                <b>
+                  {HUNDRED_CREDIT_PACKAGE.totalCredits *
+                    GENERATE_PHOTO_AMOUNT_PER_CREDIT}
+                </b>{" "}
+                images using up to <b>{HUNDRED_CREDIT_PACKAGE.totalCredits}</b>{" "}
+                different filters
+              </CustomListItem>
+            </List>
+          </>
+        </Item>
+      </SimpleGrid>
+      {/* TODO: Create a little FAQ here? */}
+    </PageContainer>
   );
 };
 

@@ -106,7 +106,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const project = await db.project.findFirstOrThrow({
     where: { id: projectId, userId: session.user.id, modelStatus: "succeeded" },
     select: {
-      credits: true,
       createdAt: true,
       id: true,
       instanceName: true,
