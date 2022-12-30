@@ -9,7 +9,8 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { HiBadgeCheck } from "react-icons/hi";
-import { formatStudioPrice } from "@/core/utils/prices";
+import { priceInUSD } from "@/core/utils/prices";
+import { STANDARD_STUDIO_PACKAGE } from "@/core/constants";
 
 export const PriceItem = ({ children }: { children: React.ReactNode }) => (
   <ListItem>
@@ -49,11 +50,14 @@ const Pricing = () => {
           color="black"
           backgroundColor="brand.500"
         >
-          1 Studio + {process.env.NEXT_PUBLIC_STUDIO_SHOT_AMOUNT} shots
+          1 Studio{" "}
+          {STANDARD_STUDIO_PACKAGE.totalCredits
+            ? `+ ${STANDARD_STUDIO_PACKAGE.totalCredits} credits`
+            : ""}
         </Tag>
 
         <Box mt={2} fontWeight="black" fontSize="3.5rem">
-          {formatStudioPrice()}
+          {priceInUSD(STANDARD_STUDIO_PACKAGE.price)}
           <Box
             ml={1}
             as="span"
@@ -69,12 +73,12 @@ const Pricing = () => {
           <PriceItem>
             <b>1</b> Studio with a <b>custom trained model</b>
           </PriceItem>
-          <PriceItem>
-            <b>{process.env.NEXT_PUBLIC_STUDIO_SHOT_AMOUNT}</b> images
-            generation
-          </PriceItem>
-          <PriceItem>Craft your own prompt</PriceItem>
-          <PriceItem>Sponsorship development 🖤</PriceItem>
+          {STANDARD_STUDIO_PACKAGE.totalCredits > 0 && (
+            <PriceItem>
+              <b>{STANDARD_STUDIO_PACKAGE.totalCredits}</b> credits to generate
+              images with
+            </PriceItem>
+          )}
         </List>
       </Box>
     </SimpleGrid>

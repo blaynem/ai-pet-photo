@@ -1,4 +1,8 @@
-import { formatStudioPrice } from "@/core/utils/prices";
+import {
+  PROMOTION_STUDIO_PACKAGE,
+  STANDARD_STUDIO_PACKAGE,
+} from "@/core/constants";
+import { priceInUSD } from "@/core/utils/prices";
 import {
   Avatar,
   AvatarGroup,
@@ -6,7 +10,6 @@ import {
   Button,
   List,
   Spinner,
-  Tag,
   Text,
   VStack,
 } from "@chakra-ui/react";
@@ -18,12 +21,16 @@ import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { PriceItem } from "../home/Pricing";
 
+// TODO: Need to implement payment with credits as well
+
 const FormPayment = ({
   project,
   handlePaymentSuccess,
+  showPromotionalPricing,
 }: {
   project: Project;
   handlePaymentSuccess: () => void;
+  showPromotionalPricing?: boolean;
 }) => {
   const [waitingPayment, setWaitingPayment] = useState(false);
   const { query } = useRouter();
@@ -33,7 +40,7 @@ const FormPayment = ({
     () => axios.get(`/api/checkout/check/${query.ppi}/${query.session_id}`),
     {
       cacheTime: 0,
-      refetchInterval: 10,
+      refetchInterval: 500,
       enabled: waitingPayment,
       onSuccess: () => {
         handlePaymentSuccess();
@@ -44,6 +51,10 @@ const FormPayment = ({
   useEffect(() => {
     setWaitingPayment(query.ppi === project.id);
   }, [query, project]);
+
+  const visibleStudioPackage = showPromotionalPricing
+    ? PROMOTION_STUDIO_PACKAGE
+    : STANDARD_STUDIO_PACKAGE;
 
   return (
     <Box textAlign="center" width="100%">
@@ -57,7 +68,7 @@ const FormPayment = ({
       ) : (
         <VStack spacing={4}>
           <Box fontWeight="black" fontSize="3.5rem">
-            {formatStudioPrice()}
+            {priceInUSD(visibleStudioPackage.price)}
             <Box
               ml={1}
               as="span"
@@ -68,6 +79,7 @@ const FormPayment = ({
               / studio
             </Box>
           </Box>
+          {/* TODO: Change the phrasing of this stuff, i dont like it */}
           <Box fontWeight="bold" fontSize="xl">
             Your Studio is ready to be trained!
           </Box>
@@ -75,21 +87,14 @@ const FormPayment = ({
             <PriceItem>
               <b>1</b> Studio with a <b>custom trained model</b>
             </PriceItem>
-            <PriceItem>
-              <b>{process.env.NEXT_PUBLIC_STUDIO_SHOT_AMOUNT}</b> images
-              generation (512x512 resolution)
-            </PriceItem>
-            <PriceItem>
-              Your Studio will be deleted 24 hours after your credits are
-              exhausted
-            </PriceItem>
+            <PriceItem>images generation (512x512 resolution)</PriceItem>
           </List>
           <Button
             as={Link}
             variant="brand"
-            href={`/api/checkout/session?ppi=${project.id}`}
+            href={`/api/checkout/session?ppi=${project.id}&packageId=${visibleStudioPackage.id}`}
           >
-            Unlock Now - {formatStudioPrice()}
+            Unlock Now - {priceInUSD(visibleStudioPackage.price)}
           </Button>
           <Box pt={4}>
             <AvatarGroup size="md" max={10}>

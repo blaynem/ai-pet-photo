@@ -1,11 +1,51 @@
-import { Button, Flex, HStack, Icon, Text } from "@chakra-ui/react";
+import { StripeCheckoutSession } from "@/pages/api/credits/check/[ppi]/[sessionId]";
+import { Button, Flex, HStack, Icon, IconButton, Text } from "@chakra-ui/react";
+import axios, { AxiosResponse } from "axios";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
-import React from "react";
+import { useRouter } from "next/router";
+import React, { useEffect } from "react";
 import { IoIosFlash } from "react-icons/io";
+import { RiCopperCoinFill } from "react-icons/ri";
+import { useQuery } from "react-query";
 
 const Header = () => {
   const { data: session } = useSession();
+  const router = useRouter();
+  const [waitingPayment, setWaitingPayment] = React.useState(false);
+  const [creditAmount, setCreditAmount] = React.useState(0);
+
+  useQuery(
+    "check-payment",
+    () =>
+      axios.get(
+        `/api/credits/check/${router.query.ppi}/${router.query.session_id}`
+      ),
+    {
+      cacheTime: 0,
+      refetchInterval: 500,
+      enabled: waitingPayment,
+      onSuccess: (data: AxiosResponse<StripeCheckoutSession>) => {
+        setCreditAmount(data.data.total_credits!);
+        setWaitingPayment(false);
+        router.replace(router.asPath.split("?")[0], undefined, {
+          shallow: true,
+        });
+      },
+    }
+  );
+
+  useEffect(() => {
+    setCreditAmount(session?.user.credits || 0);
+  }, [session]);
+
+  useEffect(() => {
+    // `updateCredits` is required to be present in the stripe success_url to trigger this.
+    const { ppi, session_id, updateCredits } = router.query;
+    if (ppi && session_id && updateCredits) {
+      setWaitingPayment(true);
+    }
+  }, [router]);
 
   return (
     <Flex
@@ -33,6 +73,18 @@ const Header = () => {
         </Flex>
         {session ? (
           <HStack>
+            {session && (
+              <Button href="/credits" as={Link} variant="transparent" size="sm">
+                {creditAmount}
+                {"   "}
+                <Icon
+                  as={RiCopperCoinFill}
+                  boxSize="1.2em"
+                  color={"gold"}
+                  margin=".5em"
+                />
+              </Button>
+            )}
             <Button href="/dashboard" as={Link} variant="brand" size="sm">
               Dashboard
             </Button>

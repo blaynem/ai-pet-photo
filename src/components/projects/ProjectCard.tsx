@@ -22,9 +22,11 @@ import FormPayment from "./FormPayment";
 const ProjectCard = ({
   project,
   handleRefreshProjects,
+  showPromotionalPricing,
 }: {
   project: ProjectWithShots;
   handleRefreshProjects: () => void;
+  showPromotionalPricing?: boolean;
 }) => {
   const {
     mutate: trainModel,
@@ -67,9 +69,6 @@ const ProjectCard = ({
         <Box>
           <Text fontSize="2xl" fontWeight="semibold">
             Studio <b>{project.name}</b>{" "}
-            {isReady && (
-              <Badge colorScheme="teal">{project.credits} shots left</Badge>
-            )}
           </Text>
           <Text textTransform="capitalize" fontSize="sm">
             {formatRelative(new Date(project.createdAt), new Date())}
@@ -78,6 +77,7 @@ const ProjectCard = ({
 
         {isWaitingPayment && (
           <FormPayment
+            showPromotionalPricing={showPromotionalPricing}
             handlePaymentSuccess={() => {
               handleRefreshProjects();
             }}

@@ -37,14 +37,19 @@ const handler = async (
       return res.status(401).json({ message: "Not authenticated" });
     }
 
+    // Fetch user to check if they have credits
+    const dbUser = await db.user.findFirstOrThrow({
+      where: { id: session.user.id },
+    });
+
+    if (dbUser.credits < 1) {
+      return res.status(400).json({ message: "No credits" });
+    }
+
     // Fetch the project from the database
     const project = await db.project.findFirstOrThrow({
       where: { id: projectId, userId: session.user.id },
     });
-
-    if (project.credits < 1) {
-      return res.status(400).json({ message: "No credit" });
-    }
 
     // Fetch the filter from the database
     const filter = await db.filters.findFirst({
@@ -61,6 +66,7 @@ const handler = async (
 
     // Send batched fetch requests to replicate
     const batchedFetches = await Promise.all(
+      // Depending on how many predictions we want to make
       Array.from({ length: predictionsToMake }).map(async () => {
         // Create a prediction on Replicate
         const { data } = await replicateClient.post<ReplicatePredictResponse>(
@@ -91,11 +97,13 @@ const handler = async (
       )
     );
 
-    // Update the project credits
-    await db.project.update({
-      where: { id: project.id },
+    // Decrement the project credits
+    await db.user.update({
+      where: { id: session.user.id },
       data: {
-        credits: project.credits - 1,
+        credits: {
+          decrement: 1,
+        },
       },
     });
 

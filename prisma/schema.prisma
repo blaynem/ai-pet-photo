@@ -1,10 +1,10 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-}
-
-generator client {
-  provider = "prisma-client-js"
 }
 
 model Account {
@@ -13,15 +13,14 @@ model Account {
   type              String
   provider          String
   providerAccountId String  @map("provider_account_id")
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
   @@map("accounts")
@@ -47,6 +46,7 @@ model User {
   sessions      Session[]
   projects      Project[]
   credits       Int       @default(0)
+  payments      Payment[]
 
   @@map("users")
 }
@@ -73,10 +73,9 @@ model Project {
   zipImageUrl      String?
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
-  User             User?    @relation(fields: [userId], references: [id])
   userId           String?
+  User             User?    @relation(fields: [userId], references: [id])
   shots            Shot[]
-  credits          Int      @default(100)
 }
 
 model Shot {
@@ -86,7 +85,6 @@ model Shot {
   status      String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  Project     Project? @relation(fields: [projectId], references: [id])
   projectId   String?
   outputUrl   String?
   // This is the name of the filter that was used to generate this shot
@@ -94,6 +92,7 @@ model Shot {
   // The filter id that was used to generate this shot
   filterId    String?
   Filters     Filters? @relation(fields: [filterId], references: [id])
+  Project     Project? @relation(fields: [projectId], references: [id])
 }
 
 model Filters {
@@ -108,4 +107,27 @@ model Filters {
   enabled    Boolean  @default(true)
 
   Shot Shot[]
+}
+
+model Payment {
+  id              String       @id @default(uuid())
+  // Payment id for stripe
+  stripePaymentId String?
+  // Amount of credits purchased
+  amount          Int
+  // Amount of credits purchased in USD
+  paid_amount     Int
+  // Type of purchase that was made
+  purchaseType    PurchaseType
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  userId          String?
+  User            User?        @relation(fields: [userId], references: [id])
+}
+
+enum PurchaseType {
+  STUDIO_PURCHASE
+  CREDIT_PURCHASE
+  PROMOTION_STUDIO_PURCHASE
+  PROMOTION_CREDIT_GIFT
 }
