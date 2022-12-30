@@ -19,8 +19,9 @@ import { useQuery } from "react-query";
 import PageContainer from "@/components/layout/PageContainer";
 import { ProjectWithShots } from "./studio/[id]";
 import { useRouter } from "next/router";
+import { PurchaseType } from "@prisma/client";
 
-export default function Home() {
+export default function Home(props: { showPromotionalPricing: boolean }) {
   const router = useRouter();
   const {
     data: projects,
@@ -82,6 +83,7 @@ export default function Home() {
         <VStack spacing={10} width="100%">
           {projects?.map((project) => (
             <ProjectCard
+              showPromotionalPricing={props.showPromotionalPricing}
               key={project.id}
               project={project}
               handleRefreshProjects={() => {
@@ -98,6 +100,13 @@ export default function Home() {
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const session = await getSession({ req: context.req });
 
+  const hasPromotionalPurchase = await db?.payment.findFirst({
+    where: {
+      userId: session?.user?.id,
+      purchaseType: PurchaseType.PROMOTION_STUDIO_PURCHASE,
+    },
+  });
+
   if (!session) {
     return {
       redirect: {
@@ -108,5 +117,9 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     };
   }
 
-  return { props: {} };
+  return {
+    props: {
+      showPromotionalPricing: !hasPromotionalPurchase,
+    },
+  };
 }

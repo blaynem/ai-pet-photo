@@ -3,6 +3,7 @@ import {
   Button,
   Divider,
   Flex,
+  Icon,
   Modal,
   ModalBody,
   ModalContent,
@@ -22,7 +23,9 @@ import {
   PredictionsResponse,
 } from "../../pages/api/projects/[id]/predictions";
 import PredictionFilter from "@/components/studio/PredictionFilter";
-import { useRouter } from "next/router";
+import { GENERATE_PHOTO_AMOUNT_PER_CREDIT } from "@/core/constants";
+import { useSession } from "next-auth/react";
+import { RiCopperCoinFill } from "react-icons/ri";
 
 type PickFilters = Pick<Filters, "id" | "name" | "exampleUrl">;
 
@@ -88,6 +91,7 @@ const GenerateStudioModal = ({
   onClose,
   onGenerate,
 }: GenerateProps) => {
+  const session = useSession();
   const [selectedFilterId, setSelectedFilterId] = useState<string | null>(null);
   const [generateError, setGenerateError] = useState<string | null>(null);
 
@@ -127,7 +131,7 @@ const GenerateStudioModal = ({
       filterId: filter.id,
       filterName: filter.name,
       projectId,
-      predictionAmount: 4,
+      predictionAmount: GENERATE_PHOTO_AMOUNT_PER_CREDIT,
     };
 
     createPrediction(body);
@@ -172,6 +176,13 @@ const GenerateStudioModal = ({
           )}
         </ModalBody>
         <ModalFooter>
+          {session?.data?.user.credits || 0}
+          <Icon
+            as={RiCopperCoinFill}
+            boxSize="1.2em"
+            color={"gold"}
+            margin=".5em"
+          />
           <Button
             size="lg"
             variant="brand"

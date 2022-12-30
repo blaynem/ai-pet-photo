@@ -23,7 +23,7 @@ const Header = () => {
       ),
     {
       cacheTime: 0,
-      refetchInterval: 10,
+      refetchInterval: 500,
       enabled: waitingPayment,
       onSuccess: (data: AxiosResponse<StripeCheckoutSession>) => {
         setCreditAmount(data.data.total_credits!);
@@ -40,8 +40,9 @@ const Header = () => {
   }, [session]);
 
   useEffect(() => {
-    const { ppi, session_id, credits } = router.query;
-    if (ppi && session_id && credits) {
+    // `updateCredits` is required to be present in the stripe success_url to trigger this.
+    const { ppi, session_id, updateCredits } = router.query;
+    if (ppi && session_id && updateCredits) {
       setWaitingPayment(true);
     }
   }, [router]);
@@ -72,23 +73,19 @@ const Header = () => {
           <Text>PetPics</Text>
         </Flex>
         {session ? (
-          <HStack marginRight={".5rem"}>
-            <Button
-              href="/credits"
-              as={Link}
-              variant="transparent"
-              size="sm"
-              paddingRight={".1rem"}
-            >
-              {creditAmount}
-              {"   "}
-              <Icon
-                as={RiCopperCoinFill}
-                boxSize="1.2em"
-                color={"gold"}
-                margin=".1rem"
-              />
-            </Button>
+          <HStack>
+            {session && (
+              <Button href="/credits" as={Link} variant="transparent" size="sm">
+                {creditAmount}
+                {"   "}
+                <Icon
+                  as={RiCopperCoinFill}
+                  boxSize="1.2em"
+                  color={"gold"}
+                  margin=".5em"
+                />
+              </Button>
+            )}
             <Button href="/dashboard" as={Link} variant="brand" size="sm">
               Dashboard
             </Button>
