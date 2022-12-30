@@ -2,7 +2,6 @@ import { getPackageInfo } from "@/core/utils/getPackageInfo";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
 import Stripe from "stripe";
-import { CREDIT_PRICE } from "../../../core/constants";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2022-11-15",
