@@ -46,7 +46,7 @@ model User {
   sessions      Session[]
   projects      Project[]
   credits       Int       @default(0)
-  Payment       Payment[]
+  payments      Payment[]
 
   @@map("users")
 }

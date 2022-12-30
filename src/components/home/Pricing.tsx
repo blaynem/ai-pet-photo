@@ -10,6 +10,7 @@ import {
 } from "@chakra-ui/react";
 import { HiBadgeCheck } from "react-icons/hi";
 import { formatStudioPrice } from "@/core/utils/prices";
+import { useSession } from "next-auth/react";
 
 export const PriceItem = ({ children }: { children: React.ReactNode }) => (
   <ListItem>
@@ -18,6 +19,9 @@ export const PriceItem = ({ children }: { children: React.ReactNode }) => (
 );
 
 const Pricing = () => {
+  const { data: session } = useSession();
+  const user = session?.user;
+
   return (
     <SimpleGrid width="100%" spacing={6} columns={{ base: 1, md: 2 }}>
       <Box

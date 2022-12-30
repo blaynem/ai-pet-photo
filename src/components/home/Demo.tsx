@@ -1,21 +1,21 @@
 import { Box, Flex, Image } from "@chakra-ui/react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Pause, WindupChildren } from "windups";
 import AvatarsPlaceholder from "./AvatarsPlaceholder";
 
 const examples = [
   {
-    label: "Yet another painting of Ted by Andy Warhol",
+    label: "Andy Warhol2",
     imageUrl: "out-0.jpg",
   },
-  { label: "Painting of Ted by Andy Warhol", imageUrl: "out-2.jpg" },
+  { label: "Andy Warhol3", imageUrl: "out-2.jpg" },
   {
-    label: "Another Painting of Ted by Andy Warhol",
+    label: "Andy Warhol",
     imageUrl: "out-1.jpg",
   },
   {
-    label: "Ted as the brain of an astronaut dog",
+    label: "Astronaut",
     imageUrl: "out-3.png",
   },
 ];
@@ -28,39 +28,42 @@ const MotionBox = motion(Box);
 const Demo = () => {
   const [step, setStep] = useState(0);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setStep((step) => (step + 1) % prompts.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <Box ml={{ base: 0, lg: 10 }} width="100%">
       <Box
-        width="100%"
+        maxWidth={"20em"}
         marginX="auto"
         fontSize="md"
-        shadow="0 14px 40px 10px brand.500, 0 5px 10px -7px black"
+        shadow="0 14px 40px 10px #bae6fd, 0 5px 10px -7px black"
         borderRadius="md"
         py={2}
         px={3}
         backgroundColor="white"
         borderWidth={1}
         borderColor="gray.200"
+        display={"flex"}
       >
-        <WindupChildren
-          onFinished={() => {
-            setStep(step === prompts.length - 1 ? 0 : step + 1);
-          }}
+        <Box mr={2}>Filter: </Box>
+
+        <motion.div
+          onAnimationIteration={async () =>
+            setStep((step) => (step + 1) % prompts.length)
+          }
+          key={prompts[step].label + "motion.div"}
+          initial={{ y: -10, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: 50, opacity: 0 }}
+          transition={{ duration: 0.3 }}
         >
           {prompts[step].label}
-          <Pause ms={4000} />
-        </WindupChildren>
-        <MotionBox
-          borderRight="1px"
-          borderColor="gray.400"
-          as="span"
-          bg="white"
-          ml={1}
-          animate={{ opacity: 1 }}
-          initial={{ opacity: 0 }}
-          exit={{ opacity: 1 }}
-          transition={{ repeat: Infinity, duration: 1.4 }}
-        />
+        </motion.div>
       </Box>
       <Flex justifyContent="space-between" mt={6} pr={6}>
         <Box width="100%" position="relative" ml={10}>
