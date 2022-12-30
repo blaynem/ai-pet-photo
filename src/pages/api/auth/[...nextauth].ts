@@ -16,12 +16,8 @@ export const authOptions: NextAuthOptions = {
       },
     }),
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID
-        ? process.env.GOOGLE_CLIENT_ID
-        : "",
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET
-        ? process.env.GOOGLE_CLIENT_SECRET
-        : "",
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
       authorization: {
         params: {
           prompt: "consent",
@@ -35,12 +31,6 @@ export const authOptions: NextAuthOptions = {
     async session({ session, user }) {
       session.user = user;
       return session;
-    },
-    async signIn({ account, profile }) {
-      if (account?.provider === "google") {
-        return profile?.email !== undefined;
-      }
-      return true;
     },
   },
   pages: {

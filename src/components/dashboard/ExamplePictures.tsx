@@ -14,11 +14,11 @@ import {
 const ImageCard = ({
   description,
   imageUrl,
-  type,
+  title,
 }: {
   imageUrl: string;
   description: string;
-  type: string;
+  title: string;
 }) => {
   return (
     <Card
@@ -42,7 +42,7 @@ const ImageCard = ({
             textTransform="uppercase"
             ml="2"
           >
-            {type}
+            {title}
           </Box>
         </Box>
         <Box
@@ -70,17 +70,17 @@ const GoodPictures = () => {
       <SimpleGrid columns={1}>
         <ImageCard
           imageUrl="/teddyLog.jpg"
-          type="Good lighting"
+          title="Good lighting"
           description="Good lighting allows the AI to see features of the subject more clearly"
         />
         <ImageCard
           imageUrl="/teddyGrass.jpg"
-          type="Plain background"
+          title="Plain background"
           description="Focused with plain background and good contrast"
         />
         <ImageCard
           imageUrl="/teddyAngle.jpg"
-          type="Multiple Angles"
+          title="Multiple Angles"
           description="Good angles allow the AI to see the subject more clearly"
         />
       </SimpleGrid>
@@ -97,17 +97,17 @@ const BadPictures = () => {
       <SimpleGrid columns={1}>
         <ImageCard
           imageUrl="/vinceLight.jpg"
-          type="Poor lighting"
+          title="Poor lighting"
           description="Bad lighting makes it hard for the AI to see features of the subject"
         />
         <ImageCard
           imageUrl="/vinceLight2.jpg"
-          type="Busy background"
+          title="Busy background"
           description="A busy background makes it hard for the AI to focus on the subject"
         />
         <ImageCard
           imageUrl="/WeirdAngleObstruction.jpg"
-          type="Poor Angles"
+          title="Poor Angles"
           description="Poor angles make it hard for the AI to see the subject"
         />
       </SimpleGrid>

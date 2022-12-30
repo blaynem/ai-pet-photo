@@ -3,14 +3,17 @@ import {
   Button,
   FormControl,
   FormLabel,
+  Icon,
   Input,
+  Link,
   Stack,
   Text,
 } from "@chakra-ui/react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { FaPaperPlane } from "react-icons/fa";
+import { FaGoogle, FaPaperPlane } from "react-icons/fa";
+import { IoLogoGoogle } from "react-icons/io";
 import { useMutation } from "react-query";
 
 export default function AuthForm() {
@@ -21,6 +24,16 @@ export default function AuthForm() {
     "login",
     () =>
       signIn("email", { email, redirect: false, callbackUrl: "/dashboard" }),
+    {
+      onSuccess: () => {
+        router.push("/login?verifyRequest=1");
+      },
+    }
+  );
+
+  const { mutate: googleLogin, isLoading: googleLoading } = useMutation(
+    "googleLogin",
+    () => signIn("google", { callbackUrl: process.env.NEXTAUTH_URL }),
     {
       onSuccess: () => {
         router.push("/login?verifyRequest=1");
@@ -69,6 +82,18 @@ export default function AuthForm() {
           </Stack>
         </Stack>
       </Box>
+      <Box>
+        <Text fontSize="sm" textAlign="center">
+          Or, Sign in with another provider
+        </Text>
+      </Box>
+      <Button
+        onClick={(e) => {
+          signIn("google", { callbackUrl: "/dashboard" });
+        }}
+      >
+        Sign in with <Icon boxSize={5} as={IoLogoGoogle} ml={2}></Icon>
+      </Button>
     </Stack>
   );
 }

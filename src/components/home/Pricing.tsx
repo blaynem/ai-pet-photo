@@ -19,9 +19,6 @@ export const PriceItem = ({ children }: { children: React.ReactNode }) => (
 );
 
 const Pricing = () => {
-  const { data: session } = useSession();
-  const user = session?.user;
-
   return (
     <SimpleGrid width="100%" spacing={6} columns={{ base: 1, md: 2 }}>
       <Box
