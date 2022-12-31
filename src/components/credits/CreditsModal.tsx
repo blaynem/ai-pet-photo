@@ -146,7 +146,24 @@ const PurchaseCreditsModal = ({ isOpen, onClose }: CreditsModalProps) => {
                 </List>
               </AccordionPanel>
             </AccordionItem>
+            <AccordionItem>
+              <AccordionButton>
+                <Box as="span" flex="1" textAlign="left" fontWeight={"bold"}>
+                  What is a studio?
+                </Box>
+                <AccordionIcon />
+              </AccordionButton>
+              <AccordionPanel pb={4}>
+                <Text mb={4}>
+                  Studios are where you will select styles to generate new
+                  images of your pet.
+                </Text>
+              </AccordionPanel>
+            </AccordionItem>
           </Accordion>
+          <Text align="right" fontSize="sm">
+            All purchases are final.
+          </Text>
         </ModalBody>
         <ModalFooter>
           <Button

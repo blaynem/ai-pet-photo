@@ -84,7 +84,7 @@ const Header = () => {
         {session ? (
           <HStack>
             {session && (
-              <Button onClick={onOpen} variant="transparent" size="sm">
+              <Button onClick={onOpen} variant="transparent" size="sm" pr={0}>
                 {creditAmount}
                 {"   "}
                 <Icon
