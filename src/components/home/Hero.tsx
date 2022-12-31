@@ -36,7 +36,7 @@ const Hero = () => {
             >
               Your{" "}
               <Text as="span" color={"accent.lightOrange"}>
-                pup
+                pet
               </Text>{" "}
               is a{" "}
               <Text as="span" color={"accent.lightOrange"}>
