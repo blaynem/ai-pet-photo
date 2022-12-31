@@ -50,7 +50,7 @@ const Hero = () => {
               fontSize={{ base: "xl", sm: "3xl" }}
               lineHeight={{ base: "xl", sm: "3xl" }}
             >
-              <b>Unleash their potential</b> to become <b>a magnum opus</b>
+              <b>Unleash their potential</b> to become <b>a masterpiece</b>
             </Box>
           </Box>
           <Button

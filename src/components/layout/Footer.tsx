@@ -50,10 +50,10 @@ export default function Footer() {
           <Text fontSize="lg" fontWeight="bold">
             PetPics
           </Text>
-          <SocialButton href="https://twitter.com/photoshot_ai">
+          <SocialButton href="https://twitter.com/petpics_ai">
             <FaTwitter />
           </SocialButton>
-          <SocialButton href="mailto:support@photoshot.app">
+          <SocialButton href="mailto:support@petpics.ai">
             <MdAlternateEmail />
           </SocialButton>
         </Stack>

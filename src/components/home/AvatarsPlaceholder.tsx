@@ -9,7 +9,7 @@ const AvatarsPlaceholder = () => {
         transform="translateZ(1px) rotate(10deg)"
       />
       <AvatarThumbnail
-        src="/TedOnABed.jpeg"
+        src="/tedOnABed.jpeg"
         left="80px"
         top="40px"
         transform="translateZ(1px) rotate(-4deg)"

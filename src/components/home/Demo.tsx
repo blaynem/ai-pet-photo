@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Pause, WindupChildren } from "windups";
 import AvatarsPlaceholder from "./AvatarsPlaceholder";
 
-const examples = [
+const prompts = [
   {
     label: "Andy Warhol2",
     imageUrl: "out-0.jpg",
@@ -19,8 +19,6 @@ const examples = [
     imageUrl: "out-3.jpg",
   },
 ];
-
-const prompts = examples;
 
 const MotionImage = motion(Image);
 const MotionBox = motion(Box);
