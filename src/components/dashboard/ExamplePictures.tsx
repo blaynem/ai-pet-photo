@@ -31,7 +31,7 @@ const ImageCard = ({
       p={4}
       m={2}
     >
-      <Image src={imageUrl} boxSize={"15rem"} />
+      <Image src={imageUrl} boxSize={"15rem"} borderRadius="lg" />
       <Box p="3">
         <Box display="flex" alignItems="baseline">
           <Box

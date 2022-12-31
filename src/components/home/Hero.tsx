@@ -1,4 +1,4 @@
-import { Box, Button, Flex, SimpleGrid, VStack } from "@chakra-ui/react";
+import { Box, Button, Flex, SimpleGrid, VStack, Text } from "@chakra-ui/react";
 import Link from "next/link";
 import { HiArrowRight } from "react-icons/hi";
 import Demo from "./Demo";
@@ -31,17 +31,26 @@ const Hero = () => {
               as="h1"
               maxWidth="43rem"
               lineHeight={{ base: "2.6rem", sm: "4rem" }}
-              fontSize={{ base: "2.6rem", sm: "4rem" }}
+              fontSize={{ base: "2.3rem", sm: "3.5rem" }}
               fontWeight="black"
-            ></Box>
+            >
+              Your{" "}
+              <Text as="span" color={"accent.lightOrange"}>
+                pup
+              </Text>{" "}
+              is a{" "}
+              <Text as="span" color={"accent.lightOrange"}>
+                model
+              </Text>
+              .
+            </Box>
             <Box
               as="h2"
               maxWidth="30rem"
               fontSize={{ base: "xl", sm: "3xl" }}
               lineHeight={{ base: "xl", sm: "3xl" }}
             >
-              <b>Unleash your creativity</b> and become{" "}
-              <b>a digital masterpiece</b>
+              <b>Unleash their potential</b> to become <b>a magnum opus</b>
             </Box>
           </Box>
           <Button

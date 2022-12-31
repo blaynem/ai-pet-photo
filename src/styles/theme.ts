@@ -14,6 +14,10 @@ const theme = extendTheme({
       800: "#0ea5e9",
       900: "#0284c7",
     },
+    accent: {
+      yellow: "#fffd77",
+      lightOrange: "#FDD1BA",
+    },
   },
   styles: {
     global: {

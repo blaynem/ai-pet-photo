@@ -84,7 +84,7 @@ export default function AuthForm() {
       </Box>
       <Box>
         <Text fontSize="sm" textAlign="center">
-          Or, Sign in with another provider
+          Or, sign in with another provider
         </Text>
       </Box>
       <Button
