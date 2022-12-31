@@ -16,13 +16,14 @@ const theme = extendTheme({
     },
     accent: {
       yellow: "#fffd77",
-      lightOrange: "#FDD1BA",
+      lightOrange: "#FBA77C",
+      purple: "#",
     },
   },
   styles: {
     global: {
       body: {
-        bg: "#f5f6ff",
+        bg: "#ebedff",
       },
     },
   },
