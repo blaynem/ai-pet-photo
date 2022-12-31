@@ -1,19 +1,28 @@
 import { StripeCheckoutSession } from "@/pages/api/credits/check/[ppi]/[sessionId]";
-import { Button, Flex, HStack, Icon, IconButton, Text } from "@chakra-ui/react";
+import {
+  Button,
+  Flex,
+  HStack,
+  Icon,
+  Text,
+  useDisclosure,
+} from "@chakra-ui/react";
 import axios, { AxiosResponse } from "axios";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
-import { IoIosFlash, IoIosPaw } from "react-icons/io";
+import { IoIosPaw } from "react-icons/io";
 import { RiCopperCoinFill } from "react-icons/ri";
 import { useQuery } from "react-query";
+import PurchaseCreditsModal from "../credits/CreditsModal";
 
 const Header = () => {
   const { data: session } = useSession();
   const router = useRouter();
   const [waitingPayment, setWaitingPayment] = React.useState(false);
   const [creditAmount, setCreditAmount] = React.useState(0);
+  const { isOpen, onClose, onOpen } = useDisclosure();
 
   useQuery(
     "check-payment",
@@ -75,7 +84,7 @@ const Header = () => {
         {session ? (
           <HStack>
             {session && (
-              <Button href="/credits" as={Link} variant="transparent" size="sm">
+              <Button onClick={onOpen} variant="transparent" size="sm">
                 {creditAmount}
                 {"   "}
                 <Icon
@@ -107,6 +116,7 @@ const Header = () => {
           </Button>
         )}
       </Flex>
+      <PurchaseCreditsModal isOpen={isOpen} onClose={onClose} />
     </Flex>
   );
 };
