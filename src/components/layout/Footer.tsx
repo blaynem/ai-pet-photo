@@ -1,7 +1,8 @@
 import { Box, chakra, Container, Stack, Text } from "@chakra-ui/react";
-import { FaGithub, FaTwitter } from "react-icons/fa";
+import { FaTwitter } from "react-icons/fa";
 import { ReactNode } from "react";
 import { MdAlternateEmail } from "react-icons/md";
+import { TWITTER_LINK, EMAIL_ADDRESS_SUPPORT } from "@/core/constants";
 
 const SocialButton = ({
   children,
@@ -50,10 +51,10 @@ export default function Footer() {
           <Text fontSize="lg" fontWeight="bold">
             PetPics
           </Text>
-          <SocialButton href="https://twitter.com/petpics_ai">
+          <SocialButton href={TWITTER_LINK}>
             <FaTwitter />
           </SocialButton>
-          <SocialButton href="mailto:support@petpics.ai">
+          <SocialButton href={`mailto:${EMAIL_ADDRESS_SUPPORT}`}>
             <MdAlternateEmail />
           </SocialButton>
         </Stack>
