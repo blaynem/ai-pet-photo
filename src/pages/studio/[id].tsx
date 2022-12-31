@@ -20,6 +20,8 @@ import { HiArrowLeft } from "react-icons/hi";
 import ShotCardGrid from "@/components/studio/ShotCardGrid";
 import GenerateStudioModal from "@/components/studio/GenerateStudioModal";
 import { useRouter } from "next/router";
+import { reloadSessionLater } from "@/core/utils/reloadSession";
+import { useState } from "react";
 
 export type ProjectWithShots = Project & {
   shots: Omit<Shot, "prompt">[];
@@ -31,11 +33,19 @@ interface IStudioPageProps {
 
 const StudioPage = ({ project }: IStudioPageProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
   const router = useRouter();
 
   // Call this function to refresh data on the page.
   const refreshData = () => {
     router.replace(router.asPath);
+    // Cancel any existing timeout for memory leaks.
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+    // Reload the session in 5 seconds to try and get the latest credits amount.
+    const newTimeoutId = reloadSessionLater(5000);
+    setTimeoutId(newTimeoutId);
   };
 
   return (

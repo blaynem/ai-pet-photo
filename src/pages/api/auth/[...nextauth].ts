@@ -29,7 +29,11 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async session({ session, user }) {
-      session.user = user;
+      const dbUser = await db.user.findUnique({
+        where: { id: user.id },
+        select: { credits: true },
+      });
+      session.user = { ...user, credits: dbUser?.credits! };
       return session;
     },
   },
