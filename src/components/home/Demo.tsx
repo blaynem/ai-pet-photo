@@ -1,28 +1,24 @@
 import { Box, Flex, Image } from "@chakra-ui/react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Pause, WindupChildren } from "windups";
 import AvatarsPlaceholder from "./AvatarsPlaceholder";
 
-const examples = [
+const prompts = [
   {
-    label: "illustration of Tom in the style of Charles Burns",
-    imageUrl: "/shots/crumb.png",
+    label: "Andy Warhol2",
+    imageUrl: "out-0.jpg",
   },
-  { label: "Painting of Tom by Edvard Munch", imageUrl: "/shots/munch.png" },
-  { label: "Portrait of Tom as Pixar character", imageUrl: "/shots/pixar.png" },
-  { label: "Portrait of Tom as Spiderman", imageUrl: "/shots/spiderman.jpg" },
-  { label: "Painting of Tom by Van Gogh", imageUrl: "/shots/vangogh.png" },
-  { label: "Portrait of Tom as a warrior", imageUrl: "/shots/warrior.png" },
-  { label: "Painting of Tom by Andy Warhol", imageUrl: "/shots/wharol.png" },
-  { label: "Portrait of Tom as Santa Claus", imageUrl: "/shots/santa.jpg" },
+  { label: "Andy Warhol3", imageUrl: "out-2.jpg" },
   {
-    label: "painting of Tom by Gustav Klimt",
-    imageUrl: "/shots/klimt.png",
+    label: "Andy Warhol",
+    imageUrl: "out-1.jpg",
+  },
+  {
+    label: "Astronaut",
+    imageUrl: "out-3.jpg",
   },
 ];
-
-const prompts = examples.sort((a, b) => 0.5 - Math.random());
 
 const MotionImage = motion(Image);
 const MotionBox = motion(Box);
@@ -30,39 +26,39 @@ const MotionBox = motion(Box);
 const Demo = () => {
   const [step, setStep] = useState(0);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setStep((step) => (step + 1) % prompts.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [step]);
+
   return (
     <Box ml={{ base: 0, lg: 10 }} width="100%">
       <Box
-        width="100%"
+        maxWidth={"20em"}
         marginX="auto"
         fontSize="md"
-        shadow="0 14px 40px 10px #B5FFD9, 0 5px 10px -7px black"
+        shadow="0 14px 40px 10px var(--chakra-colors-accent-lightOrange), 0 5px 10px -7px black"
         borderRadius="md"
         py={2}
         px={3}
         backgroundColor="white"
         borderWidth={1}
         borderColor="gray.200"
+        display={"flex"}
       >
-        <WindupChildren
-          onFinished={() => {
-            setStep(step === prompts.length - 1 ? 0 : step + 1);
-          }}
-        >
-          {prompts[step].label}
-          <Pause ms={4000} />
-        </WindupChildren>
+        <Box mr={2}>Filter: </Box>
+
         <MotionBox
-          borderRight="1px"
-          borderColor="gray.400"
-          as="span"
-          bg="white"
-          ml={1}
-          animate={{ opacity: 1 }}
-          initial={{ opacity: 0 }}
-          exit={{ opacity: 1 }}
-          transition={{ repeat: Infinity, duration: 1.4 }}
-        />
+          key={prompts[step].label}
+          initial={{ y: -10, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: 50, opacity: 0 }}
+          transition={{ duration: 0.3, delay: 0.2 }}
+        >
+          <p>{prompts[step].label}</p>
+        </MotionBox>
       </Box>
       <Flex justifyContent="space-between" mt={6} pr={6}>
         <Box width="100%" position="relative" ml={10}>

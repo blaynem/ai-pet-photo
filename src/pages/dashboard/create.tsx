@@ -4,6 +4,7 @@ import { GetServerSidePropsContext } from "next";
 import { getSession } from "next-auth/react";
 import PageContainer from "@/components/layout/PageContainer";
 import { useRouter } from "next/router";
+import ExamplePictures from "@/components/dashboard/ExamplePictures";
 
 export default function CreateProject() {
   const router = useRouter();
@@ -20,6 +21,7 @@ export default function CreateProject() {
           }}
         />
       </Box>
+      <ExamplePictures />
     </PageContainer>
   );
 }
