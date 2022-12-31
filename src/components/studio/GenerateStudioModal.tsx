@@ -23,7 +23,10 @@ import {
   PredictionsResponse,
 } from "../../pages/api/projects/[id]/predictions";
 import PredictionFilter from "@/components/studio/PredictionFilter";
-import { GENERATE_PHOTO_AMOUNT_PER_CREDIT } from "@/core/constants";
+import {
+  GENERATE_PHOTO_AMOUNT_PER_CREDIT,
+  IMAGE_GENERATION_COST_IN_CREDITS,
+} from "@/core/constants";
 import { useSession } from "next-auth/react";
 import { RiCopperCoinFill } from "react-icons/ri";
 
@@ -160,7 +163,7 @@ const GenerateStudioModal = ({
     >
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>{"Select a filter"}</ModalHeader>
+        <ModalHeader>Select Style</ModalHeader>
         <ModalBody>
           <FiltersGrid
             loading={filtersLoading}
@@ -168,6 +171,10 @@ const GenerateStudioModal = ({
             selectedFilterId={selectedFilterId}
             filters={filters!}
           />
+          <Text as="b" fontSize="sm">
+            Each style costs {IMAGE_GENERATION_COST_IN_CREDITS} credit, and will
+            generate {GENERATE_PHOTO_AMOUNT_PER_CREDIT} images.
+          </Text>
           {generateError && (
             <>
               <Divider mb={4} />

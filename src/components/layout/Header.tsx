@@ -5,6 +5,7 @@ import {
   HStack,
   Icon,
   Text,
+  Tooltip,
   useDisclosure,
 } from "@chakra-ui/react";
 import axios, { AxiosResponse } from "axios";
@@ -84,16 +85,18 @@ const Header = () => {
         {session ? (
           <HStack>
             {session && (
-              <Button onClick={onOpen} variant="transparent" size="sm" pr={0}>
-                {creditAmount}
-                {"   "}
-                <Icon
-                  as={RiCopperCoinFill}
-                  boxSize="1.2em"
-                  color={"gold"}
-                  margin=".5em"
-                />
-              </Button>
+              <Tooltip hasArrow openDelay={300} label="Credits">
+                <Button onClick={onOpen} variant="transparent" size="sm" pr={0}>
+                  {creditAmount}
+                  {"   "}
+                  <Icon
+                    as={RiCopperCoinFill}
+                    boxSize="1.2em"
+                    color={"gold"}
+                    margin=".5em"
+                  />
+                </Button>
+              </Tooltip>
             )}
             <Button href="/dashboard" as={Link} variant="brand" size="sm">
               Dashboard
