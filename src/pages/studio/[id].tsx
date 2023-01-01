@@ -17,12 +17,15 @@ import { HiArrowLeft } from "react-icons/hi";
 import ShotCardGrid from "@/components/studio/ShotCardGrid";
 import GenerateStudioModal from "@/components/studio/GenerateStudioModal";
 import { useRouter } from "next/router";
-import { reloadSessionLater } from "@/core/utils/reloadSession";
-import { useState } from "react";
+import { reloadSession } from "@/core/utils/reloadSession";
 import axios from "axios";
 import { FC } from "react";
-import { useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import { ProjectIdResponse } from "../api/projects/[id]";
+import {
+  PredictionsBody,
+  PredictionsResponse,
+} from "../api/projects/[id]/predictions";
 
 type StudioPageProps = {
   projectId: string;
@@ -30,7 +33,6 @@ type StudioPageProps = {
 
 const StudioPage: FC<StudioPageProps> = ({ projectId }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
   const router = useRouter();
   useSession({
     required: true,
@@ -43,6 +45,7 @@ const StudioPage: FC<StudioPageProps> = ({ projectId }) => {
     data: project,
     isLoading: projectLoading,
     isError,
+    refetch: refetchProject,
   } = useQuery(
     `projects-${projectId}`,
     () =>
@@ -54,17 +57,22 @@ const StudioPage: FC<StudioPageProps> = ({ projectId }) => {
     }
   );
 
-  // Call this function to refresh data on the page.
-  const refreshData = () => {
-    router.replace(router.asPath);
-    // Cancel any existing timeout for memory leaks.
-    if (timeoutId) {
-      clearTimeout(timeoutId);
+  const { mutate: createPrediction } = useMutation(
+    "create-prediction",
+    (body: PredictionsBody) =>
+      axios.post<PredictionsResponse>(
+        `/api/projects/${projectId}/predictions`,
+        body
+      ),
+    {
+      onSuccess: () => {
+        // Refetch the project to update the shots.
+        refetchProject();
+        // Reload the session to update the credits amount.
+        reloadSession();
+      },
     }
-    // Reload the session in 5 seconds to try and get the latest credits amount.
-    const newTimeoutId = reloadSessionLater(5000);
-    setTimeoutId(newTimeoutId);
-  };
+  );
 
   return (
     <PageContainer>
@@ -117,9 +125,9 @@ const StudioPage: FC<StudioPageProps> = ({ projectId }) => {
           </Box>
           <GenerateStudioModal
             isOpen={isOpen}
-            onClose={onClose}
+            closeModal={onClose}
             projectId={project!.id}
-            onGenerate={refreshData}
+            onCreateClick={(body) => createPrediction(body)}
           />
         </>
       )}
