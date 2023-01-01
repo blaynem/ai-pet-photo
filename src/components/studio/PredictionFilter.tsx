@@ -4,7 +4,7 @@ import { Filters } from "@prisma/client";
 import NextImage from "next/image";
 
 /**
- * The thumbnail representation of the prediction filter card in the studio page.
+ * The thumbnail representation of the prediction filter card in the model page.
  */
 const PredictionFilter = ({
   id,

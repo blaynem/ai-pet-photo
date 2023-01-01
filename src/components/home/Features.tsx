@@ -40,8 +40,8 @@ const Features = () => {
             Upload <b>some pictures</b> of your pet with different angles
           </Item>
           <Item iconName="square.svg" title="2. Wait">
-            Give your pet some loves while we build <b>a studio</b> based on
-            your photos
+            Give your pet some loves while we build <b>a model</b> based on your
+            photos
           </Item>
           <Item iconName="preview.svg" title="3. Generate">
             Choose a <b>filter</b> to generate art of your pet!

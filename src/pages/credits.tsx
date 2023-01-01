@@ -35,8 +35,8 @@ const BuyCredits = () => {
             </Text>
             <List mt={2} mb={4} spacing={1}>
               <CustomListItem>
-                {/* This is 40 credits in studio + 10 credits in generated image */}
-                <b>1</b> studio ({STUDIO_COST_IN_CREDITS} credits) +{" "}
+                {/* This is 40 credits in model + 10 credits in generated image */}
+                <b>1</b> model ({STUDIO_COST_IN_CREDITS} credits) +{" "}
                 <b>
                   {calcLeftoverCredits(
                     FIFTY_CREDIT_PACKAGE.totalCredits,
@@ -66,7 +66,7 @@ const BuyCredits = () => {
             <List mt={2} mb={4} spacing={1}>
               <CustomListItem>
                 {/* This is 40 credits in studio + 60 credits in generated image */}
-                <b>1</b> studio ({STUDIO_COST_IN_CREDITS} credits) +{" "}
+                <b>1</b> model ({STUDIO_COST_IN_CREDITS} credits) +{" "}
                 <b>
                   {calcLeftoverCredits(
                     HUNDRED_CREDIT_PACKAGE.totalCredits,

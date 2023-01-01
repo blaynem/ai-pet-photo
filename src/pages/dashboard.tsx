@@ -57,7 +57,7 @@ export default function Home() {
       <PageContainer>
         <Box>
           <Heading as="h2" mb={4} fontWeight="semibold" fontSize="2xl">
-            Create a new Studio
+            Create a new Model
           </Heading>
           <Uploader
             handleOnAdd={() => {
@@ -75,7 +75,7 @@ export default function Home() {
       <Box mt={10}>
         <Flex mb={4} align="center">
           <Heading as="h2" fontWeight="semibold" fontSize="2xl">
-            My Studios
+            My Models
           </Heading>
           <Spacer />
           <Button
@@ -90,7 +90,7 @@ export default function Home() {
         {isLoading && (
           <Center width="100%" textAlign="center">
             <Spinner mr={3} size="sm" speed="1s" />
-            <Text>Loading studios</Text>
+            <Text>Loading models</Text>
           </Center>
         )}
 

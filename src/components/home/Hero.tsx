@@ -74,7 +74,7 @@ const Hero = () => {
               <Badge colorScheme="orange">
                 {priceInUSD(PROMOTION_STUDIO_PACKAGE.price)}
               </Badge>{" "}
-              for your first studio +{" "}
+              for your first model +{" "}
               {PROMOTION_STUDIO_PACKAGE.bonusCredits *
                 GENERATE_PHOTO_AMOUNT_PER_CREDIT}{" "}
               photos!*

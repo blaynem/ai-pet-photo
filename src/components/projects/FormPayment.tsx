@@ -76,16 +76,16 @@ const FormPayment = ({
               color="coolGray.400"
               fontSize="1.2rem"
             >
-              / studio
+              / model
             </Box>
           </Box>
           {/* TODO: Change the phrasing of this stuff, i dont like it */}
           <Box fontWeight="bold" fontSize="xl">
-            Your Studio is ready to be trained!
+            Your Model is ready to be trained!
           </Box>
           <List textAlign="left" spacing={1}>
             <PriceItem>
-              <b>1</b> Studio with a <b>custom trained model</b>
+              <b>1</b> custom <b> trained model</b>
             </PriceItem>
             <PriceItem>images generation (512x512 resolution)</PriceItem>
           </List>

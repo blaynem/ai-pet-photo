@@ -68,7 +68,7 @@ const ProjectCard = ({
       <VStack spacing={4} alignItems="flex-start">
         <Box>
           <Text fontSize="2xl" fontWeight="semibold">
-            Studio <b>{project.name}</b>{" "}
+            Model <b>{project.name}</b>{" "}
           </Text>
           <Text textTransform="capitalize" fontSize="sm">
             {formatRelative(new Date(project.createdAt), new Date())}
@@ -89,7 +89,7 @@ const ProjectCard = ({
           <>
             <VStack width="100%" spacing={4}>
               <Box fontWeight="bold" fontSize="xl">
-                Your Studio is ready to be trained!
+                Your Model is ready to be trained!
               </Box>
               <AvatarGroup size="lg" max={10}>
                 {project.imageUrls.map((url) => (
@@ -116,7 +116,7 @@ const ProjectCard = ({
               {!project.shots ? (
                 <Box fontSize="lg">
                   {`You don't have any prompt yet`}.{" "}
-                  <b>Go to your studio to add one !</b>
+                  <b>Go to your model to add one !</b>
                 </Box>
               ) : (
                 <AvatarGroup size="xl" max={10}>
@@ -133,7 +133,7 @@ const ProjectCard = ({
                 href={`/studio/${project.id}`}
                 as={Link}
               >
-                View my Studio
+                View {project.name}'s gallery
               </Button>
             </VStack>
           </Center>
@@ -145,7 +145,7 @@ const ProjectCard = ({
           <VStack spacing={7}>
             <Spinner size="xl" speed="2s" />
             <Text textAlign="center" maxW="20rem">
-              The studio is creating{" "}
+              The model is creating{" "}
               <b>the custom model based on your uploaded photos</b>. This
               operation usually takes ~20min.
             </Text>

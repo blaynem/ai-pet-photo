@@ -13,7 +13,7 @@ export default function CreateProject() {
     <PageContainer>
       <Box>
         <Heading as="h2" mb={4} fontWeight="semibold" fontSize="2xl">
-          Create a new Studio
+          Create a new Model
         </Heading>
         <Uploader
           handleOnAdd={() => {

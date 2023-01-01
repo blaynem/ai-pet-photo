@@ -55,7 +55,7 @@ const StudioPage = ({ project }: IStudioPageProps) => {
         <Flex alignItems="center">
           <Box>
             <Text fontSize="2xl" fontWeight="semibold">
-              Studio <b>{project.instanceName}</b>
+              Model <b>{project.instanceName}</b>
             </Text>
             <Text textTransform="capitalize" fontSize="sm">
               {formatRelative(new Date(project.createdAt), new Date())}
