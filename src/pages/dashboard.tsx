@@ -19,6 +19,7 @@ import { ProjectWithShots } from "./studio/[id]";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
+import ExamplePictures from "@/components/dashboard/ExamplePictures";
 
 export default function Home() {
   const router = useRouter();
@@ -63,6 +64,7 @@ export default function Home() {
               refetchProjects();
             }}
           />
+          <ExamplePictures />
         </Box>
       </PageContainer>
     );
