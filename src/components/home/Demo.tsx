@@ -1,4 +1,11 @@
-import { Box, Divider, Flex, HStack, Image } from "@chakra-ui/react";
+import {
+  Box,
+  Divider,
+  Flex,
+  HStack,
+  Image,
+  useMediaQuery,
+} from "@chakra-ui/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Pause, WindupChildren } from "windups";
@@ -25,6 +32,7 @@ const MotionBox = motion(Box);
 
 const Demo = () => {
   const [step, setStep] = useState(0);
+  const [isMobile] = useMediaQuery("(max-width: 450px)");
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -62,8 +70,8 @@ const Demo = () => {
           </MotionBox>
         </HStack>
       </Box>
-      <Flex justifyContent="space-between" mt={6} pr={6}>
-        <Box width="100%" position="relative" ml={10}>
+      <Flex justifyContent="space-between" mt={6} pr={isMobile ? 0 : 6}>
+        <Box width="100%" position="relative" ml={isMobile ? 0 : 10}>
           <AvatarsPlaceholder />
         </Box>
         <AnimatePresence mode="wait">
