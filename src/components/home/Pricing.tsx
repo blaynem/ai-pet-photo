@@ -73,7 +73,7 @@ const Pricing = () => {
 
         <List mt={2} mb={4} spacing={1}>
           <PriceItem>
-            <b>1</b> Studio with a <b>custom trained model</b>
+            <b>1</b> Studio with a <b>custom trained pet model</b>
           </PriceItem>
           {STANDARD_STUDIO_PACKAGE.totalCredits > 0 && (
             <PriceItem>

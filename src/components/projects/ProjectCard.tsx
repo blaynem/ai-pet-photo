@@ -1,8 +1,8 @@
+import { EMAIL_ADDRESS_SUPPORT, TWITTER_LINK } from "@/core/constants";
 import { ProjectWithShots } from "@/pages/studio/[id]";
 import {
   Avatar,
   AvatarGroup,
-  Badge,
   Box,
   Button,
   Center,
@@ -14,6 +14,7 @@ import { Project } from "@prisma/client";
 import axios from "axios";
 import { formatRelative } from "date-fns";
 import Link from "next/link";
+import { useState } from "react";
 import { HiArrowRight } from "react-icons/hi";
 import { IoIosFlash } from "react-icons/io";
 import { useMutation } from "react-query";
@@ -28,6 +29,8 @@ const ProjectCard = ({
   handleRefreshProjects: () => void;
   showPromotionalPricing?: boolean;
 }) => {
+  const [timeStarted, setTimeStarted] = useState<Date | null>(new Date());
+
   const {
     mutate: trainModel,
     isLoading: isModelLoading,
@@ -89,23 +92,29 @@ const ProjectCard = ({
           <>
             <VStack width="100%" spacing={4}>
               <Box fontWeight="bold" fontSize="xl">
-                Your Studio is ready to be trained!
+                Your Studio is ready to be built!
               </Box>
               <AvatarGroup size="lg" max={10}>
                 {project.imageUrls.map((url) => (
                   <Avatar key={url} src={url} />
                 ))}
               </AvatarGroup>
-              <Button
-                variant="brand"
-                rightIcon={<IoIosFlash />}
-                isLoading={isModelLoading || isSuccess}
-                onClick={() => {
-                  trainModel(project);
-                }}
-              >
-                Start Training
-              </Button>
+              <VStack spacing={2}>
+                <Button
+                  variant="brand"
+                  rightIcon={<IoIosFlash />}
+                  isLoading={isModelLoading || isSuccess}
+                  onClick={() => {
+                    trainModel(project);
+                    setTimeStarted(new Date());
+                  }}
+                >
+                  Start Building
+                </Button>
+                <Text fontSize="sm" textAlign="center">
+                  (This is an automated process that takes about 20 minutes.)
+                </Text>
+              </VStack>
             </VStack>
           </>
         )}
@@ -115,8 +124,12 @@ const ProjectCard = ({
             <VStack spacing={7}>
               {!project.shots ? (
                 <Box fontSize="lg">
-                  {`You don't have any prompt yet`}.{" "}
-                  <b>Go to your studio to add one !</b>
+                  <Text align={"center"} mb={4}>
+                    {`Looks like you haven't generated any images yet.`}
+                  </Text>
+                  <Text align={"center"}>
+                    <b>Go to your studio to add one !</b>
+                  </Text>
                 </Box>
               ) : (
                 <AvatarGroup size="xl" max={10}>
@@ -142,12 +155,21 @@ const ProjectCard = ({
 
       {isTraining && (
         <Center marginX="auto">
-          <VStack spacing={7}>
+          <VStack spacing={2}>
             <Spinner size="xl" speed="2s" />
-            <Text textAlign="center" maxW="20rem">
-              The studio is creating{" "}
-              <b>the custom model based on your uploaded photos</b>. This
-              operation usually takes ~20min.
+            <Text textAlign="center">
+              {`Building your pets custom studio takes a little bit of time.`}
+            </Text>
+            <Text textAlign="center">
+              {`Check back ${
+                timeStarted &&
+                formatRelative(
+                  new Date(timeStarted.getTime() + 20 * 60 * 1000),
+                  new Date(timeStarted)
+                )
+                  .replace("at", "around")
+                  .replace("today", "")
+              }!`}
             </Text>
           </VStack>
         </Center>
@@ -156,8 +178,47 @@ const ProjectCard = ({
       {project.modelStatus === "failed" && (
         <Center marginX="auto">
           <Text my={10} color="red.600" textAlign="center">
-            We are sorry but the creation of the model failed. Please contact us
-            by email so we can fix it/refund you.
+            Oh no!
+            <br />
+            This is embarrassing. We are sorry, but the creation of your studio
+            failed.
+            <br />
+            <br />
+            Please contact us by{" "}
+            <Button
+              as="a"
+              bg="transparent"
+              p={0}
+              h={8}
+              target="_blank"
+              cursor="pointer"
+              display="inline-flex"
+              alignItems="center"
+              justifyContent="center"
+              _hover={{}}
+              color="brand.700"
+              href={`mailto:${EMAIL_ADDRESS_SUPPORT}`}
+            >
+              email
+            </Button>{" "}
+            or reach out to us on{" "}
+            <Button
+              as="a"
+              bg="transparent"
+              p={0}
+              h={8}
+              target="_blank"
+              cursor="pointer"
+              display="inline-flex"
+              alignItems="center"
+              justifyContent="center"
+              _hover={{}}
+              color="brand.700"
+              href={TWITTER_LINK}
+            >
+              twitter
+            </Button>{" "}
+            so we can fix it/refund you.
           </Text>
         </Center>
       )}
