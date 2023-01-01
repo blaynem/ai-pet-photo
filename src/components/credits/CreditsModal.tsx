@@ -1,4 +1,5 @@
 import {
+  creditsPackageOptions,
   FIFTY_CREDIT_PACKAGE,
   GENERATE_PHOTO_AMOUNT_PER_CREDIT,
   HUNDRED_CREDIT_PACKAGE,
@@ -95,8 +96,8 @@ const PurchaseCreditsModal = ({ isOpen, onClose }: CreditsModalProps) => {
   // Get pricing package info for displaying
   const pricingPackage = getPackageInfo(selectedValue);
   const userId = userSession?.user.id;
-  // Options for credit packages radio buttons
-  const options = [FIFTY_CREDIT_PACKAGE.id, HUNDRED_CREDIT_PACKAGE.id];
+  // Options for credit packages radio buttons, we only want the id here to render options
+  const options = creditsPackageOptions.map((option) => option.id);
 
   return (
     <Modal
@@ -109,11 +110,8 @@ const PurchaseCreditsModal = ({ isOpen, onClose }: CreditsModalProps) => {
     >
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Purchase Credits</ModalHeader>
+        <ModalHeader>Select Credits Package</ModalHeader>
         <ModalBody>
-          <Text as="b" fontSize="l">
-            Select Credit Package
-          </Text>
           <HStack {...group} mb={4}>
             {options.map((value) => {
               const radio = getRadioProps({ value });

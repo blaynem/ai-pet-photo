@@ -95,6 +95,18 @@ const FormPayment = ({
             <PriceItem>
               <b>1</b> Studio with a <b>custom trained pet model</b>
             </PriceItem>
+            {visibleStudioPackage.credits && (
+              <PriceItem>
+                <b>{visibleStudioPackage.credits}</b> credits{" "}
+                <b>create images with</b>
+              </PriceItem>
+            )}
+            {visibleStudioPackage.bonusCredits && (
+              <PriceItem>
+                Comes with <b>{visibleStudioPackage.bonusCredits}</b> bonus
+                credits!
+              </PriceItem>
+            )}
           </List>
           <HStack>
             <Button
@@ -104,12 +116,10 @@ const FormPayment = ({
             >
               Unlock Now - {priceInUSD(visibleStudioPackage.price)}
             </Button>
-            {userSession?.user.credits! > 0 && (
-              <PayWithCreditsButton
-                creditCost={STUDIO_COST_IN_CREDITS}
-                onPaymentApprove={payStudioWithCreditsMutation}
-              />
-            )}
+            <PayWithCreditsButton
+              creditCost={STUDIO_COST_IN_CREDITS}
+              onPaymentApprove={payStudioWithCreditsMutation}
+            />
           </HStack>
           <Box pt={4}>
             <AvatarGroup size="md" max={10}>
