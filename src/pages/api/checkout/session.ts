@@ -1,3 +1,4 @@
+import { PricingPackageId } from "@/core/constants";
 import { getPackageInfo } from "@/core/utils/getPackageInfo";
 import { PurchaseType } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
@@ -17,19 +18,22 @@ export default async function handler(
     const packageId = req.query.packageId as string;
     const selectedPackage = getPackageInfo(packageId);
 
-    // Check the db to see if the user has already used a promotional code
-    const hasPromotionalPurchase = await db?.payment.findFirst({
-      where: {
-        userId: userSession?.user?.id,
-        purchaseType: PurchaseType.PROMOTION_STUDIO_PURCHASE,
-      },
-    });
+    // Only check for promotional code if the user is purchasing the studio package
+    if (packageId === PricingPackageId.PROMOTION_STUDIO) {
+      // Check the db to see if the user has already used a promotional code
+      const hasPromotionalPurchase = await db?.payment.findFirst({
+        where: {
+          userId: userSession?.user?.id,
+          purchaseType: PurchaseType.PROMOTION_STUDIO_PURCHASE,
+        },
+      });
 
-    // If the user has already used a promotional code, return an error
-    if (hasPromotionalPurchase) {
-      return res
-        .status(400)
-        .json("You have already used your promotional code");
+      // If the user has already used a promotional code, return an error
+      if (hasPromotionalPurchase) {
+        return res
+          .status(400)
+          .json("You have already used your promotional code");
+      }
     }
 
     const session = await stripe.checkout.sessions.create({
