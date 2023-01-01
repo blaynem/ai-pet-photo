@@ -1,4 +1,7 @@
-import { PROMOTION_STUDIO_PACKAGE } from "@/core/constants";
+import {
+  GENERATE_PHOTO_AMOUNT_PER_CREDIT,
+  PROMOTION_STUDIO_PACKAGE,
+} from "@/core/constants";
 import { priceInUSD } from "@/core/utils/prices";
 import {
   Box,
@@ -71,7 +74,10 @@ const Hero = () => {
               <Badge colorScheme="orange">
                 {priceInUSD(PROMOTION_STUDIO_PACKAGE.price)}
               </Badge>{" "}
-              for your first studio + 15 photos!*
+              for your first studio +{" "}
+              {PROMOTION_STUDIO_PACKAGE.bonusCredits *
+                GENERATE_PHOTO_AMOUNT_PER_CREDIT}{" "}
+              photos!*
             </Text>
           </Box>
           <Box>

@@ -17,7 +17,7 @@ const theme = extendTheme({
     accent: {
       yellow: "#fffd77",
       lightOrange: "#FBA77C",
-      purple: "#",
+      purple: "#FF00FF",
     },
   },
   styles: {
