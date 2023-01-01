@@ -1,5 +1,5 @@
+import { ShotsPick } from "@/pages/api/projects";
 import { SimpleGrid } from "@chakra-ui/react";
-import { Shot } from "@prisma/client";
 import ShotCard from "../projects/ShotCard";
 
 /**
@@ -10,7 +10,7 @@ const ShotCardGrid = ({
   shots,
 }: {
   projectId: string;
-  shots: Omit<Shot, "prompt">[];
+  shots: ShotsPick[];
 }) => (
   <SimpleGrid columns={[3, 4]}>
     {shots.map((shot) => (

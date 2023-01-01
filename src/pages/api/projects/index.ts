@@ -5,6 +5,32 @@ import { createZipFolder } from "@/core/utils/assets";
 import replicateClient, { TrainingResponse } from "@/core/clients/replicate";
 import urlSlug from "url-slug";
 import supabase from "@/core/clients/supabase";
+import { Project, Shot } from "@prisma/client";
+
+export type ShotsPick = Pick<
+  Shot,
+  | "createdAt"
+  | "filterId"
+  | "filterName"
+  | "id"
+  | "outputUrl"
+  | "projectId"
+  | "status"
+>;
+
+export type ProjectWithShots = {
+  shots: ShotsPick[];
+} & Project;
+
+export type ProjectsGetResponse = {
+  projects?: ProjectWithShots[];
+  message?: string;
+};
+
+export type ProjectPostResponse = {
+  project: Project;
+  message?: string;
+};
 
 export type CreateProjectBody = {
   name: string;
@@ -17,7 +43,10 @@ interface ProjectRequest extends NextApiRequest {
   body: CreateProjectBody;
 }
 
-const handler = async (req: ProjectRequest, res: NextApiResponse) => {
+const handler = async (
+  req: ProjectRequest,
+  res: NextApiResponse<ProjectsGetResponse | ProjectPostResponse>
+) => {
   const session = await getSession({ req });
 
   if (!session?.user) {
@@ -54,12 +83,31 @@ const handler = async (req: ProjectRequest, res: NextApiResponse) => {
   }
 
   if (req.method === "GET") {
+    const userId = session.user.id;
+    // Limits the amount of shots to return
+    const shotAmount = req.query.shotAmount as string;
+
     const projects = await db.project.findMany({
-      where: { userId: session.user.id },
-      include: { shots: { take: 10, orderBy: { createdAt: "desc" } } },
+      where: { userId: userId },
+      include: {
+        shots: {
+          orderBy: { createdAt: "desc" },
+          select: {
+            createdAt: true,
+            filterId: true,
+            filterName: true,
+            id: true,
+            outputUrl: true,
+            projectId: true,
+            status: true,
+          },
+          ...(shotAmount && { take: Number(shotAmount) }),
+        },
+      },
       orderBy: { createdAt: "desc" },
     });
 
+    // We are checking if the project status on replicate has changed
     for (const project of projects) {
       if (project?.replicateModelId && project?.modelStatus !== "succeeded") {
         const { data } = await replicateClient.get<TrainingResponse>(
@@ -73,7 +121,7 @@ const handler = async (req: ProjectRequest, res: NextApiResponse) => {
       }
     }
 
-    return res.json(projects);
+    return res.json({ projects });
   }
 };
 

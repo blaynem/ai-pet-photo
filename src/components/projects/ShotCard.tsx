@@ -1,5 +1,5 @@
+import { ShotsPick } from "@/pages/api/projects";
 import { Box, Center, Spinner } from "@chakra-ui/react";
-import { Shot } from "@prisma/client";
 import axios from "axios";
 import NextImage from "next/image";
 import { memo } from "react";
@@ -10,14 +10,14 @@ const ShotCard = ({
   shot: initialShot,
   projectId,
 }: {
-  shot: Omit<Shot, "prompt">;
+  shot: ShotsPick;
   projectId: string;
 }) => {
   const { data } = useQuery(
     `shot-${initialShot.id}`,
     () =>
       axios
-        .get<{ shot: Omit<Shot, "prompt"> }>(
+        .get<{ shot: ShotsPick }>(
           `/api/projects/${projectId}/predictions/${initialShot.id}`
         )
         .then((res) => res.data),

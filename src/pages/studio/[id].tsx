@@ -1,5 +1,4 @@
 import PageContainer from "@/components/layout/PageContainer";
-import db from "@/core/db";
 import {
   Box,
   Button,
@@ -9,10 +8,8 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
-import { Project, Shot } from "@prisma/client";
 import { GetServerSidePropsContext } from "next";
-import { getSession } from "next-auth/react";
-import superjson from "superjson";
+import { useSession } from "next-auth/react";
 import { FaMagic } from "react-icons/fa";
 import { formatRelative } from "date-fns";
 import Link from "next/link";
@@ -22,19 +19,40 @@ import GenerateStudioModal from "@/components/studio/GenerateStudioModal";
 import { useRouter } from "next/router";
 import { reloadSessionLater } from "@/core/utils/reloadSession";
 import { useState } from "react";
+import axios from "axios";
+import { FC } from "react";
+import { useQuery } from "react-query";
+import { ProjectIdResponse } from "../api/projects/[id]";
 
-export type ProjectWithShots = Project & {
-  shots: Omit<Shot, "prompt">[];
+type StudioPageProps = {
+  projectId: string;
 };
 
-interface IStudioPageProps {
-  project: ProjectWithShots;
-}
-
-const StudioPage = ({ project }: IStudioPageProps) => {
+const StudioPage: FC<StudioPageProps> = ({ projectId }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
   const router = useRouter();
+  useSession({
+    required: true,
+    onUnauthenticated() {
+      router.isReady && router.push("/login");
+    },
+  });
+
+  const {
+    data: project,
+    isLoading: projectLoading,
+    isError,
+  } = useQuery(
+    `projects-${projectId}`,
+    () =>
+      axios
+        .get<ProjectIdResponse>(`/api/projects/${projectId}`)
+        .then((response) => response.data?.project),
+    {
+      retry: false,
+    }
+  );
 
   // Call this function to refresh data on the page.
   const refreshData = () => {
@@ -61,92 +79,60 @@ const StudioPage = ({ project }: IStudioPageProps) => {
           Back to Dashboard
         </Button>
       </Box>
-      <Box borderRadius="xl" p={{ base: 5, md: 10 }} backgroundColor="white">
-        <Flex alignItems="center">
-          <Box>
-            <Text fontSize="2xl" fontWeight="semibold">
-              Studio <b>{project.instanceName}</b>
-            </Text>
-            <Text textTransform="capitalize" fontSize="sm">
-              {formatRelative(new Date(project.createdAt), new Date())}
-            </Text>
-          </Box>
-          <Spacer />
-          <Button
-            size="lg"
-            variant="brand"
-            rightIcon={<FaMagic />}
-            onClick={onOpen}
+      {isError && <div>Oh no! There was an error.</div>}
+      {!projectLoading && !isError && (
+        <>
+          <Box
+            borderRadius="xl"
+            p={{ base: 5, md: 10 }}
+            backgroundColor="white"
           >
-            Generate
-          </Button>
-        </Flex>
-        <Divider mt={4} mb={4} />
-        {project.shots.length === 0 ? (
-          <Box textAlign="center" fontSize="lg">
-            {`You haven't generated any shots yet. Select a filter and click generate to create!`}
+            <Flex alignItems="center">
+              <Box>
+                <Text fontSize="2xl" fontWeight="semibold">
+                  Studio <b>{project!.instanceName}</b>
+                </Text>
+                <Text textTransform="capitalize" fontSize="sm">
+                  {formatRelative(new Date(project!.createdAt), new Date())}
+                </Text>
+              </Box>
+              <Spacer />
+              <Button
+                size="lg"
+                variant="brand"
+                rightIcon={<FaMagic />}
+                onClick={onOpen}
+              >
+                Generate
+              </Button>
+            </Flex>
+            <Divider mt={4} mb={4} />
+            {project!.shots.length === 0 ? (
+              <Box textAlign="center" fontSize="lg">
+                {`You haven't generated any shots yet. Select a filter and click generate to create!`}
+              </Box>
+            ) : (
+              <ShotCardGrid projectId={project!.id} shots={project!.shots} />
+            )}
           </Box>
-        ) : (
-          <ShotCardGrid projectId={project.id} shots={project.shots} />
-        )}
-      </Box>
-      <GenerateStudioModal
-        isOpen={isOpen}
-        onClose={onClose}
-        projectId={project.id}
-        onGenerate={refreshData}
-      />
+          <GenerateStudioModal
+            isOpen={isOpen}
+            onClose={onClose}
+            projectId={project!.id}
+            onGenerate={refreshData}
+          />
+        </>
+      )}
     </PageContainer>
   );
 };
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const session = await getSession({ req: context.req });
   const projectId = context.query.id as string;
-
-  if (!session) {
-    return {
-      redirect: {
-        permanent: false,
-        destination: "/login",
-      },
-    };
-  }
-
-  const project = await db.project.findFirstOrThrow({
-    where: { id: projectId, userId: session.user.id, modelStatus: "succeeded" },
-    select: {
-      createdAt: true,
-      id: true,
-      instanceName: true,
-      shots: {
-        // Not selecting the `prompt` so user doesn't have info on that.
-        select: {
-          createdAt: true,
-          filterId: true,
-          filterName: true,
-          id: true,
-          outputUrl: true,
-          projectId: true,
-          status: true,
-        },
-        orderBy: { createdAt: "desc" },
-      },
-    },
-    orderBy: { createdAt: "desc" },
-  });
-
-  if (!project) {
-    return {
-      notFound: true,
-    };
-  }
-
-  const { json: serializedProject } = superjson.serialize(project);
 
   return {
     props: {
-      project: serializedProject,
+      projectId,
     },
   };
 }
