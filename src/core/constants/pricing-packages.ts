@@ -18,9 +18,9 @@ export type PricingPackage = {
 
 export const STANDARD_STUDIO_PACKAGE: PricingPackage = {
   id: PricingPackageId.STANDARD_STUDIO,
-  totalCredits: 0,
+  totalCredits: 5,
   price: 499,
-  credits: 0,
+  credits: 5,
   bonusCredits: 0,
   purchaseType: PurchaseType.STUDIO_PURCHASE,
 };
@@ -51,3 +51,11 @@ export const HUNDRED_CREDIT_PACKAGE: PricingPackage = {
   bonusCredits: 0,
   purchaseType: PurchaseType.CREDIT_PURCHASE,
 };
+
+/**
+ * Available options for purchasing credits
+ */
+export const creditsPackageOptions = [
+  FIFTY_CREDIT_PACKAGE,
+  HUNDRED_CREDIT_PACKAGE,
+];
