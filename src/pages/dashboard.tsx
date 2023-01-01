@@ -18,11 +18,11 @@ import PageContainer from "@/components/layout/PageContainer";
 import { ProjectWithShots } from "./studio/[id]";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
-import { useEffect } from "react";
 
 export default function Home() {
   const router = useRouter();
-  const { data: session, status } = useSession({
+  // Redirect to login if not authenticated
+  useSession({
     required: true,
     onUnauthenticated() {
       router.isReady && router.push("/login");
