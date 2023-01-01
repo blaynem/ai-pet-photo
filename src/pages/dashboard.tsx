@@ -13,17 +13,22 @@ import {
 } from "@chakra-ui/react";
 import { FaPlus } from "react-icons/fa";
 import axios from "axios";
-import { GetServerSidePropsContext } from "next";
-import { getSession } from "next-auth/react";
 import { useQuery } from "react-query";
 import PageContainer from "@/components/layout/PageContainer";
 import { ProjectWithShots } from "./studio/[id]";
 import { useRouter } from "next/router";
-import { PurchaseType } from "@prisma/client";
-import db from "@/core/db";
+import { useSession } from "next-auth/react";
 
-export default function Home(props: { showPromotionalPricing: boolean }) {
+export default function Home() {
   const router = useRouter();
+  // Redirect to login if not authenticated
+  useSession({
+    required: true,
+    onUnauthenticated() {
+      router.isReady && router.push("/login");
+    },
+  });
+
   const {
     data: projects,
     refetch: refetchProjects,
@@ -37,6 +42,12 @@ export default function Home(props: { showPromotionalPricing: boolean }) {
     {
       retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000), // 1s, 2s, 4s, 8s, 16s, 30s
     }
+  );
+
+  const { data: showPromotionalPricing } = useQuery(`promotionalPurchase`, () =>
+    axios
+      .get<boolean>("/api/payment/promotional")
+      .then((response) => response.data)
   );
 
   // If there are no projects created yet, show the uploader.
@@ -84,7 +95,7 @@ export default function Home(props: { showPromotionalPricing: boolean }) {
         <VStack spacing={10} width="100%">
           {projects?.map((project) => (
             <ProjectCard
-              showPromotionalPricing={props.showPromotionalPricing}
+              showPromotionalPricing={showPromotionalPricing}
               key={project.id}
               project={project}
               handleRefreshProjects={() => {
@@ -96,31 +107,4 @@ export default function Home(props: { showPromotionalPricing: boolean }) {
       </Box>
     </PageContainer>
   );
-}
-
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const session = await getSession({ req: context.req });
-
-  const hasPromotionalPurchase = await db.payment.findFirst({
-    where: {
-      userId: session?.user?.id,
-      purchaseType: PurchaseType.PROMOTION_STUDIO_PURCHASE,
-    },
-  });
-
-  if (!session) {
-    return {
-      redirect: {
-        permanent: false,
-        destination: "/login",
-      },
-      props: {},
-    };
-  }
-
-  return {
-    props: {
-      showPromotionalPricing: !hasPromotionalPurchase,
-    },
-  };
 }

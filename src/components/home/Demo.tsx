@@ -1,4 +1,4 @@
-import { Box, Flex, Image } from "@chakra-ui/react";
+import { Box, Divider, Flex, HStack, Image } from "@chakra-ui/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Pause, WindupChildren } from "windups";
@@ -48,17 +48,19 @@ const Demo = () => {
         borderColor="gray.200"
         display={"flex"}
       >
-        <Box mr={2}>Filter: </Box>
+        <HStack divider={<Divider orientation="vertical" borderWidth={2} />}>
+          <Box>Style</Box>
 
-        <MotionBox
-          key={prompts[step].label}
-          initial={{ y: -10, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 50, opacity: 0 }}
-          transition={{ duration: 0.3, delay: 0.2 }}
-        >
-          <p>{prompts[step].label}</p>
-        </MotionBox>
+          <MotionBox
+            key={prompts[step].label}
+            initial={{ y: -10, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 50, opacity: 0 }}
+            transition={{ duration: 0.3, delay: 0.2 }}
+          >
+            <p>{prompts[step].label}</p>
+          </MotionBox>
+        </HStack>
       </Box>
       <Flex justifyContent="space-between" mt={6} pr={6}>
         <Box width="100%" position="relative" ml={10}>
