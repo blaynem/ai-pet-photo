@@ -217,6 +217,12 @@ export type TrainingRequest = {
     save_interval?: number;
   };
   /**
+   * Training versions are via replicate
+   *
+   * https://replicate.com/blog/dreambooth-api#versions
+   */
+  trainer_version: string;
+  /**
    * a name to give your model on Replicate, in the form username/modelname. For example, bfirsh/bfirshbooth.
    * Replicate automatically creates the model for you if it doesn't exist yet.
    */
