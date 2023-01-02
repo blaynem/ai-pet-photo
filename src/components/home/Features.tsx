@@ -44,7 +44,7 @@ const Features = () => {
             photos
           </Item>
           <Item iconName="preview.svg" title="3. Generate">
-            Choose a <b>filter</b> to generate art of your pet!
+            Choose a <b>style</b> to generate art of your pet!
           </Item>
         </SimpleGrid>
       </Flex>

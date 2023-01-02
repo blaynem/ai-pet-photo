@@ -53,7 +53,7 @@ const BuyCredits = () => {
                     GENERATE_PHOTO_AMOUNT_PER_CREDIT}
                 </b>{" "}
                 images using up to <b>{FIFTY_CREDIT_PACKAGE.totalCredits}</b>{" "}
-                different filters
+                different styles
               </CustomListItem>
             </List>
           </>

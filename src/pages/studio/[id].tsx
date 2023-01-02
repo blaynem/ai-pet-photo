@@ -74,7 +74,7 @@ const StudioPage = ({ project }: IStudioPageProps) => {
         <Divider mt={4} mb={4} />
         {project.shots.length === 0 ? (
           <Box textAlign="center" fontSize="lg">
-            {`You haven't generated any shots yet. Select a filter and click generate to create!`}
+            {`You haven't generated any shots yet. Select a style and click generate to create!`}
           </Box>
         ) : (
           <ShotCardGrid projectId={project.id} shots={project.shots} />
