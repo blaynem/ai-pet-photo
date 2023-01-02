@@ -126,7 +126,7 @@ const ExamplePictures = () => {
         <Text p={3} textAlign="center">
           <i>
             As the saying goes, Quality in equals Quality out. We can only train
-            a studio as well as the pictures that are given to it.
+            a model as well as the pictures that are given to it.
           </i>
         </Text>
         {isMobile ? (
