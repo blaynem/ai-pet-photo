@@ -17,6 +17,8 @@ import { useQuery } from "react-query";
 import PageContainer from "@/components/layout/PageContainer";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
+import { useEffect } from "react";
+import ExamplePictures from "@/components/dashboard/ExamplePictures";
 import { ProjectsGetResponse } from "./api/projects";
 
 export default function Home() {
@@ -56,13 +58,14 @@ export default function Home() {
       <PageContainer>
         <Box>
           <Heading as="h2" mb={4} fontWeight="semibold" fontSize="2xl">
-            Create a new Studio
+            Create a new Model
           </Heading>
           <Uploader
             handleOnAdd={() => {
               refetchProjects();
             }}
           />
+          <ExamplePictures />
         </Box>
       </PageContainer>
     );
@@ -73,7 +76,7 @@ export default function Home() {
       <Box mt={10}>
         <Flex mb={4} align="center">
           <Heading as="h2" fontWeight="semibold" fontSize="2xl">
-            My Studios
+            My Models
           </Heading>
           <Spacer />
           <Button
@@ -88,7 +91,7 @@ export default function Home() {
         {isLoading && (
           <Center width="100%" textAlign="center">
             <Spinner mr={3} size="sm" speed="1s" />
-            <Text>Loading studios</Text>
+            <Text>Loading models</Text>
           </Center>
         )}
 

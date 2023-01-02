@@ -57,7 +57,7 @@ const FiltersGrid = ({
   onClick: (id: string) => void;
 }) => {
   if (loading) {
-    return <Text>Loading filters...</Text>;
+    return <Text>Loading styles...</Text>;
   }
   return (
     <Flex
@@ -68,7 +68,7 @@ const FiltersGrid = ({
     >
       <Box>
         {filters?.length === 0 && (
-          <Box>No filters available. There was a possible error.</Box>
+          <Box>No styles available. There was a possible error.</Box>
         )}
         <SimpleGrid columns={[3, 4]} spacing={1}>
           {filters?.map((filter) => (

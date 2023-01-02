@@ -98,7 +98,7 @@ const StudioPage: FC<StudioPageProps> = ({ projectId }) => {
             <Flex alignItems="center">
               <Box>
                 <Text fontSize="2xl" fontWeight="semibold">
-                  Studio <b>{project!.instanceName}</b>
+                  Model <b>{project!.instanceName}</b>
                 </Text>
                 <Text textTransform="capitalize" fontSize="sm">
                   {formatRelative(new Date(project!.createdAt), new Date())}
@@ -117,7 +117,7 @@ const StudioPage: FC<StudioPageProps> = ({ projectId }) => {
             <Divider mt={4} mb={4} />
             {project!.shots.length === 0 ? (
               <Box textAlign="center" fontSize="lg">
-                {`You haven't generated any shots yet. Select a filter and click generate to create!`}
+                {`You haven't generated any shots yet. Select a style and click generate to create!`}
               </Box>
             ) : (
               <ShotCardGrid projectId={project!.id} shots={project!.shots} />

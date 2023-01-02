@@ -71,7 +71,7 @@ const ProjectCard = ({
       <VStack spacing={4} alignItems="flex-start">
         <Box>
           <Text fontSize="2xl" fontWeight="semibold">
-            Studio <b>{project.name}</b>{" "}
+            Model <b>{project.name}</b>{" "}
           </Text>
           <Text textTransform="capitalize" fontSize="sm">
             {formatRelative(new Date(project.createdAt), new Date())}
@@ -92,7 +92,7 @@ const ProjectCard = ({
           <>
             <VStack width="100%" spacing={4}>
               <Box fontWeight="bold" fontSize="xl">
-                Your Studio is ready to be built!
+                Your Model is ready to be built!
               </Box>
               <AvatarGroup size="lg" max={10}>
                 {project.imageUrls.map((url) => (
@@ -128,7 +128,7 @@ const ProjectCard = ({
                     {`Looks like you haven't generated any images yet.`}
                   </Text>
                   <Text align={"center"}>
-                    <b>Go to your studio to add one !</b>
+                    <b>Go to your model to add one !</b>
                   </Text>
                 </Box>
               ) : (
@@ -146,7 +146,7 @@ const ProjectCard = ({
                 href={`/studio/${project.id}`}
                 as={Link}
               >
-                View my Studio
+                View {project.name}'s gallery
               </Button>
             </VStack>
           </Center>
@@ -158,7 +158,7 @@ const ProjectCard = ({
           <VStack spacing={2}>
             <Spinner size="xl" speed="2s" />
             <Text textAlign="center">
-              {`Building your pets custom studio takes a little bit of time.`}
+              {`Building your pets custom model takes a little bit of time.`}
             </Text>
             <Text textAlign="center">
               {`Check back ${

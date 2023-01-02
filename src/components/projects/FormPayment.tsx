@@ -89,11 +89,11 @@ const FormPayment = ({
       ) : (
         <VStack spacing={4}>
           <Box fontWeight="bold" fontSize="xl">
-            Your Studio is ready to be built!
+            Your Model is ready to be built!
           </Box>
           <List textAlign="left" spacing={1}>
             <PriceItem>
-              <b>1</b> Studio with a <b>custom trained pet model</b>
+              <b>1</b> custom <b> trained pet model</b>
             </PriceItem>
             {visibleStudioPackage.credits && (
               <PriceItem>

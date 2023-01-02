@@ -141,7 +141,7 @@ const Uploader = ({ handleOnAdd }: { handleOnAdd: () => void }) => {
         setUploadState("not_uploaded");
 
         toast({
-          title: "Studio created!",
+          title: "Model created!",
           duration: 3000,
           isClosable: true,
           position: "top-right",
@@ -153,7 +153,7 @@ const Uploader = ({ handleOnAdd }: { handleOnAdd: () => void }) => {
 
   const createProject = () => {
     if (projectName.length < 4) {
-      setErrorMessages(["Studio name must be at least 4 characters long"]);
+      setErrorMessages(["Model name must be at least 4 characters long"]);
       return;
     }
 
@@ -311,7 +311,7 @@ const Uploader = ({ handleOnAdd }: { handleOnAdd: () => void }) => {
               value={projectName}
               onChange={onProjectNameChange}
             />
-            <FormHelperText color="blackAlpha.600">Studio Name</FormHelperText>
+            <FormHelperText color="blackAlpha.600">Model Name</FormHelperText>
           </FormControl>
           <FormControl>
             <Select
@@ -344,7 +344,7 @@ const Uploader = ({ handleOnAdd }: { handleOnAdd: () => void }) => {
                 createProject();
               }}
             >
-              Create your Studio
+              Create your Model
             </Button>
           </Box>
         </SimpleGrid>

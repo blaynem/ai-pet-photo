@@ -52,7 +52,7 @@ const Pricing = () => {
           color="black"
           backgroundColor="brand.500"
         >
-          1 Studio{" "}
+          1 Model{" "}
           {STANDARD_STUDIO_PACKAGE.totalCredits
             ? `+ ${STANDARD_STUDIO_PACKAGE.totalCredits} credits`
             : ""}
@@ -67,13 +67,13 @@ const Pricing = () => {
             color="coolGray.400"
             fontSize="1.2rem"
           >
-            / studio
+            / model
           </Box>
         </Box>
 
         <List mt={2} mb={4} spacing={1}>
           <PriceItem>
-            <b>1</b> Studio with a <b>custom trained pet model</b>
+            1 custom trained <b> pet model</b>
           </PriceItem>
           {STANDARD_STUDIO_PACKAGE.totalCredits > 0 && (
             <PriceItem>
