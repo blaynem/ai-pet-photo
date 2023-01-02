@@ -1,5 +1,5 @@
-import { Box, Center, Spinner } from "@chakra-ui/react";
-import { Shot } from "@prisma/client";
+import { ShotsPick } from "@/pages/api/projects";
+import { Box, Center, Spinner, Text } from "@chakra-ui/react";
 import axios from "axios";
 import NextImage from "next/image";
 import { memo } from "react";
@@ -10,21 +10,21 @@ const ShotCard = ({
   shot: initialShot,
   projectId,
 }: {
-  shot: Omit<Shot, "prompt">;
+  shot: ShotsPick;
   projectId: string;
 }) => {
   const { data } = useQuery(
     `shot-${initialShot.id}`,
     () =>
       axios
-        .get<{ shot: Omit<Shot, "prompt"> }>(
+        .get<{ shot: ShotsPick }>(
           `/api/projects/${projectId}/predictions/${initialShot.id}`
         )
         .then((res) => res.data),
     {
       refetchInterval: (data) => (data?.shot.outputUrl ? false : 5000),
       refetchOnWindowFocus: false,
-      enabled: !initialShot.outputUrl,
+      enabled: !initialShot.outputUrl && initialShot.status !== "failed",
       initialData: { shot: initialShot },
     }
   );
@@ -33,6 +33,11 @@ const ShotCard = ({
 
   return (
     <Box key={shot.id} backgroundColor="gray.100" overflow="hidden">
+      {shot.status === "failed" && (
+        <Center height="100%" backgroundColor="gray.100">
+          <Text>{`Failed to Generate :(`}</Text>
+        </Center>
+      )}
       {shot.outputUrl ? (
         <Zoom>
           <NextImage

@@ -97,7 +97,7 @@ const FormPayment = ({
             </PriceItem>
             {visibleStudioPackage.credits && (
               <PriceItem>
-                <b>{visibleStudioPackage.credits}</b> credits{" "}
+                <b>{visibleStudioPackage.credits}</b> credits to{" "}
                 <b>create images with</b>
               </PriceItem>
             )}

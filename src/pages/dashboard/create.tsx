@@ -1,13 +1,18 @@
 import Uploader from "@/components/dashboard/Uploader";
 import { Box, Heading } from "@chakra-ui/react";
-import { GetServerSidePropsContext } from "next";
-import { getSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import PageContainer from "@/components/layout/PageContainer";
 import { useRouter } from "next/router";
 import ExamplePictures from "@/components/dashboard/ExamplePictures";
 
 export default function CreateProject() {
   const router = useRouter();
+  useSession({
+    required: true,
+    onUnauthenticated() {
+      router.isReady && router.push("/login");
+    },
+  });
 
   return (
     <PageContainer>
@@ -24,20 +29,4 @@ export default function CreateProject() {
       <ExamplePictures />
     </PageContainer>
   );
-}
-
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const session = await getSession({ req: context.req });
-
-  if (!session) {
-    return {
-      redirect: {
-        permanent: false,
-        destination: "/login",
-      },
-      props: {},
-    };
-  }
-
-  return { props: {} };
 }
