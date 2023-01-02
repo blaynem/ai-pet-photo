@@ -1,5 +1,5 @@
 import { EMAIL_ADDRESS_SUPPORT, TWITTER_LINK } from "@/core/constants";
-import { ProjectWithShots } from "@/pages/studio/[id]";
+import { ProjectWithShots } from "@/pages/api/projects";
 import {
   Avatar,
   AvatarGroup,
