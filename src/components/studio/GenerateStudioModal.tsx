@@ -16,14 +16,14 @@ import {
 import { Filters } from "@prisma/client";
 import axios from "axios";
 import { useState } from "react";
-import { useMutation, useQuery } from "react-query";
+import { useQuery } from "react-query";
 import { FaMagic } from "react-icons/fa";
-import {
-  PredictionsBody,
-  PredictionsResponse,
-} from "../../pages/api/projects/[id]/predictions";
+import { PredictionsBody } from "../../pages/api/projects/[id]/predictions";
 import PredictionFilter from "@/components/studio/PredictionFilter";
-import { GENERATE_PHOTO_AMOUNT_PER_CREDIT } from "@/core/constants";
+import {
+  GENERATE_PHOTO_AMOUNT_PER_CREDIT,
+  IMAGE_GENERATION_COST_IN_CREDITS,
+} from "@/core/constants";
 import { useSession } from "next-auth/react";
 import { RiCopperCoinFill } from "react-icons/ri";
 
@@ -38,11 +38,11 @@ interface GenerateProps {
   /**
    * Modal close callback
    */
-  onClose: () => void;
+  closeModal: () => void;
   /**
-   * Callback to be fired after a new prediction is generated
+   * Callback fired when user clicks on create
    */
-  onGenerate: () => void;
+  onCreateClick: (params: PredictionsBody) => void;
 }
 
 const FiltersGrid = ({
@@ -88,8 +88,8 @@ const FiltersGrid = ({
 const GenerateStudioModal = ({
   projectId,
   isOpen,
-  onClose,
-  onGenerate,
+  closeModal,
+  onCreateClick,
 }: GenerateProps) => {
   const session = useSession();
   const [selectedFilterId, setSelectedFilterId] = useState<string | null>(null);
@@ -101,21 +101,6 @@ const GenerateStudioModal = ({
       const { data } = await axios.get<PickFilters[]>(`/api/filters`);
 
       return data;
-    }
-  );
-
-  const { mutate: createPrediction } = useMutation(
-    "create-prediction",
-    (body: PredictionsBody) =>
-      axios.post<PredictionsResponse>(
-        `/api/projects/${projectId}/predictions`,
-        body
-      ),
-    {
-      onSuccess: () => {
-        onClose();
-        onGenerate();
-      },
     }
   );
 
@@ -134,7 +119,8 @@ const GenerateStudioModal = ({
       predictionAmount: GENERATE_PHOTO_AMOUNT_PER_CREDIT,
     };
 
-    createPrediction(body);
+    closeModal();
+    onCreateClick(body);
   };
 
   const handleFilterClick = (filterId: string) => {
@@ -155,12 +141,12 @@ const GenerateStudioModal = ({
       onClose={() => {
         setSelectedFilterId(null);
         setGenerateError(null);
-        onClose();
+        closeModal();
       }}
     >
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>{"Select a filter"}</ModalHeader>
+        <ModalHeader>Select Style</ModalHeader>
         <ModalBody>
           <FiltersGrid
             loading={filtersLoading}
@@ -168,6 +154,10 @@ const GenerateStudioModal = ({
             selectedFilterId={selectedFilterId}
             filters={filters!}
           />
+          <Text as="b" fontSize="sm">
+            Each style costs {IMAGE_GENERATION_COST_IN_CREDITS} credit, and will
+            generate {GENERATE_PHOTO_AMOUNT_PER_CREDIT} images.
+          </Text>
           {generateError && (
             <>
               <Divider mb={4} />

@@ -14,10 +14,10 @@ export const getNextAuthOptions = (req: NextApiRequest) =>
       EmailProvider({
         server: process.env.EMAIL_SERVER,
         from: process.env.EMAIL_FROM,
-        sendVerificationRequest: async ({ identifier: email, url }) => {
-          // Sending link to console for now, we comment this out and send to email later.
-          console.log("----sendVerificationRequest", { email, url });
-        },
+        // sendVerificationRequest: async ({ identifier: email, url }) => {
+        //   // Sending link to console for now, we comment this out and send to email later.
+        //   console.log("----sendVerificationRequest", { email, url });
+        // },
       }),
       GoogleProvider({
         clientId: process.env.GOOGLE_CLIENT_ID as string,
@@ -37,6 +37,7 @@ export const getNextAuthOptions = (req: NextApiRequest) =>
           where: { id: user.id },
           select: { credits: true },
         });
+
         session.user = { ...user, credits: dbUser?.credits! };
         return session;
       },

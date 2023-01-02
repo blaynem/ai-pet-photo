@@ -1,13 +1,16 @@
 import {
   PROMOTION_STUDIO_PACKAGE,
   STANDARD_STUDIO_PACKAGE,
+  STUDIO_COST_IN_CREDITS,
 } from "@/core/constants";
 import { priceInUSD } from "@/core/utils/prices";
+import { reloadSession } from "@/core/utils/reloadSession";
 import {
   Avatar,
   AvatarGroup,
   Box,
   Button,
+  HStack,
   List,
   Spinner,
   Text,
@@ -15,13 +18,13 @@ import {
 } from "@chakra-ui/react";
 import { Project } from "@prisma/client";
 import axios from "axios";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import { PriceItem } from "../home/Pricing";
-
-// TODO: Need to implement payment with credits as well
+import PayWithCreditsButton from "./PayWithCreditsButton";
 
 const FormPayment = ({
   project,
@@ -32,6 +35,7 @@ const FormPayment = ({
   handlePaymentSuccess: () => void;
   showPromotionalPricing?: boolean;
 }) => {
+  const { data: userSession } = useSession();
   const [waitingPayment, setWaitingPayment] = useState(false);
   const { query } = useRouter();
 
@@ -44,6 +48,23 @@ const FormPayment = ({
       enabled: waitingPayment,
       onSuccess: () => {
         handlePaymentSuccess();
+        // Reload the session now to get the potential new credits value
+        reloadSession();
+      },
+    }
+  );
+
+  const { mutate: payStudioWithCreditsMutation } = useMutation(
+    "studio-payment-credits",
+    () =>
+      axios.post(
+        `/api/credits/payment?ppi=${project.id}&userId=${userSession?.user.id}&purchaseId=STUDIO`
+      ),
+    {
+      onSuccess: () => {
+        handlePaymentSuccess();
+        // Reload the session now to get the potential new credits value
+        reloadSession();
       },
     }
   );
@@ -67,35 +88,39 @@ const FormPayment = ({
         </Box>
       ) : (
         <VStack spacing={4}>
-          <Box fontWeight="black" fontSize="3.5rem">
-            {priceInUSD(visibleStudioPackage.price)}
-            <Box
-              ml={1}
-              as="span"
-              fontWeight="500"
-              color="coolGray.400"
-              fontSize="1.2rem"
-            >
-              / model
-            </Box>
-          </Box>
-          {/* TODO: Change the phrasing of this stuff, i dont like it */}
           <Box fontWeight="bold" fontSize="xl">
-            Your Model is ready to be trained!
+            Your Model is ready to be built!
           </Box>
           <List textAlign="left" spacing={1}>
             <PriceItem>
-              <b>1</b> custom <b> trained model</b>
+              <b>1</b> custom <b> trained pet model</b>
             </PriceItem>
-            <PriceItem>images generation (512x512 resolution)</PriceItem>
+            {visibleStudioPackage.credits && (
+              <PriceItem>
+                <b>{visibleStudioPackage.credits}</b> credits to{" "}
+                <b>create images with</b>
+              </PriceItem>
+            )}
+            {visibleStudioPackage.bonusCredits && (
+              <PriceItem>
+                Comes with <b>{visibleStudioPackage.bonusCredits}</b> bonus
+                credits!
+              </PriceItem>
+            )}
           </List>
-          <Button
-            as={Link}
-            variant="brand"
-            href={`/api/checkout/session?ppi=${project.id}&packageId=${visibleStudioPackage.id}`}
-          >
-            Unlock Now - {priceInUSD(visibleStudioPackage.price)}
-          </Button>
+          <HStack>
+            <Button
+              as={Link}
+              variant="brand"
+              href={`/api/checkout/session?ppi=${project.id}&packageId=${visibleStudioPackage.id}`}
+            >
+              Unlock Now - {priceInUSD(visibleStudioPackage.price)}
+            </Button>
+            <PayWithCreditsButton
+              creditCost={STUDIO_COST_IN_CREDITS}
+              onPaymentApprove={payStudioWithCreditsMutation}
+            />
+          </HStack>
           <Box pt={4}>
             <AvatarGroup size="md" max={10}>
               {project.imageUrls.map((url) => (

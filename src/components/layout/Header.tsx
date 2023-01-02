@@ -1,19 +1,29 @@
 import { StripeCheckoutSession } from "@/pages/api/credits/check/[ppi]/[sessionId]";
-import { Button, Flex, HStack, Icon, IconButton, Text } from "@chakra-ui/react";
+import {
+  Button,
+  Flex,
+  HStack,
+  Icon,
+  Text,
+  Tooltip,
+  useDisclosure,
+} from "@chakra-ui/react";
 import axios, { AxiosResponse } from "axios";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
-import { IoIosFlash, IoIosPaw } from "react-icons/io";
+import { IoIosPaw } from "react-icons/io";
 import { RiCopperCoinFill } from "react-icons/ri";
 import { useQuery } from "react-query";
+import PurchaseCreditsModal from "../credits/CreditsModal";
 
 const Header = () => {
   const { data: session } = useSession();
   const router = useRouter();
   const [waitingPayment, setWaitingPayment] = React.useState(false);
   const [creditAmount, setCreditAmount] = React.useState(0);
+  const { isOpen, onClose, onOpen } = useDisclosure();
 
   useQuery(
     "check-payment",
@@ -75,16 +85,18 @@ const Header = () => {
         {session ? (
           <HStack>
             {session && (
-              <Button href="/credits" as={Link} variant="transparent" size="sm">
-                {creditAmount}
-                {"   "}
-                <Icon
-                  as={RiCopperCoinFill}
-                  boxSize="1.2em"
-                  color={"gold"}
-                  margin=".5em"
-                />
-              </Button>
+              <Tooltip hasArrow openDelay={300} label="Credits">
+                <Button onClick={onOpen} variant="transparent" size="sm" pr={0}>
+                  {creditAmount}
+                  {"   "}
+                  <Icon
+                    as={RiCopperCoinFill}
+                    boxSize="1.2em"
+                    color={"gold"}
+                    margin=".5em"
+                  />
+                </Button>
+              </Tooltip>
             )}
             <Button href="/dashboard" as={Link} variant="brand" size="sm">
               Dashboard
@@ -107,6 +119,7 @@ const Header = () => {
           </Button>
         )}
       </Flex>
+      <PurchaseCreditsModal isOpen={isOpen} onClose={onClose} />
     </Flex>
   );
 };

@@ -15,15 +15,16 @@ import { FaPlus } from "react-icons/fa";
 import axios from "axios";
 import { useQuery } from "react-query";
 import PageContainer from "@/components/layout/PageContainer";
-import { ProjectWithShots } from "./studio/[id]";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 import ExamplePictures from "@/components/dashboard/ExamplePictures";
+import { ProjectsGetResponse } from "./api/projects";
 
 export default function Home() {
   const router = useRouter();
-  const { data: session, status } = useSession({
+  // Redirect to login if not authenticated
+  useSession({
     required: true,
     onUnauthenticated() {
       router.isReady && router.push("/login");
@@ -38,8 +39,8 @@ export default function Home() {
     `projects`,
     () =>
       axios
-        .get<ProjectWithShots[]>("/api/projects")
-        .then((response) => response.data),
+        .get<ProjectsGetResponse>("/api/projects?shotAmount=10")
+        .then((response) => response.data.projects),
     {
       retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000), // 1s, 2s, 4s, 8s, 16s, 30s
     }

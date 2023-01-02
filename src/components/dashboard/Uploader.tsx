@@ -214,14 +214,11 @@ const Uploader = ({ handleOnAdd }: { handleOnAdd: () => void }) => {
             </Box>
             <Box fontWeight="bold" fontSize="lg">
               <Highlight
-                query="up to 15 selfies"
+                query="up to 15 images"
                 styles={{ bg: "brand.500", px: 1 }}
               >
-                Add up to 15 selfies of you.
+                Add up to 15 images of your pet.
               </Highlight>
-            </Box>
-            <Box>
-              Better with different angles : face and right/left profiles
             </Box>
 
             {errorMessages?.length !== 0 && (
