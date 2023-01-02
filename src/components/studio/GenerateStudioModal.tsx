@@ -116,7 +116,7 @@ const GenerateStudioModal = ({
       filterId: filter.id,
       filterName: filter.name,
       projectId,
-      predictionAmount: 1,
+      predictionAmount: GENERATE_PHOTO_AMOUNT_PER_CREDIT,
     };
 
     closeModal();
