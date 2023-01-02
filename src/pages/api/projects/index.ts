@@ -92,6 +92,7 @@ const handler = async (
       include: {
         shots: {
           orderBy: { createdAt: "desc" },
+          // We DO NOT want to return the prompt, NEVER select
           select: {
             createdAt: true,
             filterId: true,
