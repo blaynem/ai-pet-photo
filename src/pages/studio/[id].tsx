@@ -98,7 +98,7 @@ const StudioPage: FC<StudioPageProps> = ({ projectId }) => {
             <Flex alignItems="center">
               <Box>
                 <Text fontSize="2xl" fontWeight="semibold">
-                  Studio <b>{project!.instanceName}</b>
+                  Studio <b>{project!.name}</b>
                 </Text>
                 <Text textTransform="capitalize" fontSize="sm">
                   {formatRelative(new Date(project!.createdAt), new Date())}

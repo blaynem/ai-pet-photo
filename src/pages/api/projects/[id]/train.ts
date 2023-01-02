@@ -8,6 +8,12 @@ import replicateClient, {
 import { getRefinedInstanceClass } from "@/core/utils/predictions";
 import supabase from "@/core/clients/supabase";
 
+const STABLE_DIFFUSION_VERSIONS = {
+  "1.5": "cd3f925f7ab21afaef7d45224790eedbb837eeac40d22e8fefe015489ab644aa",
+  "2.1-base":
+    "d5e058608f43886b9620a8fbb1501853b8cbae4f45c857a014011c86ee614ffb",
+};
+
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const projectId = req.query.id as string;
   const session = await getSession({ req });
@@ -28,7 +34,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const instanceClass = getRefinedInstanceClass(project.instanceClass);
   // const numOfImages = getTrainCoefficient(project.imageUrls.length);
   // const MAX_NUM_STEPS = Math.min(2000, Math.min(numOfImages, MAX_IMAGES) * 80);
-  const MAX_NUM_STEPS = 2020; // Let's not get fancy, let's just set it to the standard.
+  const MAX_NUM_STEPS = 800; // Let's not get fancy, let's just set it to the standard.
 
   const { data: data_url } = supabase.storage
     .from(process.env.NEXT_PUBLIC_UPLOAD_BUCKET_NAME!)
@@ -49,14 +55,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       gradient_checkpointing: true,
       train_batch_size: 1,
       train_text_encoder: true,
-      // class_data: undefined, // Training data of the class image ex: 'dog' or 'person'
       // resolution: 512, // I don't know what resolution we're using rn
     },
-    model: `${process.env.REPLICATE_USERNAME}/${project.name}`,
+    trainer_version: STABLE_DIFFUSION_VERSIONS["1.5"],
+    // Model has to be lowercase
+    model: `${process.env.REPLICATE_USERNAME}/${project.name.toLowerCase()}`,
     webhook_completed: `${process.env.NEXTAUTH_URL}/api/webhooks/completed`,
   };
 
-  // $13.43 -> 20.02 = 6.59
   const responseReplicate = await replicateClient.post<TrainingResponse>(
     "/v1/trainings",
     trainingData,
