@@ -50,17 +50,17 @@ const PayWithCreditsButton: FC<PayWithCreditsButtonProps> = ({
       <PopoverContent>
         <PopoverArrow />
         <PopoverCloseButton />
-        <PopoverHeader>Confirmation!</PopoverHeader>
+        <PopoverHeader>Confirm</PopoverHeader>
         <PopoverBody>
-          Are you sure you want to continue with your action?
+          Approve spending {creditCost} credits to unlock this project?
         </PopoverBody>
         <PopoverFooter display="flex" justifyContent="flex-end">
           <ButtonGroup size="sm">
             <Button variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button colorScheme="red" onClick={handleApprovePayment}>
-              Apply
+            <Button colorScheme="green" onClick={handleApprovePayment}>
+              Approve
             </Button>
           </ButtonGroup>
         </PopoverFooter>
