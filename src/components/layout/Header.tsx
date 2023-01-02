@@ -1,11 +1,61 @@
-import { Button, Flex, HStack, Icon, Text } from "@chakra-ui/react";
+import { StripeCheckoutSession } from "@/pages/api/credits/check/[ppi]/[sessionId]";
+import {
+  Button,
+  Flex,
+  HStack,
+  Icon,
+  Text,
+  Tooltip,
+  useDisclosure,
+} from "@chakra-ui/react";
+import axios, { AxiosResponse } from "axios";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
-import React from "react";
-import { IoIosFlash } from "react-icons/io";
+import { useRouter } from "next/router";
+import React, { useEffect } from "react";
+import { IoIosPaw } from "react-icons/io";
+import { RiCopperCoinFill } from "react-icons/ri";
+import { useQuery } from "react-query";
+import PurchaseCreditsModal from "../credits/CreditsModal";
 
 const Header = () => {
   const { data: session } = useSession();
+  const router = useRouter();
+  const [waitingPayment, setWaitingPayment] = React.useState(false);
+  const [creditAmount, setCreditAmount] = React.useState(0);
+  const { isOpen, onClose, onOpen } = useDisclosure();
+
+  useQuery(
+    "check-payment",
+    () =>
+      axios.get(
+        `/api/credits/check/${router.query.ppi}/${router.query.session_id}`
+      ),
+    {
+      cacheTime: 0,
+      refetchInterval: 500,
+      enabled: waitingPayment,
+      onSuccess: (data: AxiosResponse<StripeCheckoutSession>) => {
+        setCreditAmount(data.data.total_credits!);
+        setWaitingPayment(false);
+        router.replace(router.asPath.split("?")[0], undefined, {
+          shallow: true,
+        });
+      },
+    }
+  );
+
+  useEffect(() => {
+    setCreditAmount(session?.user.credits || 0);
+  }, [session]);
+
+  useEffect(() => {
+    // `updateCredits` is required to be present in the stripe success_url to trigger this.
+    const { ppi, session_id, updateCredits } = router.query;
+    if (ppi && session_id && updateCredits) {
+      setWaitingPayment(true);
+    }
+  }, [router]);
 
   return (
     <Flex
@@ -27,12 +77,27 @@ const Header = () => {
           <Icon
             transition="200ms all"
             _groupHover={{ color: "brand.500" }}
-            as={IoIosFlash}
+            as={IoIosPaw}
+            marginRight={1}
           />
-          <Text>Photoshot.</Text>
+          <Text>PetPics</Text>
         </Flex>
         {session ? (
           <HStack>
+            {session && (
+              <Tooltip hasArrow openDelay={300} label="Credits">
+                <Button onClick={onOpen} variant="transparent" size="sm" pr={0}>
+                  {creditAmount}
+                  {"   "}
+                  <Icon
+                    as={RiCopperCoinFill}
+                    boxSize="1.2em"
+                    color={"gold"}
+                    margin=".5em"
+                  />
+                </Button>
+              </Tooltip>
+            )}
             <Button href="/dashboard" as={Link} variant="brand" size="sm">
               Dashboard
             </Button>
@@ -43,6 +108,7 @@ const Header = () => {
               onClick={() => {
                 signOut({ callbackUrl: "/" });
               }}
+              marginRight=".1rem"
             >
               Log out
             </Button>
@@ -53,6 +119,7 @@ const Header = () => {
           </Button>
         )}
       </Flex>
+      <PurchaseCreditsModal isOpen={isOpen} onClose={onClose} />
     </Flex>
   );
 };

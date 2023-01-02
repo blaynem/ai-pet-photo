@@ -2,16 +2,20 @@ import { NextApiRequest, NextApiResponse } from "next";
 import Stripe from "stripe";
 import db from "@/core/db";
 import { getPackageInfo } from "@/core/utils/getPackageInfo";
-import { PricingPackageId } from "@/core/constants";
 import { Prisma, PurchaseType } from "@prisma/client";
+import { PricingPackageId } from "@/core/constants";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2022-11-15",
 });
 
+export type StripeCheckoutSession = {
+  total_credits?: number;
+};
+
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse<StripeCheckoutSession>
 ) {
   const sessionId = req.query.sessionId as string;
   const ppi = req.query.ppi as string;
@@ -22,38 +26,19 @@ export default async function handler(
 
   const paymentsCreate: Prisma.PaymentCreateInput[] = [
     {
-      amount: selectedPackage?.credits!,
+      amount: selectedPackage?.totalCredits!,
       paid_amount: selectedPackage?.price!,
       stripePaymentId: session.id,
       purchaseType: selectedPackage?.purchaseType!,
     },
   ];
 
-  // If there are bonus credits, add them to the payments array
-  if (selectedPackage?.bonusCredits) {
-    paymentsCreate.push({
-      amount: selectedPackage?.bonusCredits,
-      paid_amount: 0,
-      stripePaymentId: session.id,
-      purchaseType: PurchaseType.PROMOTION_CREDIT_GIFT,
-    });
-  }
-
-  if (
-    session.payment_status === "paid" &&
-    session.metadata?.projectId === ppi
-  ) {
-    await db.user.update({
-      where: { id: session?.metadata?.userId },
+  if (session.payment_status === "paid" && session.metadata?.userId === ppi) {
+    const user = await db.user.update({
+      where: { id: session.metadata?.userId },
       data: {
         credits: {
-          increment: selectedPackage?.totalCredits || 0,
-        },
-        projects: {
-          update: {
-            where: { id: ppi },
-            data: { stripePaymentId: session.id },
-          },
+          increment: selectedPackage?.totalCredits,
         },
         payments: {
           create: paymentsCreate,
@@ -61,8 +46,8 @@ export default async function handler(
       },
     });
 
-    return res.status(200).json({ success: true });
+    return res.status(200).json({ total_credits: user.credits });
   }
 
-  return res.status(400).json({ success: false });
+  return res.status(400).json({});
 }

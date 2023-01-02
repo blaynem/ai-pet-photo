@@ -39,8 +39,6 @@ const handler = async (req: ProjectRequest, res: NextApiResponse) => {
         modelStatus: "not_created",
         instanceClass: instanceClass,
         instanceName: urlSlug(instanceName, { separator: "" }),
-        // TODO: Create the actual number of credits
-        credits: Number(process.env.NEXT_PUBLIC_STUDIO_SHOT_AMOUNT) || 50,
       },
     });
 

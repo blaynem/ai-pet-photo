@@ -3,22 +3,27 @@ import { extendTheme } from "@chakra-ui/react";
 const theme = extendTheme({
   colors: {
     brand: {
-      50: "#FFFFFF",
+      50: "#FFFFFFf",
       100: "#FFFFFF",
       200: "#FFFFFF",
       300: "#FFFFFF",
-      400: "#DEFFEE",
-      500: "#B5FFD9",
-      600: "#7DFFBC",
-      700: "#45FF9F",
-      800: "#0DFF83",
-      900: "#00D467",
+      400: "#e0f2fe",
+      500: "#bae6fd",
+      600: "#7dd3fc",
+      700: "#38bdf8",
+      800: "#0ea5e9",
+      900: "#0284c7",
+    },
+    accent: {
+      yellow: "#fffd77",
+      lightOrange: "#FBA77C",
+      purple: "#FF00FF",
     },
   },
   styles: {
     global: {
       body: {
-        bg: "#faf6f5",
+        bg: "#ebedff",
       },
     },
   },
