@@ -47,7 +47,7 @@ const Demo = () => {
         maxWidth={"20em"}
         marginX="auto"
         fontSize="md"
-        shadow="0 14px 40px 10px var(--chakra-colors-accent-lightOrange), 0 5px 10px -7px black"
+        shadow="0 5px 30px 0px var(--chakra-colors-accent-lightOrange),0 5px 10px -7px black"
         borderRadius="md"
         py={2}
         px={3}
