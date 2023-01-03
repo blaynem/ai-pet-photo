@@ -5,6 +5,7 @@ import NextImage from "next/image";
 import { memo } from "react";
 import Zoom from "react-medium-image-zoom";
 import { useQuery } from "react-query";
+import CustomZoomContent, { ZoomContentProps } from "./CustomZoomContent";
 
 const ShotCard = ({
   shot: initialShot,
@@ -39,7 +40,15 @@ const ShotCard = ({
         </Center>
       )}
       {shot.outputUrl ? (
-        <Zoom>
+        <Zoom
+          ZoomContent={(zoomContentProps) => (
+            <CustomZoomContent
+              // Type script being annoying, i'll figure it out later.
+              {...(zoomContentProps as unknown as ZoomContentProps)}
+              description={` Style: ${shot.filterName}`}
+            />
+          )}
+        >
           <NextImage
             alt={shot.filterName || "Stylized image of your pet"}
             src={shot.outputUrl}
