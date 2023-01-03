@@ -49,7 +49,7 @@ const Item = ({
           variant="brand"
           onClick={() =>
             router.push(
-              `/api/credits/session?ppi=${userId}&packageId=${pricingPackage.id}`
+              `/api/credits/session?ppi=${userId}&packageIds=${pricingPackage.id}`
             )
           }
         >

@@ -12,8 +12,16 @@ import {
   Button,
   HStack,
   List,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Spinner,
   Text,
+  useDisclosure,
   VStack,
 } from "@chakra-ui/react";
 import { Project } from "@prisma/client";
@@ -23,6 +31,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useMutation, useQuery } from "react-query";
+import AddCreditsToPurchaseModal from "../credits/AddCreditsToPurchaseModal";
 import { PriceItem } from "../home/Pricing";
 import PayWithCreditsButton from "./PayWithCreditsButton";
 
@@ -38,7 +47,7 @@ const FormPayment = ({
   const { data: userSession } = useSession();
   const [waitingPayment, setWaitingPayment] = useState(false);
   const { query } = useRouter();
-
+  const { isOpen, onOpen, onClose } = useDisclosure();
   useQuery(
     "check-payment",
     () => axios.get(`/api/checkout/check/${query.ppi}/${query.session_id}`),
@@ -109,13 +118,16 @@ const FormPayment = ({
             )}
           </List>
           <HStack>
-            <Button
-              as={Link}
-              variant="brand"
-              href={`/api/checkout/session?ppi=${project.id}&packageId=${visibleStudioPackage.id}`}
-            >
+            <Button variant="brand" onClick={onOpen}>
               Unlock Now - {priceInUSD(visibleStudioPackage.price)}
             </Button>
+            <AddCreditsToPurchaseModal
+              isOpen={isOpen}
+              onClose={onClose}
+              packageId={visibleStudioPackage.id}
+              projectId={project.id}
+              onOpen={onOpen}
+            />
             <PayWithCreditsButton
               creditCost={STUDIO_COST_IN_CREDITS}
               onPaymentApprove={payStudioWithCreditsMutation}
