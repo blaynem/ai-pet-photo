@@ -14,7 +14,6 @@ import { Project } from "@prisma/client";
 import axios from "axios";
 import { formatRelative } from "date-fns";
 import Link from "next/link";
-import { useState } from "react";
 import { HiArrowRight } from "react-icons/hi";
 import { IoIosFlash } from "react-icons/io";
 import { useMutation } from "react-query";
@@ -29,8 +28,6 @@ const ProjectCard = ({
   handleRefreshProjects: () => void;
   showPromotionalPricing?: boolean;
 }) => {
-  const [timeStarted, setTimeStarted] = useState<Date | null>(new Date());
-
   const {
     mutate: trainModel,
     isLoading: isModelLoading,
@@ -55,6 +52,13 @@ const ProjectCard = ({
   const isReady = project.modelStatus === "succeeded";
   const isTraining =
     project.modelStatus === "processing" || project.modelStatus === "pushing";
+
+  const checkBackTime = formatRelative(
+    new Date(new Date(project.createdAt).getTime() + 30 * 60 * 1000),
+    new Date(project.createdAt)
+  )
+    .replace("at", "around")
+    .replace("today", "");
 
   return (
     <Box
@@ -106,7 +110,6 @@ const ProjectCard = ({
                   isLoading={isModelLoading || isSuccess}
                   onClick={() => {
                     trainModel(project);
-                    setTimeStarted(new Date());
                   }}
                 >
                   Start Building
@@ -146,31 +149,33 @@ const ProjectCard = ({
                 href={`/studio/${project.id}`}
                 as={Link}
               >
-                View {project.name}'s gallery
+                {`View ${project.name}'s gallery`}
               </Button>
             </VStack>
           </Center>
         )}
       </VStack>
 
-      {isTraining && (
+      {isTraining && project.modelStatus !== "pushing" && (
         <Center marginX="auto">
           <VStack spacing={2}>
             <Spinner size="xl" speed="2s" />
             <Text textAlign="center">
               {`Building your pets custom model takes a little bit of time.`}
             </Text>
+            <Text textAlign="center">{`Check back ${checkBackTime}!`}</Text>
+          </VStack>
+        </Center>
+      )}
+
+      {project.modelStatus === "pushing" && (
+        <Center marginX="auto">
+          <VStack spacing={2}>
+            <Spinner size="xl" speed="2s" />
             <Text textAlign="center">
-              {`Check back ${
-                timeStarted &&
-                formatRelative(
-                  new Date(timeStarted.getTime() + 20 * 60 * 1000),
-                  new Date(timeStarted)
-                )
-                  .replace("at", "around")
-                  .replace("today", "")
-              }!`}
+              {`Putting the final touches on your custom model.`}
             </Text>
+            <Text textAlign="center">{`Check back ${checkBackTime}!`}</Text>
           </VStack>
         </Center>
       )}

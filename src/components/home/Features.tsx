@@ -37,11 +37,11 @@ const Features = () => {
       >
         <SimpleGrid mb={10} columns={{ base: 1, md: 3 }}>
           <Item iconName="publish.svg" title="1. Upload">
-            Upload <b>some pictures</b> of your pet with different angles
+            Upload <b>3-15</b> pictures of your pet with different angles.
           </Item>
           <Item iconName="square.svg" title="2. Wait">
-            Give your pet some loves while we build <b>a model</b> based on your
-            photos
+            Give your pet some loves while we teach our system to recognize
+            them.
           </Item>
           <Item iconName="preview.svg" title="3. Generate">
             Choose a <b>style</b> to generate art of your pet!
