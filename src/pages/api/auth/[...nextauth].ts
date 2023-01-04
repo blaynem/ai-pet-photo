@@ -6,6 +6,7 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import GoogleProvider from "next-auth/providers/google";
 import db from "@/core/db";
 import { getSession } from "next-auth/react";
+import { sendVerificationRequest } from "@/core/auth/email-template";
 
 export const getNextAuthOptions = (req: NextApiRequest) =>
   ({
@@ -14,10 +15,7 @@ export const getNextAuthOptions = (req: NextApiRequest) =>
       EmailProvider({
         server: process.env.EMAIL_SERVER,
         from: process.env.EMAIL_FROM,
-        // sendVerificationRequest: async ({ identifier: email, url }) => {
-        //   // Sending link to console for now, we comment this out and send to email later.
-        //   console.log("----sendVerificationRequest", { email, url });
-        // },
+        sendVerificationRequest,
       }),
       GoogleProvider({
         clientId: process.env.GOOGLE_CLIENT_ID as string,
