@@ -1,4 +1,8 @@
-import { EMAIL_ADDRESS_SUPPORT, TWITTER_LINK } from "@/core/constants";
+import {
+  EMAIL_ADDRESS_SUPPORT,
+  PUBLIC_BUCKET_URL,
+  TWITTER_LINK,
+} from "@/core/constants";
 import { ProjectWithShots } from "@/pages/api/projects";
 import {
   Avatar,
@@ -100,7 +104,7 @@ const ProjectCard = ({
               </Box>
               <AvatarGroup size="lg" max={10}>
                 {project.imageUrls.map((url) => (
-                  <Avatar key={url} src={url} />
+                  <Avatar key={url} src={`${PUBLIC_BUCKET_URL}/${url}`} />
                 ))}
               </AvatarGroup>
               <VStack spacing={2}>

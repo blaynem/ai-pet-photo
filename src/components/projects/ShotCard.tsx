@@ -1,5 +1,5 @@
 import { ShotsPick } from "@/pages/api/projects";
-import { Box, Center, Spinner, Text } from "@chakra-ui/react";
+import { AspectRatio, Box, Center, Spinner, Text } from "@chakra-ui/react";
 import axios from "axios";
 import NextImage from "next/image";
 import { memo } from "react";
@@ -36,7 +36,7 @@ const ShotCard = ({
     <Box key={shot.id} backgroundColor="gray.100" overflow="hidden">
       {shot.status === "failed" && (
         <Center height="100%" backgroundColor="gray.100">
-          <Text>{`Failed to Generate :(`}</Text>
+          <Text align="center">{`Failed to Generate :(`}</Text>
         </Center>
       )}
       {shot.outputUrl ? (
@@ -57,9 +57,11 @@ const ShotCard = ({
           />
         </Zoom>
       ) : (
-        <Center height="100%" backgroundColor="gray.100">
-          <Spinner speed="2s" color="gray.400" />
-        </Center>
+        <AspectRatio ratio={1} height={"100%"}>
+          <Center>
+            <Spinner speed="2s" color="gray.400" />
+          </Center>
+        </AspectRatio>
       )}
     </Box>
   );
