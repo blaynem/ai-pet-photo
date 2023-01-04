@@ -12,3 +12,5 @@ export const MODEL_NAME = "Model";
 
 export const TWITTER_LINK = "https://twitter.com/petpics_ai";
 export const EMAIL_ADDRESS_SUPPORT = "support@petpics.ai";
+
+export const PUBLIC_BUCKET_URL = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/model-images`;
