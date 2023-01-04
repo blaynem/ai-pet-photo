@@ -272,8 +272,21 @@ const Uploader = ({ handleOnAdd }: { handleOnAdd: () => void }) => {
                   fontSize="2rem"
                 />
               )}
+              {uploadState === "not_uploaded" && (
+                <Box
+                  onClick={() => handleRemoveFile(index)}
+                  position={"absolute"}
+                  top={1}
+                  right={1}
+                  _hover={{
+                    cursor: "pointer",
+                  }}
+                >
+                  <RiCloseCircleFill color="red" stroke="black" />
+                </Box>
+              )}
             </Center>
-            <Box position={"relative"}>
+            <Box>
               <Image
                 objectFit="cover"
                 borderRadius="xl"
@@ -287,17 +300,6 @@ const Uploader = ({ handleOnAdd }: { handleOnAdd: () => void }) => {
                   URL.revokeObjectURL(file.preview);
                 }}
               />
-              <Box
-                onClick={() => handleRemoveFile(index)}
-                position={"absolute"}
-                top={-1}
-                right={-1}
-                _hover={{
-                  cursor: "pointer",
-                }}
-              >
-                <RiCloseCircleFill color="red" stroke="black" />
-              </Box>
             </Box>
           </Box>
         ))}
