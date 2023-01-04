@@ -10,8 +10,8 @@ import { Project, Shot } from "@prisma/client";
 export type ShotsPick = Pick<
   Shot,
   | "createdAt"
-  | "filterId"
-  | "filterName"
+  | "styleId"
+  | "styleName"
   | "id"
   | "outputUrl"
   | "projectId"
@@ -95,8 +95,8 @@ const handler = async (
           // We DO NOT want to return the prompt, NEVER select
           select: {
             createdAt: true,
-            filterId: true,
-            filterName: true,
+            styleId: true,
+            styleName: true,
             id: true,
             outputUrl: true,
             projectId: true,

@@ -87,24 +87,36 @@ model Shot {
   updatedAt   DateTime @updatedAt
   projectId   String?
   outputUrl   String?
-  // This is the name of the filter that was used to generate this shot
-  filterName  String?
-  // The filter id that was used to generate this shot
-  filterId    String?
-  Filters     Filters? @relation(fields: [filterId], references: [id])
+  // This is the name of the style that was used to generate this shot
+  styleName   String?
+  // The style id that was used to generate this shot
+  styleId     String?
+  Styles      Styles?  @relation(fields: [styleId], references: [id])
   Project     Project? @relation(fields: [projectId], references: [id])
 }
 
-model Filters {
-  id         String   @id @default(uuid())
-  // Name of the filter
-  name       String
-  // What the filter's prompt string actually is
-  prompt     String
-  createdAt  DateTime @default(now())
-  exampleUrl String
-  // Whether or not this filter is enabled for users
-  enabled    Boolean  @default(true)
+model Styles {
+  id                  String    @id @default(uuid())
+  // Name of the Style
+  name                String
+  // Things we want to see in the output
+  prompt              String
+  // Things that we do NOT want to see in the output
+  negative_prompt     String?   @default("")
+  // Seed used to generate the style
+  seed                Int
+  // Prompt strength when using init image.
+  // 1.0 corresponds to full destruction of information in init image
+  prompt_strength     Float?    @default(0.8)
+  createdAt           DateTime? @default(now())
+  // Scale for classifier-free guidance (minimum: 1; maximum: 20)
+  guidance_scale      Float     @default(7.5)
+  // Number of denoising steps (minimum: 1; maximum: 500)
+  num_inference_steps Int       @default(30)
+  scheduler           String?   @default("DDIM")
+  example_image_url   String
+  // Whether or not this style is enabled for users
+  enabled             Boolean   @default(true)
 
   Shot Shot[]
 }

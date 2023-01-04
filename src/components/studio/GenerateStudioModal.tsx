@@ -13,13 +13,13 @@ import {
   SimpleGrid,
   Text,
 } from "@chakra-ui/react";
-import { Filters } from "@prisma/client";
+import { Styles } from "@prisma/client";
 import axios from "axios";
 import { useState } from "react";
 import { useQuery } from "react-query";
 import { FaMagic } from "react-icons/fa";
 import { PredictionsBody } from "../../pages/api/projects/[id]/predictions";
-import PredictionFilter from "@/components/studio/PredictionFilter";
+import PredictionStyle from "@/components/studio/PredictionStyle";
 import {
   GENERATE_PHOTO_AMOUNT_PER_CREDIT,
   IMAGE_GENERATION_COST_IN_CREDITS,
@@ -27,7 +27,7 @@ import {
 import { useSession } from "next-auth/react";
 import { RiCopperCoinFill } from "react-icons/ri";
 
-type PickFilters = Pick<Filters, "id" | "name" | "exampleUrl">;
+type PickStyles = Pick<Styles, "id" | "name" | "example_image_url">;
 
 interface GenerateProps {
   projectId: string;
@@ -45,15 +45,15 @@ interface GenerateProps {
   onCreateClick: (params: PredictionsBody) => void;
 }
 
-const FiltersGrid = ({
-  filters,
+const StylesGrid = ({
+  styles,
   loading,
-  selectedFilterId,
+  selectedStyleId,
   onClick,
 }: {
   loading: boolean;
-  filters: PickFilters[];
-  selectedFilterId: string | null;
+  styles: PickStyles[];
+  selectedStyleId: string | null;
   onClick: (id: string) => void;
 }) => {
   if (loading) {
@@ -67,15 +67,15 @@ const FiltersGrid = ({
       width="100%"
     >
       <Box>
-        {filters?.length === 0 && (
+        {styles?.length === 0 && (
           <Box>No styles available. There was a possible error.</Box>
         )}
         <SimpleGrid columns={[3, 4]} spacing={1}>
-          {filters?.map((filter) => (
-            <PredictionFilter
-              {...filter}
-              key={filter.id}
-              selected={selectedFilterId === filter.id}
+          {styles?.map((style) => (
+            <PredictionStyle
+              {...style}
+              key={style.id}
+              selected={selectedStyleId === style.id}
               onClick={onClick}
             />
           ))}
@@ -92,29 +92,29 @@ const GenerateStudioModal = ({
   onCreateClick,
 }: GenerateProps) => {
   const session = useSession();
-  const [selectedFilterId, setSelectedFilterId] = useState<string | null>(null);
+  const [selectedStyleId, setSelectedStyleId] = useState<string | null>(null);
   const [generateError, setGenerateError] = useState<string | null>(null);
 
-  const { data: filters, isLoading: filtersLoading } = useQuery(
-    "fetchFilters",
+  const { data: styles, isLoading: stylesLoading } = useQuery(
+    "fetch-styles",
     async () => {
-      const { data } = await axios.get<PickFilters[]>(`/api/filters`);
+      const { data } = await axios.get<PickStyles[]>(`/api/styles`);
 
       return data;
     }
   );
 
-  // Generate a new prediction only if a filter is selected
+  // Generate a new prediction only if a style is selected
   const generateClick = () => {
-    const filter = filters?.find((filter) => filter.id === selectedFilterId);
-    if (!selectedFilterId || !filter) {
-      setGenerateError("Must select a filter");
+    const style = styles?.find((s) => s.id === selectedStyleId);
+    if (!selectedStyleId || !style) {
+      setGenerateError("Must select a style");
       return;
     }
 
     const body: PredictionsBody = {
-      filterId: filter.id,
-      filterName: filter.name,
+      styleId: style.id,
+      styleName: style.name,
       projectId,
       predictionAmount: GENERATE_PHOTO_AMOUNT_PER_CREDIT,
     };
@@ -123,13 +123,13 @@ const GenerateStudioModal = ({
     onCreateClick(body);
   };
 
-  const handleFilterClick = (filterId: string) => {
-    if (filterId === selectedFilterId) {
-      setSelectedFilterId(null);
+  const handleStyleClick = (styleId: string) => {
+    if (styleId === selectedStyleId) {
+      setSelectedStyleId(null);
       return;
     }
 
-    setSelectedFilterId(filterId);
+    setSelectedStyleId(styleId);
     setGenerateError(null);
   };
 
@@ -139,7 +139,7 @@ const GenerateStudioModal = ({
       size="xl"
       isOpen={isOpen}
       onClose={() => {
-        setSelectedFilterId(null);
+        setSelectedStyleId(null);
         setGenerateError(null);
         closeModal();
       }}
@@ -148,11 +148,11 @@ const GenerateStudioModal = ({
       <ModalContent>
         <ModalHeader>Select Style</ModalHeader>
         <ModalBody>
-          <FiltersGrid
-            loading={filtersLoading}
-            onClick={handleFilterClick}
-            selectedFilterId={selectedFilterId}
-            filters={filters!}
+          <StylesGrid
+            loading={stylesLoading}
+            onClick={handleStyleClick}
+            selectedStyleId={selectedStyleId}
+            styles={styles!}
           />
           <Text as="b" fontSize="sm">
             Each style costs {IMAGE_GENERATION_COST_IN_CREDITS} credit, and will

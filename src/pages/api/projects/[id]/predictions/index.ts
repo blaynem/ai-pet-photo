@@ -7,8 +7,8 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
 
 export interface PredictionsBody {
-  filterId: string;
-  filterName: string;
+  styleId: string;
+  styleName: string;
   projectId: string;
   /**
    * Amount of predictions to make
@@ -30,7 +30,7 @@ const handler = async (
   res: NextApiResponse<PredictionsResponse>
 ) => {
   try {
-    const { filterId, filterName, projectId, predictionAmount } = req.body;
+    const { styleId, styleName, projectId, predictionAmount } = req.body;
     const session = await getSession({ req });
 
     if (!session?.user) {
@@ -51,13 +51,13 @@ const handler = async (
       where: { id: projectId, userId: session.user.id },
     });
 
-    // Fetch the filter from the database
-    const filter = await db.filters.findFirst({
-      where: { id: filterId },
+    // Fetch the style from the database
+    const style = await db.styles.findFirst({
+      where: { id: styleId },
     });
 
     // replace the instance name and class in the prompt with the actual values
-    const prompt = filter!.prompt
+    const prompt = style!.prompt
       .replaceAll("{instanceName}", project.instanceName)
       .replaceAll("{instanceClass}", project.instanceClass);
 
@@ -85,8 +85,8 @@ const handler = async (
       replicateId: data.id,
       status: "starting",
       projectId: project.id,
-      filterId,
-      filterName,
+      styleId,
+      styleName,
     }));
 
     const shots = await db.$transaction(

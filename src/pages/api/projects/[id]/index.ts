@@ -7,8 +7,8 @@ type ProjectPick = Pick<Project, "id" | "name" | "instanceName" | "createdAt">;
 type ShotsPick = Pick<
   Shot,
   | "createdAt"
-  | "filterId"
-  | "filterName"
+  | "styleId"
+  | "styleName"
   | "id"
   | "outputUrl"
   | "projectId"
@@ -51,8 +51,8 @@ const handler = async (
             // Not selecting the `prompt` so user doesn't have info on that.
             prompt: false,
             createdAt: true,
-            filterId: true,
-            filterName: true,
+            styleId: true,
+            styleName: true,
             id: true,
             outputUrl: true,
             projectId: true,

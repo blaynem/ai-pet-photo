@@ -45,12 +45,12 @@ const ShotCard = ({
             <CustomZoomContent
               // Type script being annoying, i'll figure it out later.
               {...(zoomContentProps as unknown as ZoomContentProps)}
-              description={` Style: ${shot.filterName}`}
+              description={` Style: ${shot.styleName}`}
             />
           )}
         >
           <NextImage
-            alt={shot.filterName || "Stylized image of your pet"}
+            alt={shot.styleName || "Stylized image of your pet"}
             src={shot.outputUrl}
             width="512"
             height="512"

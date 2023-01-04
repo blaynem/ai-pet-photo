@@ -10,17 +10,17 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   if (req.method === "GET") {
-    const filters = await db.filters.findMany({
+    const styles = await db.styles.findMany({
       orderBy: { name: "desc" },
     });
 
-    // Remove the prompt from the filter
-    const parsedFilters = filters.map((filter) => {
-      const { prompt, ...rest } = filter;
+    // Remove the prompt from the style
+    const parsedStyles = styles.map((style) => {
+      const { prompt, ...rest } = style;
       return rest;
     });
 
-    return res.json(parsedFilters);
+    return res.json(parsedStyles);
   }
 };
 
