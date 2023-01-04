@@ -1,4 +1,5 @@
 import {
+  PricingPackage,
   PROMOTION_STUDIO_PACKAGE,
   STANDARD_STUDIO_PACKAGE,
   STUDIO_COST_IN_CREDITS,
@@ -48,6 +49,7 @@ const FormPayment = ({
   const [waitingPayment, setWaitingPayment] = useState(false);
   const { query } = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const router = useRouter();
   useQuery(
     "check-payment",
     () => axios.get(`/api/checkout/check/${query.ppi}/${query.session_id}`),
@@ -85,6 +87,15 @@ const FormPayment = ({
   const visibleStudioPackage = showPromotionalPricing
     ? PROMOTION_STUDIO_PACKAGE
     : STANDARD_STUDIO_PACKAGE;
+
+  const handlePurchase = (packages: PricingPackage[]) => {
+    router.isReady &&
+      router.push(
+        `/api/checkout/session?ppi=${project.id}&packageIds=${packages
+          .map((pack: PricingPackage) => pack.id)
+          .join(",")}`
+      );
+  };
 
   return (
     <Box textAlign="center" width="100%">
@@ -124,9 +135,9 @@ const FormPayment = ({
             <AddCreditsToPurchaseModal
               isOpen={isOpen}
               onClose={onClose}
-              packageId={visibleStudioPackage.id}
-              projectId={project.id}
+              handlePurchase={handlePurchase}
               onOpen={onOpen}
+              pricePack={visibleStudioPackage}
             />
             <PayWithCreditsButton
               creditCost={STUDIO_COST_IN_CREDITS}

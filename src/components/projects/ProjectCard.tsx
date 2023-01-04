@@ -6,6 +6,8 @@ import {
   Box,
   Button,
   Center,
+  Icon,
+  IconButton,
   Spinner,
   Text,
   VStack,
@@ -17,6 +19,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { HiArrowRight } from "react-icons/hi";
 import { IoIosFlash } from "react-icons/io";
+import { MdDelete } from "react-icons/md";
 import { useMutation } from "react-query";
 import FormPayment from "./FormPayment";
 
@@ -56,6 +59,11 @@ const ProjectCard = ({
   const isTraining =
     project.modelStatus === "processing" || project.modelStatus === "pushing";
 
+  const handleDeleteStudio = async () => {
+    await axios.delete(`/api/projects/${project.id}`);
+    handleRefreshProjects();
+  };
+
   return (
     <Box
       overflow="hidden"
@@ -69,10 +77,21 @@ const ProjectCard = ({
       shadow="lg"
     >
       <VStack spacing={4} alignItems="flex-start">
-        <Box>
-          <Text fontSize="2xl" fontWeight="semibold">
-            Model <b>{project.name}</b>{" "}
-          </Text>
+        <Box width={"100%"}>
+          <Box justifyContent={"space-between"} display={"flex"} width="100%">
+            <Text fontSize="2xl" fontWeight="semibold">
+              Model <b>{project.name}</b>{" "}
+            </Text>
+            {isWaitingPayment && (
+              <IconButton
+                alignSelf={"flex-end"}
+                onClick={handleDeleteStudio}
+                icon={<Icon as={MdDelete} />}
+                aria-label={""}
+              />
+            )}
+          </Box>
+
           <Text textTransform="capitalize" fontSize="sm">
             {formatRelative(new Date(project.createdAt), new Date())}
           </Text>

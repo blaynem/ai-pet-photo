@@ -69,17 +69,17 @@ const GoodPictures = () => {
       </Heading>
       <SimpleGrid columns={1}>
         <ImageCard
-          imageUrl="/teddyLog.jpg"
+          imageUrl="/pics/teddyLog.jpg"
           title="Good lighting"
           description="Good lighting allows the AI to see features of the subject more clearly"
         />
         <ImageCard
-          imageUrl="/teddyGrass.jpg"
+          imageUrl="/pics/teddyGrass.jpg"
           title="Plain background"
           description="Focused with plain background and good contrast"
         />
         <ImageCard
-          imageUrl="/teddyAngle.jpg"
+          imageUrl="/pics/teddyAngle.jpg"
           title="Multiple Angles"
           description="Good angles allow the AI to see the subject more clearly"
         />
@@ -96,17 +96,17 @@ const BadPictures = () => {
       </Heading>
       <SimpleGrid columns={1}>
         <ImageCard
-          imageUrl="/vinceLight.jpg"
+          imageUrl="/pics/vinceLight.jpg"
           title="Poor lighting"
           description="Bad lighting makes it hard for the AI to see features of the subject"
         />
         <ImageCard
-          imageUrl="/vinceLight2.jpg"
+          imageUrl="/pics/vinceLight2.jpg"
           title="Busy background"
           description="A busy background makes it hard for the AI to focus on the subject"
         />
         <ImageCard
-          imageUrl="/WeirdAngleObstruction.jpg"
+          imageUrl="/pics/vinceAngle.jpg"
           title="Poor Angles"
           description="Poor angles make it hard for the AI to see the subject"
         />

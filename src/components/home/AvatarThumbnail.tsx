@@ -1,4 +1,4 @@
-import { Box, BoxProps } from "@chakra-ui/react";
+import { Box, BoxProps, ScaleFade } from "@chakra-ui/react";
 import Image from "next/image";
 import React from "react";
 

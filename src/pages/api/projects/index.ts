@@ -124,6 +124,26 @@ const handler = async (
 
     return res.json({ projects });
   }
+
+  // handle delete method and delete uploaded photos
+  if (req.method === "DELETE") {
+    const { projectId } = req.query;
+
+    const project = await db.project.findUnique({
+      where: { id: projectId as string },
+      select: { userId: true },
+    });
+
+    if (project?.userId !== session.user.id) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+
+    await db.project.delete({
+      where: { id: projectId as string },
+    });
+    // todo: delete uploaded photos
+    return res.json({ message: "Project deleted" });
+  }
 };
 
 export default handler;

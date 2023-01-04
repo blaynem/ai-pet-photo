@@ -206,7 +206,13 @@ const Uploader = ({ handleOnAdd }: { handleOnAdd: () => void }) => {
         >
           <input {...getInputProps()} />
           <Box mb={4} position="relative">
-            <AvatarsPlaceholder />
+            <AvatarsPlaceholder
+              imageUrls={[
+                "/pics/teddyGrass.jpg",
+                "/pics/tedOnABed.jpg",
+                "/pics/teddyLog.jpg",
+              ]}
+            />
           </Box>
           <VStack textAlign="center" spacing={1}>
             <Box fontWeight="bold" fontSize="2xl">

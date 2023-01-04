@@ -1,11 +1,9 @@
-import { PricingPackage } from "./../../../../../../core/constants/pricing-packages";
+import { PricingPackage } from "@/core/constants/pricing-packages";
 import { NextApiRequest, NextApiResponse } from "next";
 import Stripe from "stripe";
 import db from "@/core/db";
 import { getPackageInfo } from "@/core/utils/getPackageInfo";
-import { PricingPackageId } from "@/core/constants";
 import { Prisma, PurchaseType } from "@prisma/client";
-import { PackageId } from "typescript";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2022-11-15",
