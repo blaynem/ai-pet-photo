@@ -1,6 +1,5 @@
 import Features from "@/components/home/Features";
 import Hero from "@/components/home/Hero";
-import Pricing from "@/components/home/Pricing";
 import { Flex } from "@chakra-ui/react";
 
 export default function Home() {
