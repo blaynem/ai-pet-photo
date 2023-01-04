@@ -25,15 +25,17 @@ const CustomZoomContent: FC<CustomZoomContentProps> = ({
   img,
   description,
 }) => {
-  const showDescription = modalState === "LOADED" || modalState === "LOADING";
+  // If we don't have this check, the unzoom button / description will render
+  // before the modals transition is complete.
+  const modalLoaded = modalState === "LOADED";
 
   return (
     <>
-      {buttonUnzoom}
+      {modalLoaded && buttonUnzoom}
 
       <Box>
         {img}
-        {showDescription && (
+        {modalLoaded && (
           <Text align={"center"} fontWeight="light" fontSize={"2em"}>
             {description}
           </Text>
