@@ -1,4 +1,5 @@
 import { FETCH_FILTERS_QUERY, fetchFilters } from "@/core/queries/filters";
+import { getStylesUrl } from "@/core/utils/getStylesUrl";
 import {
   AspectRatio,
   Box,
@@ -40,7 +41,7 @@ const StylesDisplay = () => {
             <Image
               borderRadius="lg"
               alt={filter.name || "Stylized image of your pet"}
-              src={filter.exampleUrl}
+              src={getStylesUrl(filter.exampleUrl)}
               fallback={
                 <AspectRatio ratio={1} height={"100%"}>
                   <Center>

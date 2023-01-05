@@ -2,6 +2,7 @@ import React from "react";
 import { Box, Text } from "@chakra-ui/react";
 import { Filters } from "@prisma/client";
 import NextImage from "next/image";
+import { getStylesUrl } from "@/core/utils/getStylesUrl";
 
 /**
  * The thumbnail representation of the prediction filter card in the model page.
@@ -25,7 +26,12 @@ const PredictionFilter = ({
       boxShadow={selected ? "lg" : "none"}
       cursor="pointer"
     >
-      <NextImage alt={name} src={exampleUrl} width={512} height={512} />
+      <NextImage
+        alt={name}
+        src={getStylesUrl(exampleUrl)}
+        width={512}
+        height={512}
+      />
       <Text fontSize="sm">{name}</Text>
     </Box>
   );
