@@ -25,8 +25,10 @@ const StylesDisplay = () => {
   );
   return (
     <Box>
-      <Heading mb={8}>Available Styles (Updated weekly!)</Heading>
-      <SimpleGrid columns={[4, 6]} spacing={[1, 2]}>
+      <Heading size={"lg"} mb={4}>
+        Available Styles (Updated weekly!)
+      </Heading>
+      <SimpleGrid columns={[3, 4, 6, 10]} spacing={[1, 2]}>
         {filters?.map((filter) => (
           <Box
             key={filter.name}
