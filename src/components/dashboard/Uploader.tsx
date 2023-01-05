@@ -23,6 +23,7 @@ import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { MdCheckCircle, MdCloud } from "react-icons/md";
+import { RiCloseCircleFill } from "react-icons/ri";
 import { useMutation } from "react-query";
 import AvatarsPlaceholder from "../home/AvatarsPlaceholder";
 import ErrorMessages, { ErrorMessageHeader } from "./ErrorMessages";
@@ -99,11 +100,23 @@ const Uploader = ({ handleOnAdd }: { handleOnAdd: () => void }) => {
     },
   });
 
+  // Remove file from the currently uploaded list
+  const handleRemoveFile = (index: number) => {
+    const newFiles = [...files];
+    newFiles.splice(index, 1);
+    setFiles(newFiles);
+  };
+
   const handleUpload = async () => {
     const filesToUpload = Array.from(files);
     setUploadState("uploading");
 
     try {
+      // If there are less than 3 photos, throw an error
+      if (filesToUpload.length < 3) {
+        throw new Error("You must upload at least 3 images");
+      }
+
       for (let index = 0; index < filesToUpload.length; index++) {
         const file = await resizeImage(filesToUpload[index]);
 
@@ -119,10 +132,10 @@ const Uploader = ({ handleOnAdd }: { handleOnAdd: () => void }) => {
       }
 
       setUploadState("uploaded");
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
       setUploadState("not_uploaded");
-      setErrorMessages(["Something went wrong, please try again"]);
+      setErrorMessages([error?.message || "An error occured"]);
     }
   };
 
@@ -220,10 +233,10 @@ const Uploader = ({ handleOnAdd }: { handleOnAdd: () => void }) => {
             </Box>
             <Box fontWeight="bold" fontSize="lg">
               <Highlight
-                query="up to 15 images"
+                query="3-15 images"
                 styles={{ bg: "brand.500", px: 1 }}
               >
-                Add up to 15 images of your pet.
+                Add 3-15 images of your pet.
               </Highlight>
             </Box>
 
@@ -265,20 +278,35 @@ const Uploader = ({ handleOnAdd }: { handleOnAdd: () => void }) => {
                   fontSize="2rem"
                 />
               )}
+              {uploadState === "not_uploaded" && (
+                <Box
+                  onClick={() => handleRemoveFile(index)}
+                  position={"absolute"}
+                  top={1}
+                  right={1}
+                  _hover={{
+                    cursor: "pointer",
+                  }}
+                >
+                  <RiCloseCircleFill color="red" stroke="black" />
+                </Box>
+              )}
             </Center>
-            <Image
-              objectFit="cover"
-              borderRadius="xl"
-              border="4px solid white"
-              shadow="xl"
-              alt={file.name}
-              width="7rem"
-              height="7rem"
-              src={file.preview}
-              onLoad={() => {
-                URL.revokeObjectURL(file.preview);
-              }}
-            />
+            <Box>
+              <Image
+                objectFit="cover"
+                borderRadius="xl"
+                border="4px solid white"
+                shadow="xl"
+                alt={file.name}
+                width="7rem"
+                height="7rem"
+                src={file.preview}
+                onLoad={() => {
+                  URL.revokeObjectURL(file.preview);
+                }}
+              />
+            </Box>
           </Box>
         ))}
       </Flex>

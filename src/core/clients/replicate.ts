@@ -5,7 +5,7 @@ import axios, { AxiosResponse } from "axios";
  *
  * Inputs here: https://replicate.com/replicate/dreambooth/api#inputs
  */
-type TrainingRequest = {
+export type TrainingRequest = {
   /**
    * All of these inputs are the replicate/dreambooth inputs specifically.
    */
@@ -210,7 +210,18 @@ type TrainingRequest = {
      * "Max gradient norm.
      */
     max_grad_norm?: number;
+
+    /**
+     * TBD: Unsure if this actually works on the replicate api, or if its just a dreambooth thing.
+     */
+    save_interval?: number;
   };
+  /**
+   * Training versions are via replicate
+   *
+   * https://replicate.com/blog/dreambooth-api#versions
+   */
+  trainer_version: string;
   /**
    * a name to give your model on Replicate, in the form username/modelname. For example, bfirsh/bfirshbooth.
    * Replicate automatically creates the model for you if it doesn't exist yet.
@@ -242,7 +253,7 @@ export type TrainingResponse = {
   id: string;
   input: any;
   model: string;
-  status: "starting" | "pushing" | "succeeded";
+  status: "starting" | "pushing" | "queued" | "succeeded";
   webhook_completed: string;
   version: string;
   logs: any;

@@ -1,10 +1,11 @@
 import { ShotsPick } from "@/pages/api/projects";
-import { Box, Center, Spinner, Text } from "@chakra-ui/react";
+import { AspectRatio, Box, Center, Spinner, Text } from "@chakra-ui/react";
 import axios from "axios";
 import NextImage from "next/image";
 import { memo } from "react";
 import Zoom from "react-medium-image-zoom";
 import { useQuery } from "react-query";
+import CustomZoomContent, { ZoomContentProps } from "./CustomZoomContent";
 
 const ShotCard = ({
   shot: initialShot,
@@ -35,11 +36,19 @@ const ShotCard = ({
     <Box key={shot.id} backgroundColor="gray.100" overflow="hidden">
       {shot.status === "failed" && (
         <Center height="100%" backgroundColor="gray.100">
-          <Text>{`Failed to Generate :(`}</Text>
+          <Text align="center">{`Failed to Generate :(`}</Text>
         </Center>
       )}
       {shot.outputUrl ? (
-        <Zoom>
+        <Zoom
+          ZoomContent={(zoomContentProps) => (
+            <CustomZoomContent
+              // Type script being annoying, i'll figure it out later.
+              {...(zoomContentProps as unknown as ZoomContentProps)}
+              description={` Style: ${shot.filterName}`}
+            />
+          )}
+        >
           <NextImage
             alt={shot.filterName || "Stylized image of your pet"}
             src={shot.outputUrl}
@@ -48,9 +57,11 @@ const ShotCard = ({
           />
         </Zoom>
       ) : (
-        <Center height="100%" backgroundColor="gray.100">
-          <Spinner speed="2s" color="gray.400" />
-        </Center>
+        <AspectRatio ratio={1} height={"100%"}>
+          <Center>
+            <Spinner speed="2s" color="gray.400" />
+          </Center>
+        </AspectRatio>
       )}
     </Box>
   );

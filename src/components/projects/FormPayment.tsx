@@ -33,8 +33,8 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useMutation, useQuery } from "react-query";
 import AddCreditsToPurchaseModal from "../credits/AddCreditsToPurchaseModal";
-import { PriceItem } from "../home/Pricing";
 import PayWithCreditsButton from "./PayWithCreditsButton";
+import { PriceItem } from "./PricingItem";
 
 const FormPayment = ({
   project,

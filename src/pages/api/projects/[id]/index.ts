@@ -3,7 +3,7 @@ import { Project, Shot } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
 
-type ProjectPick = Pick<Project, "id" | "instanceName" | "createdAt">;
+type ProjectPick = Pick<Project, "id" | "name" | "instanceName" | "createdAt">;
 type ShotsPick = Pick<
   Shot,
   | "createdAt"
@@ -44,9 +44,12 @@ const handler = async (
         createdAt: true,
         id: true,
         instanceName: true,
+        name: true,
+        replicateModelId: true,
         shots: {
-          // Not selecting the `prompt` so user doesn't have info on that.
           select: {
+            // Not selecting the `prompt` so user doesn't have info on that.
+            prompt: false,
             createdAt: true,
             filterId: true,
             filterName: true,
