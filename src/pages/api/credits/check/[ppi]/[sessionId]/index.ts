@@ -2,8 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import Stripe from "stripe";
 import db from "@/core/db";
 import { getPackageInfo } from "@/core/utils/getPackageInfo";
-import { Prisma, PurchaseType } from "@prisma/client";
-import { PricingPackageId } from "@/core/constants";
+import { Prisma } from "@prisma/client";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2022-11-15",
