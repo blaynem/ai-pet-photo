@@ -46,6 +46,7 @@ export function html(params: { url: string; host: string; theme: Theme }) {
   };
 
   return `
+<html lang="en">
 <body style="background: ${color.background};">
   <table width="100%" border="0" cellspacing="20" cellpadding="0"
     style="background: ${color.mainBackground}; max-width: 600px; margin: auto; border-radius: 10px;">
@@ -75,6 +76,7 @@ export function html(params: { url: string; host: string; theme: Theme }) {
     </tr>
   </table>
 </body>
+</html>
 `;
 }
 
