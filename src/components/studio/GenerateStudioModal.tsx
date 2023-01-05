@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Divider,
   Flex,
   Icon,
   Modal,
@@ -71,7 +70,22 @@ const FiltersGrid = ({
         {filters?.length === 0 && (
           <Box>No styles available. There was a possible error.</Box>
         )}
-        <SimpleGrid columns={[3, 4]} spacing={1}>
+        <SimpleGrid
+          px={4}
+          height={"100%"}
+          maxH={["sm", "lg"]}
+          overflow="auto"
+          columns={[3, 4]}
+          spacing={1}
+        >
+          {filters?.map((filter) => (
+            <PredictionFilter
+              {...filter}
+              key={filter.id}
+              selected={selectedFilterId === filter.id}
+              onClick={onClick}
+            />
+          ))}
           {filters?.map((filter) => (
             <PredictionFilter
               {...filter}
@@ -148,40 +162,52 @@ const GenerateStudioModal = ({
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Select Style</ModalHeader>
-        <ModalBody>
+        <ModalBody px={0}>
           <FiltersGrid
             loading={filtersLoading}
             onClick={handleFilterClick}
             selectedFilterId={selectedFilterId}
             filters={filters!}
           />
+        </ModalBody>
+        <Box px={4}>
           <Text as="b" fontSize="sm">
             Each style costs {IMAGE_GENERATION_COST_IN_CREDITS} credit, and will
             generate {GENERATE_PHOTO_AMOUNT_PER_CREDIT} images.
           </Text>
-          {generateError && (
-            <>
-              <Divider mb={4} />
-              <Box color={"red.400"}>{generateError}</Box>
-            </>
-          )}
-        </ModalBody>
-        <ModalFooter>
-          {session?.data?.user.credits || 0}
-          <Icon
-            as={RiCopperCoinFill}
-            boxSize="1.2em"
-            color={"gold"}
-            margin=".5em"
-          />
-          <Button
-            size="lg"
-            variant="brand"
-            rightIcon={<FaMagic />}
-            onClick={generateClick}
-          >
-            Create
-          </Button>
+          <Text fontSize="xs">
+            {`While we're still improving the generations, some of them may be a
+            bit goofy, and some may even be terrifying . We appreciate your
+            understanding, and we're working on them!`}
+          </Text>
+        </Box>
+        <ModalFooter justifyContent={"space-between"}>
+          <Box>
+            {generateError && (
+              <Text justifySelf={"left"} color={"red.400"}>
+                {generateError}
+              </Text>
+            )}
+          </Box>
+          <Flex>
+            <Flex align={"center"}>
+              {session?.data?.user.credits || 0}
+              <Icon
+                as={RiCopperCoinFill}
+                boxSize="1.2em"
+                color={"gold"}
+                margin=".5em"
+              />
+            </Flex>
+            <Button
+              size="lg"
+              variant="brand"
+              rightIcon={<FaMagic />}
+              onClick={generateClick}
+            >
+              Create
+            </Button>
+          </Flex>
         </ModalFooter>
       </ModalContent>
     </Modal>

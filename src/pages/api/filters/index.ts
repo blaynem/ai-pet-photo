@@ -11,7 +11,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (req.method === "GET") {
     const filters = await db.filters.findMany({
-      orderBy: { name: "desc" },
+      orderBy: { name: "asc" },
     });
 
     // Remove the prompt from the filter

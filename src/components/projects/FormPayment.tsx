@@ -11,9 +11,9 @@ import {
   AvatarGroup,
   Box,
   Button,
-  HStack,
   List,
   Spinner,
+  Stack,
   Text,
   useDisclosure,
   VStack,
@@ -120,7 +120,7 @@ const FormPayment = ({
               </PriceItem>
             )}
           </List>
-          <HStack>
+          <Stack direction={["column", "row"]}>
             <Button variant="brand" onClick={onOpen}>
               Unlock Now - {priceInUSD(visibleStudioPackage.price)}
             </Button>
@@ -135,7 +135,7 @@ const FormPayment = ({
               creditCost={STUDIO_COST_IN_CREDITS}
               onPaymentApprove={payStudioWithCreditsMutation}
             />
-          </HStack>
+          </Stack>
           <Box pt={4}>
             <AvatarGroup size="md" max={10}>
               {project.imageUrls.map((url) => (

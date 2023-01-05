@@ -1,6 +1,6 @@
 export const DEMO_IMAGES = [
   {
-    label: "Andy Warhol",
+    label: "Andy Warthog",
     imageUrl: "/generations/out-0.jpg",
     petId: "teddy",
   },
