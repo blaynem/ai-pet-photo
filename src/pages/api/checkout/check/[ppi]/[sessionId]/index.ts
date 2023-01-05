@@ -16,8 +16,8 @@ export default async function handler(
   const sessionId = req.query.sessionId as string;
   const ppi = req.query.ppi as string;
   const session = await stripe.checkout.sessions.retrieve(sessionId);
-  const packageIdsString = session?.metadata?.packageIdsString as string;
-  const packageIdsArray = packageIdsString.split(",") as string[];
+  const packageIds = session?.metadata?.packageIds as string;
+  const packageIdsArray = packageIds.split(",") as string[];
   // get packages for each packageId
   const selectedPackages = packageIdsArray.map((id: string) =>
     getPackageInfo(id)
