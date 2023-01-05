@@ -19,7 +19,7 @@ import {
   IconButton,
   Tbody,
 } from "@chakra-ui/react";
-import React, { FunctionComponent, useState } from "react";
+import React, { FunctionComponent, useEffect, useState } from "react";
 import { FaTrash } from "react-icons/fa";
 
 interface AddCreditsToPurchaseModalProps {
@@ -34,6 +34,10 @@ const AddCreditsToPurchaseModal: FunctionComponent<
   AddCreditsToPurchaseModalProps
 > = ({ onClose, isOpen, handlePurchase, pricePack }) => {
   const [packages, setPackages] = useState<PricingPackage[]>([pricePack]);
+
+  useEffect(() => {
+    setPackages([pricePack]);
+  }, [pricePack]);
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
