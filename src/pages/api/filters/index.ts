@@ -1,26 +1,26 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { getSession } from "next-auth/react";
 import db from "@/core/db";
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const session = await getSession({ req });
+const simplifiedUrl = new URL(process.env.NEXTAUTH_URL!);
 
-  if (!session?.user) {
-    return res.status(401).json({ message: "Not authenticated" });
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+  // Check that they are coming from our nextjs app
+  const { host, referer } = req.headers;
+  if (host !== simplifiedUrl.host && referer !== simplifiedUrl.href) {
+    return res.status(200).json([]);
   }
 
   if (req.method === "GET") {
     const filters = await db.filters.findMany({
       orderBy: { name: "asc" },
+      select: {
+        id: true,
+        name: true,
+        exampleUrl: true,
+      },
     });
 
-    // Remove the prompt from the filter
-    const parsedFilters = filters.map((filter) => {
-      const { prompt, ...rest } = filter;
-      return rest;
-    });
-
-    return res.json(parsedFilters);
+    return res.json(filters);
   }
 };
 
