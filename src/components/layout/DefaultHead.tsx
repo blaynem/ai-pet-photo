@@ -4,7 +4,7 @@ import React from "react";
 const description =
   "Generate amazing AI pictures of your pet with just a few clicks!";
 const title = "PetPics - Create awesome AI art of your pets";
-const image = "/PawPrint.png";
+const image = "https://www.petpics.ai/PawPrint.png";
 const twitterCardImage = "https://www.petpics.ai/card-image.jpg";
 
 const DefaultHead = () => {
@@ -28,7 +28,7 @@ const DefaultHead = () => {
       <meta property="og:logo" content={image}></meta>
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
-      <meta property="og:image" content={image} />
+      <meta property="og:image" content={twitterCardImage} />
 
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:site" content="@PetPics_ai" />
