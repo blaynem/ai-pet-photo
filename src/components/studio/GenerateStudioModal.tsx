@@ -13,8 +13,6 @@ import {
   SimpleGrid,
   Text,
 } from "@chakra-ui/react";
-import { Filters } from "@prisma/client";
-import axios from "axios";
 import { useState } from "react";
 import { useQuery } from "react-query";
 import { FaMagic } from "react-icons/fa";
@@ -26,8 +24,11 @@ import {
 } from "@/core/constants";
 import { useSession } from "next-auth/react";
 import { RiCopperCoinFill } from "react-icons/ri";
-
-type PickFilters = Pick<Filters, "id" | "name" | "exampleUrl">;
+import {
+  fetchFilters,
+  FETCH_FILTERS_QUERY,
+  PickFilters,
+} from "@/core/queries/filters";
 
 interface GenerateProps {
   projectId: string;
@@ -96,9 +97,9 @@ const GenerateStudioModal = ({
   const [generateError, setGenerateError] = useState<string | null>(null);
 
   const { data: filters, isLoading: filtersLoading } = useQuery(
-    "fetchFilters",
+    FETCH_FILTERS_QUERY,
     async () => {
-      const { data } = await axios.get<PickFilters[]>(`/api/filters`);
+      const { data } = await fetchFilters();
 
       return data;
     }
