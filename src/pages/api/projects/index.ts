@@ -62,7 +62,7 @@ const handler = async (
 
     const project = await db.project.create({
       data: {
-        name,
+        name: name.trim(),
         imageUrls: urls,
         userId: userId,
         modelStatus: "not_created",
