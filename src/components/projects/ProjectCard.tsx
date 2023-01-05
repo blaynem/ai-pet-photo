@@ -57,6 +57,11 @@ const ProjectCard = ({
   const isTraining =
     project.modelStatus === "processing" || project.modelStatus === "pushing";
 
+  const handleDeleteStudio = async () => {
+    await axios.delete(`/api/projects/${project.id}`);
+    handleRefreshProjects();
+  };
+
   const checkBackTime = formatRelative(
     new Date(new Date(project.createdAt).getTime() + 30 * 60 * 1000),
     new Date(project.createdAt)
@@ -77,10 +82,23 @@ const ProjectCard = ({
       shadow="lg"
     >
       <VStack spacing={4} alignItems="flex-start">
-        <Box>
-          <Text fontSize="2xl" fontWeight="semibold">
-            Model <b>{project.name}</b>{" "}
-          </Text>
+        <Box width={"100%"}>
+          <Box justifyContent={"space-between"} display={"flex"} width="100%">
+            <Text fontSize="2xl" fontWeight="semibold">
+              Model <b>{project.name}</b>{" "}
+            </Text>
+            {/* 
+             Commenting out while we figure out RLS on supabase for deleting projects 1/4/23
+             {isWaitingPayment && (
+              <IconButton
+                alignSelf={"flex-end"}
+                onClick={handleDeleteStudio}
+                icon={<Icon as={MdDelete} />}
+                aria-label={""}
+              />
+            )} */}
+          </Box>
+
           <Text textTransform="capitalize" fontSize="sm">
             {formatRelative(new Date(project.createdAt), new Date())}
           </Text>

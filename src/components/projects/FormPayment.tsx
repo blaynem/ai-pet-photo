@@ -1,4 +1,5 @@
 import {
+  PricingPackage,
   PROMOTION_STUDIO_PACKAGE,
   STANDARD_STUDIO_PACKAGE,
   STUDIO_COST_IN_CREDITS,
@@ -14,15 +15,16 @@ import {
   List,
   Spinner,
   Text,
+  useDisclosure,
   VStack,
 } from "@chakra-ui/react";
 import { Project } from "@prisma/client";
 import axios from "axios";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useMutation, useQuery } from "react-query";
+import AddCreditsToPurchaseModal from "../credits/AddCreditsToPurchaseModal";
 import PayWithCreditsButton from "./PayWithCreditsButton";
 import { PriceItem } from "./PricingItem";
 
@@ -38,7 +40,8 @@ const FormPayment = ({
   const { data: userSession } = useSession();
   const [waitingPayment, setWaitingPayment] = useState(false);
   const { query } = useRouter();
-
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const router = useRouter();
   useQuery(
     "check-payment",
     () => axios.get(`/api/checkout/check/${query.ppi}/${query.session_id}`),
@@ -77,6 +80,15 @@ const FormPayment = ({
     ? PROMOTION_STUDIO_PACKAGE
     : STANDARD_STUDIO_PACKAGE;
 
+  const handlePurchase = (packages: PricingPackage[]) => {
+    router.isReady &&
+      router.push(
+        `/api/checkout/session?ppi=${project.id}&packageIds=${packages
+          .map((pack: PricingPackage) => pack.id)
+          .join(",")}`
+      );
+  };
+
   return (
     <Box textAlign="center" width="100%">
       {waitingPayment ? (
@@ -109,13 +121,16 @@ const FormPayment = ({
             )}
           </List>
           <HStack>
-            <Button
-              as={Link}
-              variant="brand"
-              href={`/api/checkout/session?ppi=${project.id}&packageId=${visibleStudioPackage.id}`}
-            >
+            <Button variant="brand" onClick={onOpen}>
               Unlock Now - {priceInUSD(visibleStudioPackage.price)}
             </Button>
+            <AddCreditsToPurchaseModal
+              isOpen={isOpen}
+              onClose={onClose}
+              handlePurchase={handlePurchase}
+              onOpen={onOpen}
+              pricePack={visibleStudioPackage}
+            />
             <PayWithCreditsButton
               creditCost={STUDIO_COST_IN_CREDITS}
               onPaymentApprove={payStudioWithCreditsMutation}

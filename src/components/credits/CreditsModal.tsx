@@ -2,11 +2,9 @@ import {
   creditsPackageOptions,
   FIFTY_CREDIT_PACKAGE,
   GENERATE_PHOTO_AMOUNT_PER_CREDIT,
-  HUNDRED_CREDIT_PACKAGE,
   STUDIO_COST_IN_CREDITS,
 } from "@/core/constants";
 import { getPackageInfo } from "@/core/utils/getPackageInfo";
-import { priceInUSD } from "@/core/utils/prices";
 import {
   Accordion,
   AccordionButton,
@@ -25,13 +23,12 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
-  useRadio,
   useRadioGroup,
 } from "@chakra-ui/react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
 import { useState } from "react";
+import { RadioCard } from "./RadioCard";
 
 interface CreditsModalProps {
   /**
@@ -43,42 +40,6 @@ interface CreditsModalProps {
    */
   onClose: () => void;
 }
-
-const RadioCard = (props: any) => {
-  const { getInputProps, getCheckboxProps } = useRadio(props);
-
-  const inputProps = getInputProps();
-  const checkbox = getCheckboxProps();
-
-  // Get pricing package info for displaying
-  const pricingPackage = getPackageInfo(inputProps.value);
-
-  return (
-    <Box as="label">
-      <input {...inputProps} />
-      <Box
-        {...checkbox}
-        cursor="pointer"
-        borderWidth="1px"
-        borderRadius="md"
-        boxShadow="md"
-        _checked={{
-          bg: "brand.500",
-          color: "blackAlpha.700",
-          borderColor: "brand.500",
-        }}
-        _focus={{
-          boxShadow: "outline",
-        }}
-        px={5}
-        py={3}
-      >
-        <b>{pricingPackage?.totalCredits} Credits</b> for{" "}
-        {priceInUSD(pricingPackage?.price!)}
-      </Box>
-    </Box>
-  );
-};
 
 const PurchaseCreditsModal = ({ isOpen, onClose }: CreditsModalProps) => {
   const router = useRouter();
@@ -167,11 +128,11 @@ const PurchaseCreditsModal = ({ isOpen, onClose }: CreditsModalProps) => {
           <Button
             size="lg"
             variant="brand"
-            onClick={() =>
+            onClick={() => {
               router.push(
-                `/api/credits/session?ppi=${userId}&packageId=${pricingPackage?.id}`
-              )
-            }
+                `/api/credits/session?ppi=${userId}&packageIds=${pricingPackage?.id}`
+              );
+            }}
           >
             Purchase
           </Button>

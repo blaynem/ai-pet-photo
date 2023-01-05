@@ -14,6 +14,7 @@ export type PricingPackage = {
   totalCredits: number;
   price: number;
   purchaseType: PurchaseType;
+  displayName?: string;
 };
 
 export const STANDARD_STUDIO_PACKAGE: PricingPackage = {
@@ -23,6 +24,7 @@ export const STANDARD_STUDIO_PACKAGE: PricingPackage = {
   credits: 5,
   bonusCredits: 0,
   purchaseType: PurchaseType.STUDIO_PURCHASE,
+  displayName: "Studio Standard",
 };
 
 export const PROMOTION_STUDIO_PACKAGE: PricingPackage = {
@@ -32,6 +34,7 @@ export const PROMOTION_STUDIO_PACKAGE: PricingPackage = {
   credits: 0,
   bonusCredits: 3,
   purchaseType: PurchaseType.PROMOTION_STUDIO_PURCHASE,
+  displayName: "Promotional Studio",
 };
 
 export const FIFTY_CREDIT_PACKAGE: PricingPackage = {
@@ -41,6 +44,7 @@ export const FIFTY_CREDIT_PACKAGE: PricingPackage = {
   credits: 50,
   bonusCredits: 0,
   purchaseType: PurchaseType.CREDIT_PURCHASE,
+  displayName: "50 Credits",
 };
 
 export const HUNDRED_CREDIT_PACKAGE: PricingPackage = {
@@ -50,6 +54,7 @@ export const HUNDRED_CREDIT_PACKAGE: PricingPackage = {
   credits: 100,
   bonusCredits: 0,
   purchaseType: PurchaseType.CREDIT_PURCHASE,
+  displayName: "100 Credits",
 };
 
 /**
