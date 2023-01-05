@@ -119,6 +119,26 @@ const PurchaseCreditsModal = ({ isOpen, onClose }: CreditsModalProps) => {
                 </Text>
               </AccordionPanel>
             </AccordionItem>
+            <AccordionItem>
+              <AccordionButton>
+                <Box as="span" flex="1" textAlign="left" fontWeight={"bold"}>
+                  Why 4 images per credit?
+                </Box>
+                <AccordionIcon />
+              </AccordionButton>
+              <AccordionPanel pb={4}>
+                <Text mb={4}>
+                  While we work on improving each of the styles, we are giving
+                  you 3 bonus pictures as a way to try out our service and give
+                  you a better understanding of the different styles we offer.
+                </Text>
+                <Text mb={4}>
+                  In the future, each picture will cost 1 credit, but for now,
+                  you can enjoy 4 at no extra cost. We hope you enjoy the
+                  pictures and look forward to seeing which styles you choose!
+                </Text>
+              </AccordionPanel>
+            </AccordionItem>
           </Accordion>
           <Text align="right" fontSize="sm">
             All purchases are final.

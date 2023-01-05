@@ -86,14 +86,6 @@ const FiltersGrid = ({
               onClick={onClick}
             />
           ))}
-          {filters?.map((filter) => (
-            <PredictionFilter
-              {...filter}
-              key={filter.id}
-              selected={selectedFilterId === filter.id}
-              onClick={onClick}
-            />
-          ))}
         </SimpleGrid>
       </Box>
     </Flex>
