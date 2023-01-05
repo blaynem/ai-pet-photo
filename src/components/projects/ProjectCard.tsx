@@ -10,8 +10,6 @@ import {
   Box,
   Button,
   Center,
-  Icon,
-  IconButton,
   Spinner,
   Text,
   VStack,
@@ -22,7 +20,6 @@ import { formatRelative } from "date-fns";
 import Link from "next/link";
 import { HiArrowRight } from "react-icons/hi";
 import { IoIosFlash } from "react-icons/io";
-import { MdDelete } from "react-icons/md";
 import { useMutation } from "react-query";
 import FormPayment from "./FormPayment";
 

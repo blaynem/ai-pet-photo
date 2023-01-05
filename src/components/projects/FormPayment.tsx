@@ -13,13 +13,6 @@ import {
   Button,
   HStack,
   List,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
   Spinner,
   Text,
   useDisclosure,
@@ -28,7 +21,6 @@ import {
 import { Project } from "@prisma/client";
 import axios from "axios";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useMutation, useQuery } from "react-query";

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import AvatarThumbnail from "./AvatarThumbnail";
 
 const AvatarsPlaceholder = ({ imageUrls }: { imageUrls: string[] }) => {

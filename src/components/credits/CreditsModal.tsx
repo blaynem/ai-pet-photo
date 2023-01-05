@@ -2,11 +2,9 @@ import {
   creditsPackageOptions,
   FIFTY_CREDIT_PACKAGE,
   GENERATE_PHOTO_AMOUNT_PER_CREDIT,
-  HUNDRED_CREDIT_PACKAGE,
   STUDIO_COST_IN_CREDITS,
 } from "@/core/constants";
 import { getPackageInfo } from "@/core/utils/getPackageInfo";
-import { priceInUSD } from "@/core/utils/prices";
 import {
   Accordion,
   AccordionButton,
@@ -25,12 +23,10 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
-  useRadio,
   useRadioGroup,
 } from "@chakra-ui/react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
 import { useState } from "react";
 import { RadioCard } from "./RadioCard";
 
@@ -133,9 +129,6 @@ const PurchaseCreditsModal = ({ isOpen, onClose }: CreditsModalProps) => {
             size="lg"
             variant="brand"
             onClick={() => {
-              console.log(
-                `/api/credits/session?ppi=${userId}&packageIds=${pricingPackage?.id}`
-              );
               router.push(
                 `/api/credits/session?ppi=${userId}&packageIds=${pricingPackage?.id}`
               );

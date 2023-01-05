@@ -10,10 +10,6 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  useRadioGroup,
-  VStack,
-  Text,
-  Divider,
   Table,
   Tr,
   Td,
@@ -23,10 +19,8 @@ import {
   IconButton,
   Tbody,
 } from "@chakra-ui/react";
-import { useRouter } from "next/router";
 import React, { FunctionComponent, useState } from "react";
 import { FaTrash } from "react-icons/fa";
-import { RadioCard } from "./RadioCard";
 
 interface AddCreditsToPurchaseModalProps {
   isOpen: boolean;
@@ -39,7 +33,6 @@ interface AddCreditsToPurchaseModalProps {
 const AddCreditsToPurchaseModal: FunctionComponent<
   AddCreditsToPurchaseModalProps
 > = ({ onClose, isOpen, handlePurchase, pricePack }) => {
-  const [selectedValue, setSelectedValue] = useState<string>("");
   const [packages, setPackages] = useState<PricingPackage[]>([pricePack]);
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -64,7 +57,7 @@ const AddCreditsToPurchaseModal: FunctionComponent<
               <Tbody>
                 {packages.map((packageInfo, index) => {
                   return (
-                    <Tr>
+                    <Tr key={packageInfo.id + index}>
                       <Td>{packageInfo.displayName}</Td>
                       <Td isNumeric>{priceInUSD(packageInfo.price)}</Td>
                       <Td flexShrink={1}>

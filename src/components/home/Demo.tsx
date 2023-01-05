@@ -9,7 +9,6 @@ import {
 } from "@chakra-ui/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { Pause, WindupChildren } from "windups";
 import AvatarsPlaceholder from "./AvatarsPlaceholder";
 
 const teddyImgs = [
