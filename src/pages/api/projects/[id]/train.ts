@@ -59,7 +59,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     },
     trainer_version: STABLE_DIFFUSION_VERSIONS["1.5"],
     // Model has to be lowercase
-    model: `${process.env.REPLICATE_USERNAME}/${project.name.toLowerCase()}`,
+    model: `${process.env.REPLICATE_USERNAME}/${project.name
+      .toLowerCase()
+      .trim()}`,
     webhook_completed: `${process.env.NEXTAUTH_URL}/api/webhooks/completed`,
   };
 
