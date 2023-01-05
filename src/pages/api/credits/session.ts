@@ -13,7 +13,7 @@ export default async function handler(
 ) {
   try {
     const userSession = await getSession({ req });
-    const packageId = req.query.packageId as string;
+    const packageId = req.query.packageIds as string;
     const selectedPackage = getPackageInfo(packageId);
 
     const session = await stripe.checkout.sessions.create({
