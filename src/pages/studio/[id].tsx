@@ -111,13 +111,13 @@ const StudioPage: FC<StudioPageProps> = ({ projectId }) => {
                 rightIcon={<FaMagic />}
                 onClick={onOpen}
               >
-                Generate
+                Select Style
               </Button>
             </Flex>
             <Divider mt={4} mb={4} />
             {project!.shots.length === 0 ? (
               <Box textAlign="center" fontSize="lg">
-                {`You haven't generated any shots yet. Select a style and click generate to create!`}
+                {`Click 'select style' to generate!`}
               </Box>
             ) : (
               <ShotCardGrid projectId={project!.id} shots={project!.shots} />
