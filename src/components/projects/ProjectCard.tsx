@@ -82,14 +82,16 @@ const ProjectCard = ({
             <Text fontSize="2xl" fontWeight="semibold">
               Model <b>{project.name}</b>{" "}
             </Text>
-            {isWaitingPayment && (
+            {/* 
+             Commenting out while we figure out RLS on supabase for deleting projects 1/4/23
+             {isWaitingPayment && (
               <IconButton
                 alignSelf={"flex-end"}
                 onClick={handleDeleteStudio}
                 icon={<Icon as={MdDelete} />}
                 aria-label={""}
               />
-            )}
+            )} */}
           </Box>
 
           <Text textTransform="capitalize" fontSize="sm">

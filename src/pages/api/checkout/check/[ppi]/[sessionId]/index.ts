@@ -23,49 +23,60 @@ export default async function handler(
     getPackageInfo(id)
   ) as PricingPackage[];
   try {
-    for (const selectedPackage of selectedPackages) {
-      const paymentsCreate: Prisma.PaymentCreateInput[] = [
-        {
-          amount: selectedPackage?.credits!,
-          paid_amount: selectedPackage?.price!,
+    const paymentsCreate = selectedPackages.reduce(
+      (acc, pkg: PricingPackage) => {
+        // Create initializer array to add
+        const payments: Prisma.PaymentCreateInput[] = [];
+        // Add the payment for the package
+        payments.push({
+          amount: pkg?.credits!,
+          paid_amount: pkg?.price!,
           stripePaymentId: session.id,
-          purchaseType: selectedPackage?.purchaseType!,
-        },
-      ];
-
-      // If there are bonus credits, add them to the payments array
-      if (selectedPackage?.bonusCredits) {
-        paymentsCreate.push({
-          amount: selectedPackage?.bonusCredits,
-          paid_amount: 0,
-          stripePaymentId: session.id,
-          purchaseType: PurchaseType.PROMOTION_CREDIT_GIFT,
+          purchaseType: pkg?.purchaseType!,
         });
-      }
+        // If there are bonus credits, add them to the payments array
+        if (pkg?.bonusCredits) {
+          payments.push({
+            amount: pkg.bonusCredits,
+            paid_amount: 0,
+            stripePaymentId: session.id,
+            purchaseType: PurchaseType.PROMOTION_CREDIT_GIFT,
+          });
+        }
+        // Add the payments to the accumulator
+        return [...acc, ...payments];
+      },
+      [] as Prisma.PaymentCreateInput[]
+    );
 
-      if (
-        session.payment_status === "paid" &&
-        session.metadata?.projectId === ppi
-      ) {
-        await db.user.update({
-          where: { id: session?.metadata?.userId },
-          data: {
-            credits: {
-              increment: selectedPackage?.totalCredits || 0,
-            },
-            projects: {
-              update: {
-                where: { id: ppi },
-                data: { stripePaymentId: session.id },
-              },
-            },
-            payments: {
-              create: paymentsCreate,
+    const creditIncrement = selectedPackages.reduce(
+      (acc, pkg) => (acc += pkg.totalCredits),
+      0
+    );
+
+    if (
+      session.payment_status === "paid" &&
+      session.metadata?.projectId === ppi
+    ) {
+      await db.user.update({
+        where: { id: session?.metadata?.userId },
+        data: {
+          credits: {
+            increment: creditIncrement,
+          },
+          projects: {
+            update: {
+              where: { id: ppi },
+              data: { stripePaymentId: session.id },
             },
           },
-        });
-      }
+          payments: {
+            create: paymentsCreate,
+          },
+        },
+      });
     }
+
     return res.status(200).json({ success: true });
   } catch {
     return res.status(400).json({ success: false });

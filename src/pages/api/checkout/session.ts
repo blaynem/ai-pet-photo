@@ -5,6 +5,7 @@ import { PurchaseType } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
 import Stripe from "stripe";
+import { LineItem } from "@stripe/stripe-js";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2022-11-15",
@@ -16,10 +17,10 @@ export default async function handler(
 ) {
   try {
     const userSession = await getSession({ req });
-    const packageIdsString = req.query.packageIds as string;
+    const packageIds = req.query.packageIds as string;
 
     // split package IDs by comma
-    const packageIdsArray = packageIdsString.split(",") as string[];
+    const packageIdsArray = packageIds.split(",") as string[];
     // get packages for each packageId
     const selectedPackages = packageIdsArray.map((id: string) =>
       getPackageInfo(id)
@@ -42,19 +43,50 @@ export default async function handler(
           .json("You have already used your promotional code");
       }
     }
+    if (!selectedPackages) {
+      return res.status(400).json("No packages selected");
+    }
 
-    const lineItems = converPackagesToStripeLineItems(
-      selectedPackages as PricingPackage[]
-    );
+    const lineItems = selectedPackages.map((selectedPackage) => {
+      // This name should only go through if we forget to update the pricing packages when we add a new one.
+      let name = "PetPics.ai Purchase";
+      if (
+        selectedPackage?.purchaseType === "STUDIO_PURCHASE" ||
+        selectedPackage?.purchaseType === "PROMOTION_STUDIO_PURCHASE"
+      ) {
+        // Name if studio package is purchased
+        name = `Studio model training ${
+          selectedPackage?.totalCredits
+            ? `+ ${selectedPackage.totalCredits} credits`
+            : ""
+        }`;
+      } else if (
+        selectedPackage?.purchaseType === "CREDIT_PURCHASE" ||
+        selectedPackage?.purchaseType === "PROMOTION_CREDIT_GIFT"
+      ) {
+        // name if credit package is purchased
+        name = `${selectedPackage?.totalCredits} Credits`;
+      }
+      return {
+        price_data: {
+          currency: "usd",
+          unit_amount: selectedPackage?.price,
+          product_data: {
+            name: name,
+          },
+        },
+        quantity: 1,
+      };
+    });
 
     const session = await stripe.checkout.sessions.create({
       allow_promotion_codes: true,
       metadata: {
         userId: userSession?.user?.id as string,
         projectId: req.query.ppi as string,
-        packageIdsString,
+        packageIds,
       },
-      line_items: lineItems,
+      line_items: lineItems as Stripe.Checkout.SessionCreateParams.LineItem[],
       mode: "payment",
       success_url: `${process.env.NEXTAUTH_URL}/dashboard?session_id={CHECKOUT_SESSION_ID}&ppi=${req.query.ppi}`,
       cancel_url: `${process.env.NEXTAUTH_URL}/dashboard`,
@@ -64,47 +96,4 @@ export default async function handler(
   } catch (err: any) {
     return res.status(400).json(err.message);
   }
-}
-
-function converPackagesToStripeLineItems(
-  selectedPackages: PricingPackage[]
-): Stripe.Checkout.SessionCreateParams.LineItem[] {
-  const lineItems = selectedPackages.map((selectedPackage) => {
-    if (
-      selectedPackage?.purchaseType === "STUDIO_PURCHASE" ||
-      selectedPackage?.purchaseType === "PROMOTION_STUDIO_PURCHASE"
-    ) {
-      return {
-        price_data: {
-          currency: "usd",
-          unit_amount: selectedPackage?.price,
-          product_data: {
-            name: `Studio model training ${
-              selectedPackage?.totalCredits
-                ? `+ ${selectedPackage.totalCredits} credits`
-                : ""
-            }`,
-          },
-        },
-        quantity: 1,
-      };
-    }
-
-    if (
-      selectedPackage?.purchaseType === "CREDIT_PURCHASE" ||
-      selectedPackage?.purchaseType === "PROMOTION_CREDIT_GIFT"
-    ) {
-      return {
-        price_data: {
-          currency: "usd",
-          unit_amount: selectedPackage?.price,
-          product_data: {
-            name: `${selectedPackage?.totalCredits} Credits`,
-          },
-        },
-        quantity: 1,
-      };
-    }
-  });
-  return lineItems as Stripe.Checkout.SessionCreateParams.LineItem[];
 }
