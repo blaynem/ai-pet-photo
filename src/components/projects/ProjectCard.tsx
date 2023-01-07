@@ -171,7 +171,7 @@ const ProjectCard = ({
                 href={`/studio/${project.id}`}
                 as={Link}
               >
-                {`View ${project.name}'s gallery`}
+                {`Browse & Generate Images`}
               </Button>
             </VStack>
           </Center>
