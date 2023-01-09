@@ -3,6 +3,7 @@ import { FaTwitter } from "react-icons/fa";
 import { ReactNode } from "react";
 import { MdAlternateEmail } from "react-icons/md";
 import { TWITTER_LINK, EMAIL_ADDRESS_SUPPORT } from "@/core/constants";
+import Link from "next/link";
 
 const SocialButton = ({
   children,
@@ -51,6 +52,7 @@ export default function Footer() {
           <Text fontSize="lg" fontWeight="bold">
             PetPics
           </Text>
+          <Link href="/policies">Terms & Policies</Link>
           <SocialButton href={TWITTER_LINK}>
             <FaTwitter />
           </SocialButton>
