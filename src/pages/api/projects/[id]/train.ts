@@ -7,6 +7,7 @@ import replicateClient, {
 } from "@/core/clients/replicate";
 import { getRefinedInstanceClass } from "@/core/utils/predictions";
 import supabase from "@/core/clients/supabase";
+import { userAgent } from "next/server";
 
 const STABLE_DIFFUSION_VERSIONS = {
   "1.5": "cd3f925f7ab21afaef7d45224790eedbb837eeac40d22e8fefe015489ab644aa",
@@ -42,6 +43,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   // modelName may contain only lowercase letters, numbers, dashes, underscores, or periods.
   const modelName = project.name.replace(/[^a-z0-9-_\.]/gi, "").toLowerCase();
+  const webHookParams = new URLSearchParams({
+    projectId: project.id,
+    secret: process.env.WEBHOOK_SECRET!,
+  });
 
   const trainingData: TrainingRequest = {
     input: {
@@ -63,7 +68,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     trainer_version: STABLE_DIFFUSION_VERSIONS["1.5"],
     // Model has to be lowercase
     model: `${process.env.REPLICATE_USERNAME}/${modelName}`,
-    webhook_completed: `${process.env.NEXTAUTH_URL}/api/webhooks/completed`,
+    webhook_completed: `${
+      process.env.NEXTAUTH_URL
+    }/api/webhooks/completed${webHookParams.toString()}`,
   };
 
   const responseReplicate = await replicateClient.post<TrainingResponse>(

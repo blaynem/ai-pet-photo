@@ -90,53 +90,14 @@ const PrivacyPolicy = () => (
     <Heading variant="policy" as="h2" size="md">
       How We Use Your Information
     </Heading>
-    <Text mt={"20px"}>
-      We use your information to provide and improve the Services, to
-      communicate with you, and to protect the security and integrity of the
-      Services. We may also use your information for research and analytics
-      purposes.
-    </Text>
-    <Heading variant="policy" as="h2" size="md">
-      How We Share Your Information
-    </Heading>
-    <Text mt={"20px"}>
-      We may share your information with third parties in the following cases:
-    </Text>
+    <Text mt={"20px"}>We use your information for the following purposes:</Text>
 
     <UnorderedList mt={"30px"}>
       <ListItem>
-        With your consent: We may share your information with third parties if
-        you have given us your consent to do so.
+        Email: For login information, account services, and optional updates on
+        the status of your purchases.
       </ListItem>
-      <ListItem>
-        With service providers: We may share your information with third-party
-        service providers who perform services on our behalf, such as hosting
-        and maintenance, analytics, marketing, and payment processing.
-      </ListItem>
-      <ListItem>
-        For legal reasons: We may share your information if we believe it is
-        necessary to comply with a legal obligation, such as a court order or
-        subpoena.
-      </ListItem>
-    </UnorderedList>
-
-    <Heading variant="policy" as="h2" size="md">
-      Your Choices
-    </Heading>
-    <Text mt={"20px"}>
-      You have the following choices regarding your information:
-    </Text>
-
-    <UnorderedList mt={"30px"}>
-      <ListItem>
-        Opting out of marketing communications: You can opt out of receiving
-        marketing communications from us by following the opt-out instructions
-        in the communications or by contacting us at support@petpics.ai
-      </ListItem>
-      <ListItem>
-        Accessing and updating your information: You have the right to access
-        and update your information by contacting us at support@petpics.ai
-      </ListItem>
+      <ListItem>Images: Solely to create a model of your pet.</ListItem>
     </UnorderedList>
 
     <Heading variant="policy" as="h2" size="md">
