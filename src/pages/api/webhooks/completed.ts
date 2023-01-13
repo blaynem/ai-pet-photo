@@ -46,8 +46,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     let info = await transporter.sendMail({
       from: '"PetPics ai" <general@petpics.ai>',
       to: user.email!,
-      subject: `Your PetPics.ai model "${project.name}" is ready!`,
-      text: "Your model is ready to generate images! 🎉 🎉 🎉",
+      subject: `${project.name} is ready!`,
+      text: "Your model is ready to generate! 🎉 🎉 🎉",
       html: `<html>
       <head>
       <style>
@@ -99,7 +99,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       <body>
       <div class="container">
       <div class="header">
-      <h1>Your model, "${project.name}" is ready to generate images! 🎉 </h1>
+      <h1>Your model, "${project.name}" is ready! 🎉 </h1>
       </div>
       <div class="content">
       <p>Hi there!</p>
