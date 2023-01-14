@@ -96,16 +96,18 @@ model Shot {
 }
 
 model Filters {
-  id              String   @id @default(uuid())
+  id             String   @id @default(uuid())
   // Name of the filter
-  name            String
+  name           String
   // What the filter's prompt string actually is
-  prompt          String
-  createdAt       DateTime @default(now())
-  example_url_dog String
-  example_url_cat String
+  prompt         String
+  createdAt      DateTime @default(now())
+  // This should always be the dog url example
+  exampleUrl     String
+  // Add cat example url
+  exampleUrl_cat String
   // Whether or not this filter is enabled for users
-  enabled         Boolean  @default(true)
+  enabled        Boolean  @default(true)
 
   Shot Shot[]
 }
