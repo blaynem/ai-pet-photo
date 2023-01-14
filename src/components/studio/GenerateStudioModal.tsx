@@ -30,6 +30,7 @@ import {
 } from "@/core/queries/filters";
 
 interface GenerateProps {
+  animal: "dog" | "cat";
   projectId: string;
   /**
    * Whether modal is open
@@ -46,11 +47,13 @@ interface GenerateProps {
 }
 
 const FiltersGrid = ({
+  animal,
   filters,
   loading,
   selectedFilterId,
   onClick,
 }: {
+  animal: "dog" | "cat";
   loading: boolean;
   filters: PickFilters[];
   selectedFilterId: string | null;
@@ -81,6 +84,7 @@ const FiltersGrid = ({
           {filters?.map((filter) => (
             <PredictionFilter
               {...filter}
+              animal={animal}
               key={filter.id}
               selected={selectedFilterId === filter.id}
               onClick={onClick}
@@ -93,6 +97,7 @@ const FiltersGrid = ({
 };
 
 const GenerateStudioModal = ({
+  animal,
   projectId,
   isOpen,
   closeModal,
@@ -156,6 +161,7 @@ const GenerateStudioModal = ({
         <ModalHeader>Select Style</ModalHeader>
         <ModalBody px={0}>
           <FiltersGrid
+            animal={animal}
             loading={filtersLoading}
             onClick={handleFilterClick}
             selectedFilterId={selectedFilterId}

@@ -1,23 +1,29 @@
 import React from "react";
 import { Box, Text } from "@chakra-ui/react";
-import { Filters } from "@prisma/client";
 import NextImage from "next/image";
 import { getStylesUrl } from "@/core/utils/getStylesUrl";
+import { PickFilters } from "@/core/queries/filters";
 
 /**
  * The thumbnail representation of the prediction filter card in the model page.
  */
 const PredictionFilter = ({
+  animal,
   id,
   name,
   exampleUrl,
+  exampleUrl_cat,
   selected,
   onClick,
 }: {
+  animal: "dog" | "cat";
   selected: boolean;
   onClick: (filterId: string) => void;
-} & Pick<Filters, "id" | "name" | "exampleUrl">) => {
+} & PickFilters) => {
   if (!exampleUrl) return null;
+  // If the animal is a cat, use the cat example url. However, fallback to the dog example url if the cat is not available.
+  const exampleUrlToUse =
+    animal === "cat" ? exampleUrl_cat || exampleUrl : exampleUrl;
   return (
     <Box
       onClick={() => onClick(id)}
@@ -28,7 +34,7 @@ const PredictionFilter = ({
     >
       <NextImage
         alt={name}
-        src={getStylesUrl(exampleUrl)}
+        src={getStylesUrl(exampleUrlToUse)}
         width={512}
         height={512}
       />

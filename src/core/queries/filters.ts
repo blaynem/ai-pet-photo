@@ -1,7 +1,10 @@
 import { Filters } from "@prisma/client";
 import axios from "axios";
 
-export type PickFilters = Pick<Filters, "id" | "name" | "exampleUrl">;
+export type PickFilters = Pick<
+  Filters,
+  "id" | "name" | "exampleUrl" | "exampleUrl_cat"
+>;
 
 export const FETCH_FILTERS_QUERY = "FETCH_FILTERS_QUERY";
 /**
