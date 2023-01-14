@@ -88,7 +88,7 @@ const PrivacyPolicy = () => (
       absolute security of your information.
     </Text>
     <Heading variant="policy" as="h2" size="md">
-      Children's Privacy
+      {`Children's Privacy`}
     </Heading>
     <Text mt={"20px"}>
       The Services are not intended for children under the age of 13. We do not
@@ -163,10 +163,10 @@ const TermsOfService = () => (
       Use of the Website
     </Heading>
     <Text mt={"20px"}>
-      The Website is for personal and non-commercial use only. You may not use
+      {`The Website is for personal and non-commercial use only. You may not use
       the Website for any illegal or unauthorized purpose. You may not use the
       Website in any manner that could damage, disable, overburden, or impair
-      the Website or interfere with any other party's use of the Website.
+      the Website or interfere with any other party's use of the Website.`}
     </Text>
     <Heading variant="policy" as="h2" size="md">
       User Generated Content
@@ -198,11 +198,11 @@ const TermsOfService = () => (
       Disclaimer of Warranties
     </Heading>
     <Text mt={"20px"}>
-      The Website is provided on an "as is" and "as available" basis. PetPics.ai
+      {`The Website is provided on an "as is" and "as available" basis. PetPics.ai
       makes no representations or warranties of any kind, express or implied, as
       to the operation of the Website or the information, content, materials, or
       products included on the Website. PetPics.ai does not warrant that the
-      Website will be uninterrupted or error-free.
+      Website will be uninterrupted or error-free.`}
     </Text>
     <Heading variant="policy" as="h2" size="md">
       Limitation of Liability
@@ -216,11 +216,11 @@ const TermsOfService = () => (
       Indemnification
     </Heading>
     <Text mt={"20px"}>
-      You agree to indemnify and hold PetPics.ai and its affiliates, officers,
+      {`You agree to indemnify and hold PetPics.ai and its affiliates, officers,
       agents, and employees harmless from any claim or demand, including
       reasonable attorneys' fees, made by any third party due to or arising out
       of your use of the Website, your violation of these Terms, or your
-      violation of any rights of another.
+      violation of any rights of another.`}
     </Text>
     <Heading variant="policy" as="h2" size="md">
       Governing Law
