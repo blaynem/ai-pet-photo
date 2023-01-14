@@ -26,7 +26,6 @@ const StylesDisplay = () => {
   );
 
   if (filtersLoading) return null;
-  console.log(filters);
   return (
     <Box>
       <Heading size={"lg"} mb={4}>
