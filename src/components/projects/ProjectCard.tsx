@@ -18,6 +18,7 @@ import { Project } from "@prisma/client";
 import axios from "axios";
 import { formatRelative } from "date-fns";
 import Link from "next/link";
+import { useState } from "react";
 import { HiArrowRight } from "react-icons/hi";
 import { IoIosFlash } from "react-icons/io";
 import { useMutation } from "react-query";
@@ -48,6 +49,7 @@ const ProjectCard = ({
       },
     }
   );
+  const [startTime, setStartTime] = useState<number>(0);
 
   const isWaitingPayment = !project.stripePaymentId;
   const isWaitingTraining =
@@ -63,8 +65,8 @@ const ProjectCard = ({
   };
 
   const checkBackTime = formatRelative(
-    new Date(new Date(project.createdAt).getTime() + 30 * 60 * 1000),
-    new Date(project.createdAt)
+    new Date(new Date(startTime).getTime() + 30 * 60 * 1000),
+    new Date(startTime)
   )
     .replace("at", "around")
     .replace("today", "");
@@ -131,13 +133,14 @@ const ProjectCard = ({
                   rightIcon={<IoIosFlash />}
                   isLoading={isModelLoading || isSuccess}
                   onClick={() => {
+                    setStartTime(Date.now());
                     trainModel(project);
                   }}
                 >
                   Start Building
                 </Button>
                 <Text fontSize="sm" textAlign="center">
-                  (This is an automated process that takes about 20 minutes.)
+                  (This is an automated process that takes about 30 minutes.)
                 </Text>
               </VStack>
             </VStack>

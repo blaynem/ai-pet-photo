@@ -232,11 +232,8 @@ const Uploader = ({ handleOnAdd }: { handleOnAdd: () => void }) => {
               Drag and drop or click to upload
             </Box>
             <Box fontWeight="bold" fontSize="lg">
-              <Highlight
-                query="3-15 images"
-                styles={{ bg: "brand.500", px: 1 }}
-              >
-                Add 3-15 images of your pet.
+              <Highlight query="one" styles={{ bg: "brand.500", px: 1 }}>
+                Add 3-15 images of one pet
               </Highlight>
             </Box>
 

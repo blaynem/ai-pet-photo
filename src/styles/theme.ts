@@ -47,6 +47,25 @@ const theme = extendTheme({
         },
       },
     },
+    Heading: {
+      variants: {
+        policy: {
+          fontWeight: "bold",
+          fontSize: "xl",
+          mb: 2,
+          marginTop: 10,
+        },
+      },
+    },
+    Text: {
+      variants: {
+        policy: {
+          m: 20,
+          fontSize: "sm",
+          color: "blackAlpha.700",
+        },
+      },
+    },
     Link: {
       variants: {
         brand: {

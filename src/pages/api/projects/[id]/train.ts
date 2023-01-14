@@ -43,6 +43,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   // modelName may contain only lowercase letters, numbers, dashes, underscores, or periods.
   const modelName = project.name.replace(/[^a-z0-9-_\.]/gi, "").toLowerCase();
 
+  const webhookUrl = new URL(
+    `/api/webhooks/trainingComplete`,
+    process.env.NEXT_PUBLIC_BASE_URL
+  );
+  webhookUrl.searchParams.set("secret", process.env.WEBHOOK_SECRET!);
+  webhookUrl.searchParams.set("projectId", project.id);
+
   const trainingData: TrainingRequest = {
     input: {
       instance_prompt: `${project.instanceName} ${instanceClass}`,
@@ -63,7 +70,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     trainer_version: STABLE_DIFFUSION_VERSIONS["1.5"],
     // Model has to be lowercase
     model: `${process.env.REPLICATE_USERNAME}/${modelName}`,
-    webhook_completed: `${process.env.NEXTAUTH_URL}/api/webhooks/completed`,
+    webhook_completed: webhookUrl.toString(),
   };
 
   const responseReplicate = await replicateClient.post<TrainingResponse>(
