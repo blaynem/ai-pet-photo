@@ -26,6 +26,7 @@ const StylesDisplay = () => {
   );
 
   if (filtersLoading) return null;
+  console.log(filters);
   return (
     <Box>
       <Heading size={"lg"} mb={4}>
@@ -54,7 +55,9 @@ const StylesDisplay = () => {
             <Text fontSize={"sm"}>{filter.name}</Text>
           </Box>
         ))}
-        {/* Add cat styles as well */}
+      </SimpleGrid>
+      {/* Add cat styles as well */}
+      <SimpleGrid columns={[3, 4, 6, 10]} spacing={[1, 2]} mt={3}>
         {filters?.map((filter) => {
           if (!filter.exampleUrl_cat) return null;
           return (
