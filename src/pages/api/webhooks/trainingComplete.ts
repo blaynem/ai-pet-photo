@@ -11,28 +11,19 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(400).json({ message: "No projectId" });
     }
 
-    const projectId = req.query.projectId as string;
     const project = await db.project.findFirstOrThrow({
       where: {
-        id: projectId,
+        id: req.query.projectId as string,
       },
       select: {
         name: true,
-        userId: true,
+        User: { select: { email: true } },
       },
     });
 
-    const user = await db.user.findFirstOrThrow({
-      where: {
-        id: project.userId!,
-      },
-      select: {
-        id: true,
-        email: true,
-      },
-    });
+    const userEmail = project.User?.email;
 
-    if (!user.email) {
+    if (!userEmail) {
       return res.status(400).json({ message: "No email" });
     }
     if (!project.name) {
@@ -43,7 +34,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     transporter.sendMail({
       from: '"PetPics ai" <general@petpics.ai>',
-      to: user.email!,
+      to: userEmail,
       subject: `${project.name} is ready!`,
       text: "Your model is ready to generate! 🎉 🎉 🎉",
       html: `<html>

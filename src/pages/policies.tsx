@@ -1,15 +1,9 @@
-// TODO: Create a 2 tab view for the page
-// 1. Create a container that has 2 tabs
-// 2. Create a tab for the privacy policy
-// 3. Create a tab for the terms of service
-
 import PageContainer from "@/components/layout/PageContainer";
 import theme from "@/styles/theme";
 import {
   Box,
   ChakraProvider,
   Heading,
-  List,
   ListItem,
   Tab,
   TabList,
@@ -19,9 +13,8 @@ import {
   Text,
   UnorderedList,
 } from "@chakra-ui/react";
-import React, { FunctionComponent } from "react";
+import React from "react";
 
-// Convert this pages headings and Text components to have the "policy" variant
 const PolicyTabs = () => {
   return (
     <ChakraProvider theme={theme}>
