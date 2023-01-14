@@ -1,11 +1,14 @@
 import AuthForm from "@/components/layout/AuthForm";
 import { Box, Flex, Heading, Icon, Text } from "@chakra-ui/react";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import React from "react";
 import { MdCheckCircleOutline } from "react-icons/md";
 
 const Login = () => {
   const router = useRouter();
+  const { data: session } = useSession();
+  if (session) router.push("/dashboard");
 
   return (
     <Flex flex="1" align="center" justify="center">

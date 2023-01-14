@@ -42,11 +42,11 @@ model User {
   email         String?   @unique
   emailVerified DateTime? @map("email_verified")
   image         String?
-  accounts      Account[]
-  sessions      Session[]
-  projects      Project[]
   credits       Int       @default(0)
   payments      Payment[]
+  projects      Project[]
+  accounts      Account[]
+  sessions      Session[]
 
   @@map("users")
 }
@@ -87,41 +87,32 @@ model Shot {
   updatedAt   DateTime @updatedAt
   projectId   String?
   outputUrl   String?
-  // This is the name of the filter that was used to generate this shot
-  filterName  String?
-  // The filter id that was used to generate this shot
   filterId    String?
+  filterName  String?
   Filters     Filters? @relation(fields: [filterId], references: [id])
   Project     Project? @relation(fields: [projectId], references: [id])
 }
 
 model Filters {
-  id         String   @id @default(uuid())
-  // Name of the filter
-  name       String
-  // What the filter's prompt string actually is
-  prompt     String
-  createdAt  DateTime @default(now())
-  exampleUrl String
-  // Whether or not this filter is enabled for users
-  enabled    Boolean  @default(true)
-
-  Shot Shot[]
+  id             String   @id @default(uuid())
+  name           String
+  prompt         String
+  createdAt      DateTime @default(now())
+  exampleUrl     String
+  enabled        Boolean  @default(true)
+  exampleUrl_cat String?
+  Shot           Shot[]
 }
 
 model Payment {
   id              String       @id @default(uuid())
-  // Payment id for stripe
   stripePaymentId String?
-  // Amount of credits purchased
   amount          Int
-  // Amount of credits purchased in USD
-  paid_amount     Int
-  // Type of purchase that was made
   purchaseType    PurchaseType
   createdAt       DateTime     @default(now())
   updatedAt       DateTime     @updatedAt
   userId          String?
+  paid_amount     Int
   User            User?        @relation(fields: [userId], references: [id])
 }
 
