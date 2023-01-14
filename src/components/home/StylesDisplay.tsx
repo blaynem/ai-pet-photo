@@ -32,6 +32,7 @@ const StylesDisplay = () => {
         Available Styles (Updated weekly!)
       </Heading>
       <SimpleGrid columns={[3, 4, 6, 10]} spacing={[1, 2]}>
+        {/* All the default dog styles displayed */}
         {filters?.map((filter) => (
           <Box
             key={filter.name}
@@ -40,7 +41,7 @@ const StylesDisplay = () => {
           >
             <Image
               borderRadius="lg"
-              alt={filter.name || "Stylized image of your pet"}
+              alt={filter.name || "Stylized image of a dog"}
               src={getStylesUrl(filter.exampleUrl)}
               fallback={
                 <AspectRatio ratio={1} height={"100%"}>
@@ -53,6 +54,33 @@ const StylesDisplay = () => {
             <Text fontSize={"sm"}>{filter.name}</Text>
           </Box>
         ))}
+      </SimpleGrid>
+      {/* Add cat styles as well */}
+      <SimpleGrid columns={[3, 4, 6, 10]} spacing={[1, 2]} mt={3}>
+        {filters?.map((filter) => {
+          if (!filter.exampleUrl_cat) return null;
+          return (
+            <Box
+              key={filter.name}
+              backgroundColor="transparent"
+              overflow="hidden"
+            >
+              <Image
+                borderRadius="lg"
+                alt={filter.name || "Stylized image of a cat"}
+                src={getStylesUrl(filter.exampleUrl_cat)}
+                fallback={
+                  <AspectRatio ratio={1} height={"100%"}>
+                    <Center>
+                      <Spinner speed="2s" color="gray.400" />
+                    </Center>
+                  </AspectRatio>
+                }
+              />
+              <Text fontSize={"sm"}>{filter.name}</Text>
+            </Box>
+          );
+        })}
       </SimpleGrid>
     </Box>
   );

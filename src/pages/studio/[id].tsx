@@ -124,6 +124,7 @@ const StudioPage: FC<StudioPageProps> = ({ projectId }) => {
             )}
           </Box>
           <GenerateStudioModal
+            animal={project!.instanceClass === "cat" ? "cat" : "dog"}
             isOpen={isOpen}
             closeModal={onClose}
             projectId={project!.id}

@@ -17,6 +17,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         id: true,
         name: true,
         exampleUrl: true,
+        exampleUrl_cat: true,
       },
     });
 
