@@ -63,29 +63,6 @@ const PrivacyPolicy = () => (
       your information as described in this Policy. If you do not agree with our
       policies and practices, do not use the Services.
     </Text>
-    <Heading variant="policy" as="h2" size="md">
-      Information We Collect
-    </Heading>
-    <Text mt={"20px"}>
-      We collect information about you in the following ways:
-    </Text>
-
-    <UnorderedList mt={"30px"}>
-      <ListItem>
-        Information you provide to us: We collect information that you
-        voluntarily provide to us, such as your name, email address, and phone
-        number.
-      </ListItem>
-      <ListItem>
-        Information we collect automatically: When you use the Services, we may
-        collect certain information automatically, such as your IP address,
-        device type, browser type, and usage data.
-      </ListItem>
-      <ListItem>
-        Information from third parties: We may receive information about you
-        from third parties, such as social media platforms and partners.
-      </ListItem>
-    </UnorderedList>
 
     <Heading variant="policy" as="h2" size="md">
       How We Use Your Information
