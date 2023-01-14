@@ -41,7 +41,7 @@ const StylesDisplay = () => {
             <Image
               borderRadius="lg"
               alt={filter.name || "Stylized image of your pet"}
-              src={getStylesUrl(filter.exampleUrl)}
+              src={getStylesUrl(filter.example_url_dog)}
               fallback={
                 <AspectRatio ratio={1} height={"100%"}>
                   <Center>

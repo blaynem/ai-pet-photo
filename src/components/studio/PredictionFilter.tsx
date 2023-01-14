@@ -10,14 +10,14 @@ import { getStylesUrl } from "@/core/utils/getStylesUrl";
 const PredictionFilter = ({
   id,
   name,
-  exampleUrl,
+  example_url_dog,
   selected,
   onClick,
 }: {
   selected: boolean;
   onClick: (filterId: string) => void;
-} & Pick<Filters, "id" | "name" | "exampleUrl">) => {
-  if (!exampleUrl) return null;
+} & Pick<Filters, "id" | "name" | "example_url_dog">) => {
+  if (!example_url_dog) return null;
   return (
     <Box
       onClick={() => onClick(id)}
@@ -28,7 +28,7 @@ const PredictionFilter = ({
     >
       <NextImage
         alt={name}
-        src={getStylesUrl(exampleUrl)}
+        src={getStylesUrl(example_url_dog)}
         width={512}
         height={512}
       />
