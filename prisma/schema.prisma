@@ -105,7 +105,7 @@ model Filters {
   // This should always be the dog url example
   exampleUrl     String
   // Add cat example url
-  exampleUrl_cat String
+  exampleUrl_cat String?
   // Whether or not this filter is enabled for users
   enabled        Boolean  @default(true)
 
