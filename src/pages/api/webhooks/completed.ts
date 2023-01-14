@@ -40,10 +40,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     if (!project.name) {
       return res.status(400).json({ message: "No project name" });
     }
-    let testAccount = nodemailer.createTestAccount();
+
     let transporter = nodemailer.createTransport(process.env.EMAIL_SERVER);
-    // make a button in the email that links to petpics.ai
-    let info = await transporter.sendMail({
+
+    transporter.sendMail({
       from: '"PetPics ai" <general@petpics.ai>',
       to: user.email!,
       subject: `${project.name} is ready!`,
