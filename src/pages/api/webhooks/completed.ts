@@ -1,7 +1,5 @@
 import db from "@/core/db";
-import { Project, Shot } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
-import { getSession } from "next-auth/react";
 import nodemailer from "nodemailer";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
