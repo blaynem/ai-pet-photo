@@ -6,6 +6,7 @@ import { MdCheckCircleOutline } from "react-icons/md";
 
 const Login = () => {
   const router = useRouter();
+
   return (
     <Flex flex="1" align="center" justify="center">
       {router.query.verifyRequest ? (
