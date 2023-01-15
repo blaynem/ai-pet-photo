@@ -45,7 +45,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   const webhookUrl = new URL(
     `/api/webhooks/trainingComplete`,
-    process.env.NEXT_PUBLIC_BASE_URL
+    process.env.NEXTAUTH_URL!
   );
   webhookUrl.searchParams.set("secret", process.env.WEBHOOK_SECRET!);
   webhookUrl.searchParams.set("projectId", project.id);
