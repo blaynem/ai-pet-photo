@@ -1,6 +1,5 @@
 import AuthForm from "@/components/layout/AuthForm";
 import { Box, Flex, Heading, Icon, Text } from "@chakra-ui/react";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import React from "react";
 import { MdCheckCircleOutline } from "react-icons/md";
