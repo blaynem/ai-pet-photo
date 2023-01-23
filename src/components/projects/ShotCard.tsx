@@ -1,3 +1,4 @@
+import { getFullShotUrl } from "@/core/utils/bucketHelpers";
 import { ShotsPick } from "@/pages/api/projects";
 import { AspectRatio, Box, Center, Spinner, Text } from "@chakra-ui/react";
 import axios from "axios";
@@ -23,9 +24,9 @@ const ShotCard = ({
         )
         .then((res) => res.data),
     {
-      refetchInterval: (data) => (data?.shot.outputUrl ? false : 5000),
+      refetchInterval: (data) => (data?.shot.imageUrl ? false : 5000),
       refetchOnWindowFocus: false,
-      enabled: !initialShot.outputUrl && initialShot.status !== "failed",
+      enabled: !initialShot.imageUrl && initialShot.status !== "failed",
       initialData: { shot: initialShot },
     }
   );
@@ -41,7 +42,7 @@ const ShotCard = ({
           </Center>
         </div>
       )}
-      {shot.outputUrl ? (
+      {shot.imageUrl ? (
         <Zoom
           ZoomContent={(zoomContentProps) => (
             <CustomZoomContent
@@ -53,7 +54,7 @@ const ShotCard = ({
         >
           <NextImage
             alt={shot.filterName || "Stylized image of your pet"}
-            src={shot.outputUrl}
+            src={getFullShotUrl(shot)}
             width="512"
             height="512"
           />

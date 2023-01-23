@@ -79,34 +79,37 @@ model Project {
 }
 
 model Shot {
-  id          String   @id @default(uuid())
-  prompt      String
-  replicateId String
-  status      String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  projectId   String?
-  outputUrl   String?
-  // This is the name of the filter that was used to generate this shot
-  filterName  String?
-  // The filter id that was used to generate this shot
-  filterId    String?
-  Filters     Filters? @relation(fields: [filterId], references: [id])
-  Project     Project? @relation(fields: [projectId], references: [id])
+  id               String   @id @default(uuid())
+  prompt           String
+  replicateId      String
+  status           String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  projectId        String?
+  /// Standard 512x512 image url, will likely just be {id}.png
+  imageUrl         String?
+  /// Upscaled image url
+  upscaledImageUrl String?
+  /// This is the name of the filter that was used to generate this shot
+  filterName       String?
+  /// The filter id that was used to generate this shot
+  filterId         String?
+  Filters          Filters? @relation(fields: [filterId], references: [id])
+  Project          Project? @relation(fields: [projectId], references: [id])
 }
 
 model Filters {
   id             String   @id @default(uuid())
-  // Name of the filter
+  /// Name of the filter
   name           String
-  // What the filter's prompt string actually is
+  /// What the filter's prompt string actually is
   prompt         String
   createdAt      DateTime @default(now())
-  // This should always be the dog url example
+  /// This should always be the dog url example
   exampleUrl     String
-  // Add cat example url
+  /// Add cat example url
   exampleUrl_cat String?
-  // Whether or not this filter is enabled for users
+  /// Whether or not this filter is enabled for users
   enabled        Boolean  @default(true)
 
   Shot Shot[]
@@ -114,13 +117,13 @@ model Filters {
 
 model Payment {
   id              String       @id @default(uuid())
-  // Payment id for stripe
+  /// Payment id for stripe
   stripePaymentId String?
-  // Amount of credits purchased
+  /// Amount of credits purchased
   amount          Int
-  // Amount of credits purchased in USD
+  /// Amount of credits purchased in USD
   paid_amount     Int
-  // Type of purchase that was made
+  /// Type of purchase that was made
   purchaseType    PurchaseType
   createdAt       DateTime     @default(now())
   updatedAt       DateTime     @updatedAt
