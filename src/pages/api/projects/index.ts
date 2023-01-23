@@ -13,9 +13,10 @@ export type ShotsPick = Pick<
   | "filterId"
   | "filterName"
   | "id"
-  | "outputUrl"
   | "projectId"
   | "status"
+  | "imageUrl"
+  | "upscaledImageUrl"
 >;
 
 export type ProjectWithShots = {
@@ -98,7 +99,8 @@ const handler = async (
             filterId: true,
             filterName: true,
             id: true,
-            outputUrl: true,
+            imageUrl: true,
+            upscaledImageUrl: true,
             projectId: true,
             status: true,
           },

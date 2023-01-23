@@ -1,5 +1,6 @@
 import replicateClient, { PredictionResponse } from "@/core/clients/replicate";
 import db from "@/core/db";
+import { fetchImageAndStoreIt } from "@/core/utils/bucketHelpers";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
 
@@ -20,16 +21,20 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     // If the initial shot status changes from the prediction, update the shot in database.
     if (shot.status !== prediction.status) {
-      await db.shot.update({
-        where: { id: shot.id },
-        data: {
-          status: prediction.status,
-          outputUrl: prediction.output?.[0] || null,
-        },
-      });
+      const outputUrl = prediction.output?.[0];
+      // If the prediction has an output, download it and store it in the bucket.
+      if (outputUrl) {
+        const fileName = await fetchImageAndStoreIt(outputUrl, shot);
+        // store the prediction output in the bucket as well.
+        await db.shot.update({
+          where: { id: shot.id },
+          data: {
+            status: prediction.status,
+            imageUrl: fileName,
+          },
+        });
+      }
     }
-
-    // todo: Probably need to save these images in our database as well instead of replicate storage.
 
     // Remove the `prompt` from the shot, so users don't see it.
     const { prompt, ...shotWithoutPrompt } = shot;

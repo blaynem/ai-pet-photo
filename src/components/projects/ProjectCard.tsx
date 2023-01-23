@@ -3,6 +3,7 @@ import {
   PUBLIC_BUCKET_URL,
   TWITTER_LINK,
 } from "@/core/constants";
+import { getFullShotUrl } from "@/core/utils/bucketHelpers";
 import { ProjectWithShots } from "@/pages/api/projects";
 import {
   Avatar,
@@ -162,9 +163,9 @@ const ProjectCard = ({
               ) : (
                 <AvatarGroup size="xl" max={10}>
                   {project.shots
-                    .filter((shot) => Boolean(shot.outputUrl))
+                    .filter((shot) => Boolean(shot.imageUrl))
                     .map((shot) => (
-                      <Avatar key={shot.outputUrl} src={shot.outputUrl!} />
+                      <Avatar key={shot.imageUrl} src={getFullShotUrl(shot)} />
                     ))}
                 </AvatarGroup>
               )}
