@@ -35,9 +35,11 @@ const ShotCard = ({
   return (
     <Box key={shot.id} backgroundColor="gray.100" overflow="hidden">
       {shot.status === "failed" && (
-        <Center height="100%" backgroundColor="gray.100">
-          <Text align="center">{`Failed to Generate :(`}</Text>
-        </Center>
+        <div style={{ height: "512" }}>
+          <Center height="100%" backgroundColor="gray.100">
+            <Text align="center">{`Failed to Generate :(`}</Text>
+          </Center>
+        </div>
       )}
       {shot.outputUrl ? (
         <Zoom

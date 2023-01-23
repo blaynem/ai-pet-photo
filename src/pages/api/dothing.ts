@@ -8,19 +8,19 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   // IF YOU UNCOMMENT THIS, MAKE SURE YOU REPLACE ALL THE DATA, OTHERWISE WE GET DUPLICATES!!
   // REEE!!
-  //   const newFilters: Prisma.FiltersCreateInput[]  = [
-  //     {
-  //       name: "Elvish",
-  //       prompt:
-  //         "A stylized illustration of {instanceName} {instanceClass} as an elf, fantasy concept art, intricate details, detailed armor, majestic background, art by wlop, Greg Rutkowski, digital painting, smooth lighting, looking towards the viewer.",
-  //       exampleUrl:
-  //         "https://replicate.delivery/pbxt/3xE7uudwFeSnDq2uzLZfeS6lawrl77dB6Zs25Lw8JVey3fPBC/out-0.png",
-  //     },
-  //   ];
+  const newFilters: Prisma.FiltersCreateInput[] = [
+    // {
+    //   name: "King",
+    //   prompt:
+    //     "{instanceName} {instanceClass} king with a crown, royal gold armor, crown, king helmet, royal cape, holding golden cross on chest, wearing golden royal crown, rococo, by Albert Aublet, Krenz Cushart, WLOP, Sakimichan, high fantasy, purple aethetic, matte painting",
+    //   exampleUrl: "king_ted.jpg",
+    //   exampleUrl_cat: "king_vincent.jpg",
+    // },
+  ];
 
-  //   const data = await db.filters.createMany({
-  //     data: newFilters,
-  //   });
+  // const data = await db.filters.createMany({
+  //   data: newFilters,
+  // });
   res.json(`AHHH DON'T DO THIS. HACKER. STOP!`);
 };
 
