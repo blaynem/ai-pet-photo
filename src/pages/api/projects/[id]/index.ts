@@ -13,7 +13,8 @@ type ShotsPick = Pick<
   | "filterId"
   | "filterName"
   | "id"
-  | "outputUrl"
+  | "imageUrl"
+  | "upscaledImageUrl"
   | "projectId"
   | "status"
 >;
@@ -58,7 +59,8 @@ const handler = async (
             filterId: true,
             filterName: true,
             id: true,
-            outputUrl: true,
+            imageUrl: true,
+            upscaledImageUrl: true,
             projectId: true,
             status: true,
           },
