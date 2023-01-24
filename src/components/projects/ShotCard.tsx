@@ -48,7 +48,7 @@ const ShotCard = ({
             <CustomZoomContent
               // Type script being annoying, i'll figure it out later.
               {...(zoomContentProps as unknown as ZoomContentProps)}
-              description={` Style: ${shot.filterName}`}
+              shot={shot}
             />
           )}
         >

@@ -233,6 +233,71 @@ export type TrainingRequest = {
   webhook_completed?: string;
 };
 
+export type UpscaleRequest = {
+  input: {
+    // * The image that you want to upscale
+    image: string;
+    /**
+     * The Task type that you want to run
+     * Allowed values:
+     * Real-World Image Super-Resolution-Large,
+     * Real-World Image Super-Resolution-Medium,
+     * Grayscale Image Denoising,
+     * Color Image Denoising,
+     * JPEG Compression Artifact Reduction
+     *
+     *  default: Real-World Image Super-Resolution-Large
+     **/
+    task:
+      | "Real-World Image Super-Resolution-Large"
+      | "Real-World Image Super-Resolution-Medium"
+      | "Grayscale Image Denoising"
+      | "Color Image Denoising"
+      | "JPEG Compression Artifact Reduction";
+
+    /**
+     *  Noise level,  activated for Grayscale Image Denoising and Color Image Denoising. Leave it as default or arbitrary if other tasks are selected
+     *  allowed values: 15,25,50
+     * default: 15
+     * */
+
+    noise_level?: 15 | 25 | 50;
+    /**
+     * scale factor, activated for JPEG Compression Artifact Reduction. Leave it as default or arbitrary if other tasks are selected
+     * default value: 40
+     * */
+    scale_factor?: number;
+  };
+  /**
+   * Training versions are via replicate
+   *
+   * https://replicate.com/blog/dreambooth-api#versions
+   */
+  version: string;
+  /**
+   * a webhook to call when the job finishes. (Optional.)
+   */
+  webhook_completed?: string;
+};
+
+export type UpscaleResponse = {
+  id: string;
+  version: string;
+  urls: {
+    get: string;
+    cancel: string;
+  };
+  created_at: Date;
+  started_at: Date | null;
+  completed_at: Date | null;
+  status: "starting" | "pushing" | "succeeded";
+  input: any; // the input is free form it comes
+  output: any;
+  error: any;
+  logs: any;
+  metrics: {};
+};
+
 type PredictionRequest = {
   // * The prompt that you use to describe the prediction request, in the format a [identifier] [class noun].
   // * Ex: Teddy dog, portrait photograph, 85mm medium format photo
@@ -294,7 +359,7 @@ interface ReplicateClient {
   get: <t>(url: string) => Promise<AxiosResponse<t>>;
   post: <t>(
     url: string,
-    data: TrainingRequest | PredictionRequest,
+    data: TrainingRequest | PredictionRequest | UpscaleRequest,
     headers?: any
   ) => Promise<AxiosResponse<t>>;
 }

@@ -90,6 +90,8 @@ model Shot {
   imageUrl         String?
   /// Upscaled image url
   upscaledImageUrl String?
+  /// Upscale ID for receiving the upscaled image from replicate
+  upscaleId        String?
   /// This is the name of the filter that was used to generate this shot
   filterName       String?
   /// The filter id that was used to generate this shot

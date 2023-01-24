@@ -8,15 +8,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   // IF YOU UNCOMMENT THIS, MAKE SURE YOU REPLACE ALL THE DATA, OTHERWISE WE GET DUPLICATES!!
   // REEE!!
-  const newFilters: Prisma.FiltersCreateInput[] = [
-    // {
-    //   name: "King",
-    //   prompt:
-    //     "{instanceName} {instanceClass} king with a crown, royal gold armor, crown, king helmet, royal cape, holding golden cross on chest, wearing golden royal crown, rococo, by Albert Aublet, Krenz Cushart, WLOP, Sakimichan, high fantasy, purple aethetic, matte painting",
-    //   exampleUrl: "king_ted.jpg",
-    //   exampleUrl_cat: "king_vincent.jpg",
-    // },
-  ];
+  // const newFilters: Prisma.FiltersCreateInput[] = [
+  //   {
+  //     name: "Cyberspace",
+  //     prompt:
+  //       "{instanceName} {instanceClass}  as lonely cybernetic astronaut in jupiter, epic scene, by victo ngai, kilian eng vibrant colours, dynamic lighting, digital art, winning award masterpiece, fantastically beautiful, illustration, aesthetically inspired by beksinski and dan mumford, trending on artstation, art by greg rutkowski, 8 k",
+  //     exampleUrl: "cyberspace_ted.jpg",
+  //     exampleUrl_cat: "cyberspace_vince.jpg",
+  //   },
+  // ];
 
   // const data = await db.filters.createMany({
   //   data: newFilters,
