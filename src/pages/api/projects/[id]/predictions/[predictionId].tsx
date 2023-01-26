@@ -14,14 +14,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const shot = await db.shot.findFirstOrThrow({
       where: { projectId: projectId, id: predictionId },
     });
-
+    const fetchId = shot.upscaleId ? shot.upscaleId : shot.replicateId;
     const { data: prediction } = await replicateClient.get<PredictionResponse>(
-      `https://api.replicate.com/v1/predictions/${shot.replicateId}`
+      `https://api.replicate.com/v1/predictions/${fetchId}`
     );
-
     // If the initial shot status changes from the prediction, update the shot in database.
     if (shot.status !== prediction.status) {
-      const outputUrl = prediction.output?.[0];
+      const outputUrl = shot.upscaleId
+        ? prediction.output
+        : prediction.output?.[0];
       // If the prediction has an output, download it and store it in the bucket.
       if (outputUrl) {
         const fileName = await fetchImageAndStoreIt(outputUrl, shot);
@@ -30,7 +31,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           where: { id: shot.id },
           data: {
             status: prediction.status,
-            imageUrl: fileName,
+            imageUrl: shot.upscaleId ? shot.imageUrl : fileName,
+            upscaledImageUrl: shot.upscaleId ? fileName : null,
           },
         });
       }

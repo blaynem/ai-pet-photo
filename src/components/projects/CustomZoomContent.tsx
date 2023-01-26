@@ -1,6 +1,6 @@
 import { ShotsPick } from "@/pages/api/projects";
 import { Box, Text } from "@chakra-ui/layout";
-import { Button, useDisclosure } from "@chakra-ui/react";
+import { Button, Portal, useDisclosure } from "@chakra-ui/react";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { ReactElement, FC } from "react";
@@ -62,16 +62,22 @@ const CustomZoomContent: FC<CustomZoomContentProps> = ({
       </Box>
       <Box display={"flex"} alignItems={"center"} justifyContent={"center"}>
         {modalLoaded && (
-          <Button variant={"brand"} onClick={() => mutateUpscale(shot)}>
+          <Button variant={"brand"} onClick={onOpen}>
             Upscale
           </Button>
         )}
       </Box>
-      <ConfirmationModal
-        isOpen={isOpen}
-        onClose={onClose}
-        onConfirm={() => mutateUpscale(shot)}
-      />
+      <Box
+        display={isOpen ? "flex" : "none"}
+        alignItems="center"
+        justifyContent="center"
+      >
+        <ConfirmationModal
+          isOpen={isOpen}
+          onClose={onClose}
+          onConfirm={() => mutateUpscale(shot)}
+        />
+      </Box>
     </>
   );
 };

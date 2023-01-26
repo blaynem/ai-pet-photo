@@ -248,7 +248,7 @@ export type UpscaleRequest = {
      *
      *  default: Real-World Image Super-Resolution-Large
      **/
-    task:
+    task_type:
       | "Real-World Image Super-Resolution-Large"
       | "Real-World Image Super-Resolution-Medium"
       | "Grayscale Image Denoising"

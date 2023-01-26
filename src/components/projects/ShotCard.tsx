@@ -24,15 +24,22 @@ const ShotCard = ({
         )
         .then((res) => res.data),
     {
-      refetchInterval: (data) => (data?.shot.imageUrl ? false : 5000),
+      refetchInterval: (data) =>
+        !data?.shot.imageUrl ||
+        (data?.shot.upscaleId && !data?.shot.upscaledImageUrl)
+          ? 5000
+          : false,
       refetchOnWindowFocus: false,
-      enabled: !initialShot.imageUrl && initialShot.status !== "failed",
+      enabled:
+        (initialShot.upscaleId &&
+          initialShot.status !== "failed" &&
+          !initialShot.upscaledImageUrl) ||
+        (!initialShot.imageUrl && initialShot.status !== "failed"),
       initialData: { shot: initialShot },
     }
   );
 
   const shot = data!.shot;
-
   return (
     <Box key={shot.id} backgroundColor="gray.100" overflow="hidden">
       {shot.status === "failed" && (
@@ -54,7 +61,7 @@ const ShotCard = ({
         >
           <NextImage
             alt={shot.filterName || "Stylized image of your pet"}
-            src={getFullShotUrl(shot)}
+            src={getFullShotUrl(shot, shot.upscaledImageUrl ? true : false)}
             width="512"
             height="512"
           />
