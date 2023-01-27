@@ -50,7 +50,6 @@ const ProjectCard = ({
       },
     }
   );
-  const [startTime, setStartTime] = useState<number>(0);
 
   const isWaitingPayment = !project.stripePaymentId;
   const isWaitingTraining =
@@ -66,8 +65,8 @@ const ProjectCard = ({
   };
 
   const checkBackTime = formatRelative(
-    new Date(new Date(startTime).getTime() + 30 * 60 * 1000),
-    new Date(startTime)
+    new Date(new Date(project.createdAt).getTime() + 30 * 60 * 1000),
+    new Date(project.createdAt)
   )
     .replace("at", "around")
     .replace("today", "");

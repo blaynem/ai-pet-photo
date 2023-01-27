@@ -17,7 +17,6 @@ import { useQuery } from "react-query";
 import PageContainer from "@/components/layout/PageContainer";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
-import { useEffect } from "react";
 import ExamplePictures from "@/components/dashboard/ExamplePictures";
 import { ProjectsGetResponse } from "./api/projects";
 

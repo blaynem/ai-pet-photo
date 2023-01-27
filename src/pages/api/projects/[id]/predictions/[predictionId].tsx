@@ -18,6 +18,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const { data: prediction } = await replicateClient.get<PredictionResponse>(
       `https://api.replicate.com/v1/predictions/${fetchId}`
     );
+    if (prediction.status === "failed") {
+      await db.shot.update({
+        where: { id: shot.id },
+        data: {
+          status: prediction.status,
+          upscaleId: null,
+        },
+      });
+    }
     // If the initial shot status changes from the prediction, update the shot in database.
     if (shot.status !== prediction.status) {
       const outputUrl = shot.upscaleId

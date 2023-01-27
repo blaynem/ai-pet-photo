@@ -15,7 +15,15 @@ const ShotCard = ({
   shot: ShotsPick;
   projectId: string;
 }) => {
-  const { data } = useQuery(
+  // if shot has failed status, dont refetch,
+  // if shot has upscaleId and no upscaledImageUrl, refetch
+  // if shot has no imageUrl, refetch
+  const enableFetch =
+    initialShot.status !== "failed" &&
+    ((initialShot.upscaleId && !initialShot.upscaledImageUrl) ||
+      !initialShot.imageUrl);
+
+  const { data, refetch: refetchShot } = useQuery(
     `shot-${initialShot.id}`,
     () =>
       axios
@@ -24,22 +32,15 @@ const ShotCard = ({
         )
         .then((res) => res.data),
     {
-      refetchInterval: (data) =>
-        !data?.shot.imageUrl ||
-        (data?.shot.upscaleId && !data?.shot.upscaledImageUrl)
-          ? 5000
-          : false,
+      refetchInterval: (data) => (enableFetch ? 5000 : false),
       refetchOnWindowFocus: false,
-      enabled:
-        (initialShot.upscaleId &&
-          initialShot.status !== "failed" &&
-          !initialShot.upscaledImageUrl) ||
-        (!initialShot.imageUrl && initialShot.status !== "failed"),
+      enabled: enableFetch,
       initialData: { shot: initialShot },
     }
   );
 
   const shot = data!.shot;
+
   return (
     <Box key={shot.id} backgroundColor="gray.100" overflow="hidden">
       {shot.status === "failed" && (
@@ -56,6 +57,7 @@ const ShotCard = ({
               // Type script being annoying, i'll figure it out later.
               {...(zoomContentProps as unknown as ZoomContentProps)}
               shot={shot}
+              refetchShot={refetchShot}
             />
           )}
         >

@@ -347,7 +347,7 @@ export type PredictionResponse = {
   created_at: Date;
   started_at: Date | null;
   completed_at: Date | null;
-  status: "starting" | "pushing" | "succeeded";
+  status: "starting" | "pushing" | "succeeded" | "failed";
   input: any; // the input is free form it comes
   output: any;
   error: any;
