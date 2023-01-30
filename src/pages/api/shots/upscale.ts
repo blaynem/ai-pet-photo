@@ -1,15 +1,9 @@
 import db from "@/core/db";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
-import replicateClient, {
-  TrainingRequest,
-  TrainingResponse,
-  UpscaleRequest,
-  UpscaleResponse,
-} from "@/core/clients/replicate";
-import { getRefinedInstanceClass } from "@/core/utils/predictions";
+import replicateClient, { UpscaleResponse } from "@/core/clients/replicate";
 import supabase from "@/core/clients/supabase";
-import { fetchImageAndGetDataUrl } from "@/core/utils/bucketHelpers";
+import { getShotsUrlPath } from "@/core/utils/bucketHelpers";
 
 const SWINIR_VERSION =
   "660d922d33153019e8c263a3bba265de882e7f4f70396546b6c9c8f9d47a021a";
@@ -24,18 +18,21 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(401).json({ message: "Not authenticated" });
   }
 
-  let shot = await db.shot.findFirstOrThrow({
+  // Get the shot
+  const shot = await db.shot.findFirstOrThrow({
     where: {
       id: shotId,
       upscaledImageUrl: null,
     },
   });
 
+  // Get the standard shot to upscale
   const { data: data_url } = supabase.storage
-    .from(process.env.NEXT_SHOT_BUCKET_NAME!)
-    .getPublicUrl(`${shot.projectId}/standard/${shot.id}.png`);
+    .from("shots")
+    .getPublicUrl(getShotsUrlPath(shot));
 
-  const { data } = await replicateClient.post<UpscaleResponse>(
+  // Upscale the shot
+  const { data: prediction } = await replicateClient.post<UpscaleResponse>(
     `https://api.replicate.com/v1/predictions`,
     {
       input: { image: data_url.publicUrl, task_type: TASK_TYPE },
@@ -43,9 +40,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
   );
 
-  shot = await db.shot.update({
-    where: { id: shot.id },
-    data: { upscaleId: data.id, status: data.status },
+  const upscaledShot = await db.shot.update({
+    where: { id: shotId },
+    data: { upscaleId: prediction.id, upscaleStatus: prediction.status },
   });
 
   // Decrement the user's credits
@@ -54,7 +51,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     data: { credits: { decrement: 1 } },
   });
 
-  return res.json({ shot });
+  return res.json({ shot: upscaledShot });
 };
 
 export default handler;

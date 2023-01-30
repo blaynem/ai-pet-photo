@@ -15,7 +15,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import axios from "axios";
-import { ReactElement, FC, useState, useEffect } from "react";
+import { ReactElement, FC, useState } from "react";
 import { useMutation } from "react-query";
 import { saveAs } from "file-saver";
 
@@ -32,7 +32,7 @@ export type ZoomContentProps = {
   modalState: ModalState;
   shot: ShotsPick;
   onUnzoom: () => void;
-  refetchShot: () => void;
+  onUpscale: () => void;
 };
 
 type CustomZoomContentProps = {} & ZoomContentProps;
@@ -42,7 +42,7 @@ const CustomZoomContent: FC<CustomZoomContentProps> = ({
   modalState,
   img,
   shot,
-  refetchShot,
+  onUpscale,
 }) => {
   const [isLoadingUpscale, setIsLoadingUpscale] = useState(
     shot.upscaleId && !shot.upscaledImageUrl
@@ -50,28 +50,19 @@ const CustomZoomContent: FC<CustomZoomContentProps> = ({
   // If we don't have this check, the unzoom button / description will render
   // before the modals transition is complete.
   const modalLoaded = modalState === "LOADED";
-  const { isOpen, onClose, onOpen, onToggle } = useDisclosure();
+  const { isOpen, onClose, onToggle } = useDisclosure();
 
-  const { mutate: mutateUpscale, isLoading: isLoading } = useMutation(
+  const { mutate: mutateUpscale } = useMutation(
     `upscale-shot-${shot.id}`,
     (shot: ShotsPick) =>
       axios.post(`/api/shots/upscale?id=${shot.id}`).then((res) => res.data),
     {
       onSuccess: () => {
         setIsLoadingUpscale(true);
-        refetchShot();
+        onUpscale();
       },
     }
   );
-
-  useEffect(() => {
-    if (!isLoadingUpscale) return;
-    const interval = setInterval(() => {
-      refetchShot();
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [isLoadingUpscale]);
 
   return (
     <>
