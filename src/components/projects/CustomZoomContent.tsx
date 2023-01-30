@@ -18,6 +18,8 @@ import axios from "axios";
 import { ReactElement, FC, useState } from "react";
 import { useMutation } from "react-query";
 import { saveAs } from "file-saver";
+import { UPSCALE_IMAGE_COST_IN_CREDITS } from "@/core/constants";
+import { reloadSession } from "@/core/utils/reloadSession";
 
 declare const enum ModalState {
   LOADED = "LOADED",
@@ -60,6 +62,8 @@ const CustomZoomContent: FC<CustomZoomContentProps> = ({
       onSuccess: () => {
         setIsLoadingUpscale(true);
         onUpscale();
+        // Reload the session fetches their new credits balance
+        reloadSession();
       },
     }
   );
@@ -135,7 +139,8 @@ const CustomZoomContent: FC<CustomZoomContentProps> = ({
 
                 <PopoverBody>
                   <Text fontSize="sm" mb={4}>
-                    Are you sure you want to spend 1 credit to upscale this
+                    Are you sure you want to spend{" "}
+                    {UPSCALE_IMAGE_COST_IN_CREDITS} credit to upscale this
                     image?
                   </Text>
                 </PopoverBody>

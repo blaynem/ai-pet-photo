@@ -4,6 +4,7 @@ import { getSession } from "next-auth/react";
 import replicateClient, { UpscaleResponse } from "@/core/clients/replicate";
 import supabase from "@/core/clients/supabase";
 import { getShotsUrlPath } from "@/core/utils/bucketHelpers";
+import { UPSCALE_IMAGE_COST_IN_CREDITS } from "@/core/constants";
 
 const SWINIR_VERSION =
   "660d922d33153019e8c263a3bba265de882e7f4f70396546b6c9c8f9d47a021a";
@@ -48,7 +49,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   // Decrement the user's credits
   await db.user.update({
     where: { id: session.user.id },
-    data: { credits: { decrement: 1 } },
+    data: { credits: { decrement: UPSCALE_IMAGE_COST_IN_CREDITS } },
   });
 
   return res.json({ shot: upscaledShot });
