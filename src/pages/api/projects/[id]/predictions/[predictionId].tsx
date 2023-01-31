@@ -3,56 +3,85 @@ import db from "@/core/db";
 import { fetchImageAndStoreIt } from "@/core/utils/bucketHelpers";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
+import { Prisma } from "@prisma/client";
+import { ShotsPick } from "../..";
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const projectId = req.query.id as string;
-  const predictionId = req.query.predictionId as string;
+const handler = async (
+  req: NextApiRequest,
+  res: NextApiResponse<{ shot: ShotsPick | null; message?: string }>
+) => {
+  try {
+    const projectId = req.query.id as string;
+    const predictionId = req.query.predictionId as string;
+    const getUpscaledPrediction = req.query.upscaled === "true";
+    console.log(req.query);
+    const session = await getSession({ req });
 
-  const session = await getSession({ req });
+    if (!session?.user) {
+      return res.status(401).json({ message: "Not authenticated", shot: null });
+    }
 
-  if (session?.user) {
-    const shot = await db.shot.findFirstOrThrow({
+    // Remove the `prompt` from the shot, so users don't see it.
+    const { prompt, ...shot } = await db.shot.findFirstOrThrow({
       where: { projectId: projectId, id: predictionId },
     });
+
     const fetchId = shot.upscaleId ? shot.upscaleId : shot.replicateId;
     const { data: prediction } = await replicateClient.get<PredictionResponse>(
       `https://api.replicate.com/v1/predictions/${fetchId}`
     );
+
+    // If the prediction has failed, update the shot in database and return.
     if (prediction.status === "failed") {
-      await db.shot.update({
+      const updatedShot = await db.shot.update({
         where: { id: shot.id },
         data: {
-          status: prediction.status,
+          upscaleStatus: prediction.status,
           upscaleId: null,
         },
       });
+      return res.json({ shot: updatedShot });
     }
+
     // If the initial shot status changes from the prediction, update the shot in database.
-    if (shot.status !== prediction.status) {
+
+    console.log(shot);
+
+    const checkPredictionStatus = shot.upscaleId
+      ? shot.upscaleStatus !== prediction.status
+      : shot.status !== prediction.status;
+
+    if (checkPredictionStatus) {
+      // Depending on the prediction, the output is either a single url or an array of urls.
+      // For predictions to the upscaler, the output is a single url.
       const outputUrl = shot.upscaleId
         ? prediction.output
         : prediction.output?.[0];
-      // If the prediction has an output, download it and store it in the bucket.
+
+      let dataToUpdate: Prisma.ShotUpdateArgs["data"] = {};
+      // If the prediction has an output
       if (outputUrl) {
+        // Fetch the image and store it in the "shots" bucket.
         const fileName = await fetchImageAndStoreIt(outputUrl, shot);
-        // store the prediction output in the bucket as well.
-        await db.shot.update({
-          where: { id: shot.id },
-          data: {
-            status: prediction.status,
-            imageUrl: shot.upscaleId ? shot.imageUrl : fileName,
-            upscaledImageUrl: shot.upscaleId ? fileName : null,
-          },
-        });
+        // Add data to update the shot with
+        dataToUpdate = shot.upscaleId
+          ? { upscaledImageUrl: fileName, upscaleStatus: prediction.status }
+          : { imageUrl: fileName, status: prediction.status };
       }
+      // Update the shot with status, and other data if it exists.
+      const updatedShot = await db.shot.update({
+        where: { id: shot.id },
+        data: {
+          ...dataToUpdate,
+        },
+      });
+      return res.json({ shot: updatedShot });
     }
 
-    // Remove the `prompt` from the shot, so users don't see it.
-    const { prompt, ...shotWithoutPrompt } = shot;
-    return res.json({ shot: shotWithoutPrompt });
+    return res.json({ shot });
+  } catch (error) {
+    res.status(500).json({ message: "There was an error", shot: null });
   }
-
-  res.status(401).json({ message: "Not authenticated" });
 };
 
 export default handler;

@@ -39,7 +39,7 @@ export const fetchImageAndStoreIt = async (
 ): Promise<string | null> => {
   const response = await fetch(url);
   const buffer = await response.arrayBuffer();
-  const imagePath = getShotsUrlPath(shot, shot.upscaleId !== null);
+  const imagePath = getShotsUrlPath(shot, !!shot.upscaleId);
 
   // This should always just return the `{id}.png` part of the url
   const bucketFileName = imagePath.split("/").slice(-1)[0];
@@ -56,12 +56,4 @@ export const fetchImageAndStoreIt = async (
   }
 
   return bucketFileName;
-};
-
-export const fetchImageAndGetDataUrl = async (url: string): Promise<string> => {
-  const response = await fetch(url);
-  const buffer = await response.arrayBuffer();
-  const myBlob = new Blob([buffer]);
-  const dataUrl = URL.createObjectURL(myBlob);
-  return dataUrl;
 };

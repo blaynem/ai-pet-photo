@@ -185,7 +185,7 @@ const Uploader = ({ handleOnAdd }: { handleOnAdd: () => void }) => {
       // We create a unique name by taking the first 4 letters of the project name
       // and adding the instance class qualifier to the end.
       // Note: This does not have to be unique, as all training data will be separated.
-      instanceName: `${parsedProjectName.slice(0, 1)}${nameEnding}${
+      instanceName: `${parsedProjectName.slice(0, 4)}${nameEnding}${
         instanceClass.qualifier
       }`,
       instanceClass: instanceClass.value,

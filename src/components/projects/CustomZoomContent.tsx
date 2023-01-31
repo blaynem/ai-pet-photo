@@ -3,6 +3,8 @@ import { ShotsPick } from "@/pages/api/projects";
 import { Box, Text } from "@chakra-ui/layout";
 import {
   Button,
+  Icon,
+  IconButton,
   Popover,
   PopoverArrow,
   PopoverBody,
@@ -18,6 +20,7 @@ import axios from "axios";
 import { ReactElement, FC, useState, useEffect } from "react";
 import { useMutation } from "react-query";
 import { saveAs } from "file-saver";
+import { FiDownload } from "react-icons/fi";
 
 declare const enum ModalState {
   LOADED = "LOADED",
@@ -94,24 +97,28 @@ const CustomZoomContent: FC<CustomZoomContentProps> = ({
       >
         {shot.imageUrl && (
           <Button
+            rightIcon={<Icon as={FiDownload} />}
+            aria-label="Download SD"
             variant="brand"
             mr={4}
             onClick={async () => {
               saveAs(getFullShotUrl(shot, false), "image.png");
             }}
           >
-            Download SD
+            512px
           </Button>
         )}
         {shot.upscaledImageUrl && (
           <Button
             variant="brand"
+            aria-label="Download HD"
             mr={4}
             onClick={async () => {
               saveAs(getFullShotUrl(shot, true), "image.png");
             }}
+            rightIcon={<Icon as={FiDownload} />}
           >
-            Download HD
+            2048px
           </Button>
         )}
         {isLoadingUpscale && (

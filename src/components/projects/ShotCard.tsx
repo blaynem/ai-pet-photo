@@ -3,7 +3,7 @@ import { ShotsPick } from "@/pages/api/projects";
 import { AspectRatio, Box, Center, Spinner, Text } from "@chakra-ui/react";
 import axios from "axios";
 import NextImage from "next/image";
-import { memo } from "react";
+import { memo, useState } from "react";
 import Zoom from "react-medium-image-zoom";
 import { useQuery } from "react-query";
 import CustomZoomContent, { ZoomContentProps } from "./CustomZoomContent";
@@ -18,19 +18,25 @@ const ShotCard = ({
   // if shot has failed status, dont refetch,
   // if shot has upscaleId and no upscaledImageUrl, refetch
   // if shot has no imageUrl, refetch
+  const [isUpscale, setIsUpscale] = useState(!!initialShot.upscaleId);
   const enableFetch =
     initialShot.status !== "failed" &&
     ((initialShot.upscaleId && !initialShot.upscaledImageUrl) ||
       !initialShot.imageUrl);
 
+  const makeFetch = (upscale: boolean) => {
+    const params = new URLSearchParams();
+    upscale && params.append("upscaled", upscale.toString());
+    return axios.get<{ shot: ShotsPick }>(
+      `/api/projects/${projectId}/predictions/${
+        initialShot.id
+      }?${params.toString()}`
+    );
+  };
+
   const { data, refetch: refetchShot } = useQuery(
     `shot-${initialShot.id}`,
-    () =>
-      axios
-        .get<{ shot: ShotsPick }>(
-          `/api/projects/${projectId}/predictions/${initialShot.id}`
-        )
-        .then((res) => res.data),
+    () => makeFetch(isUpscale).then((res) => res.data),
     {
       refetchInterval: (data) => (enableFetch ? 5000 : false),
       refetchOnWindowFocus: false,
@@ -38,6 +44,11 @@ const ShotCard = ({
       initialData: { shot: initialShot },
     }
   );
+
+  const handleRefetchForUpscale = () => {
+    refetchShot();
+    setIsUpscale(true);
+  };
 
   const shot = data!.shot;
 
@@ -57,15 +68,15 @@ const ShotCard = ({
               // Type script being annoying, i'll figure it out later.
               {...(zoomContentProps as unknown as ZoomContentProps)}
               shot={shot}
-              refetchShot={refetchShot}
+              refetchShot={handleRefetchForUpscale}
             />
           )}
         >
           <NextImage
             alt={shot.filterName || "Stylized image of your pet"}
-            src={getFullShotUrl(shot, shot.upscaledImageUrl ? true : false)}
-            width="512"
-            height="512"
+            src={getFullShotUrl(shot, !!shot.upscaledImageUrl)}
+            width="640"
+            height="640"
           />
         </Zoom>
       ) : (

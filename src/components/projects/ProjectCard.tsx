@@ -132,10 +132,7 @@ const ProjectCard = ({
                   variant="brand"
                   rightIcon={<IoIosFlash />}
                   isLoading={isModelLoading || isSuccess}
-                  onClick={() => {
-                    setStartTime(Date.now());
-                    trainModel(project);
-                  }}
+                  onClick={() => trainModel(project)}
                 >
                   Start Building
                 </Button>

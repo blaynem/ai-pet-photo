@@ -1,20 +1,21 @@
+import { getShotsUrlPath } from "./../../../core/utils/bucketHelpers";
 import db from "@/core/db";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
-import replicateClient, {
-  TrainingRequest,
-  TrainingResponse,
-  UpscaleRequest,
-  UpscaleResponse,
-} from "@/core/clients/replicate";
-import { getRefinedInstanceClass } from "@/core/utils/predictions";
+import replicateClient, { UpscaleResponse } from "@/core/clients/replicate";
 import supabase from "@/core/clients/supabase";
-import { fetchImageAndGetDataUrl } from "@/core/utils/bucketHelpers";
 
 const SWINIR_VERSION =
   "660d922d33153019e8c263a3bba265de882e7f4f70396546b6c9c8f9d47a021a";
 
-const TASK_TYPE = "Real-World Image Super-Resolution-Large";
+export enum TaskType {
+  RealWorldImageSuperResolutionLarge = "Real-World Image Super-Resolution-Large",
+  RealWorldImageSuperResolutionMedium = "Real-World Image Super-Resolution-Medium",
+  GrayscaleImageDenoising = "Grayscale Image Denoising",
+  ColorImageDenoising = "Color Image Denoising",
+  JPEGCompressionArtifactReduction = "JPEG Compression Artifact Reduction",
+}
+const TASK_TYPE = TaskType.RealWorldImageSuperResolutionLarge;
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const shotId = req.query.id as string;
@@ -45,14 +46,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   shot = await db.shot.update({
     where: { id: shot.id },
-    data: { upscaleId: data.id, status: data.status },
+    data: { upscaleId: data.id, upscaleStatus: data.status },
   });
 
   // Decrement the user's credits
-  await db.user.update({
-    where: { id: session.user.id },
-    data: { credits: { decrement: 1 } },
-  });
+  if (data.status === "succeeded") {
+    await db.user.update({
+      where: { id: session.user.id },
+      data: { credits: { decrement: 1 } },
+    });
+  }
 
   return res.json({ shot });
 };
