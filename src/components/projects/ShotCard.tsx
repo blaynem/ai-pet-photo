@@ -3,10 +3,37 @@ import { ShotsPick } from "@/pages/api/projects";
 import { AspectRatio, Box, Center, Spinner, Text } from "@chakra-ui/react";
 import axios from "axios";
 import NextImage from "next/image";
-import { memo } from "react";
+import { memo, useState } from "react";
 import Zoom from "react-medium-image-zoom";
 import { useQuery } from "react-query";
 import CustomZoomContent, { ZoomContentProps } from "./CustomZoomContent";
+
+/**
+ * Determines if we should attempt to refetch the images while they're processing.
+ *
+ * @param shot
+ * @returns
+ */
+const shouldRefetchImages = (shot?: ShotsPick) => {
+  if (!shot) {
+    return false;
+  }
+  // If we have both image urls, we don't need to get them
+  if (shot.imageUrl && shot.upscaledImageUrl) {
+    return false;
+  }
+  // For standard shots that are loading
+  if (!shot.imageUrl) {
+    return shot.status !== "failed" && shot.status !== "succeeded";
+  }
+  // If we're trying to load upscale shots
+  if (shot.upscaleId && !shot.upscaledImageUrl) {
+    return (
+      shot.upscaleStatus !== "failed" && shot.upscaleStatus !== "succeeded"
+    );
+  }
+  return false;
+};
 
 const ShotCard = ({
   shot: initialShot,
@@ -15,32 +42,33 @@ const ShotCard = ({
   shot: ShotsPick;
   projectId: string;
 }) => {
-  // if shot has failed status, dont refetch,
-  // if shot has upscaleId and no upscaledImageUrl, refetch
-  // if shot has no imageUrl, refetch
-  const enableFetch =
-    initialShot.status !== "failed" &&
-    ((initialShot.upscaleId && !initialShot.upscaledImageUrl) ||
-      !initialShot.imageUrl);
+  const [fetchUpscaledImage, setFetchUpscaledImage] = useState(
+    !!initialShot.upscaleId
+  );
 
-  const { data, refetch: refetchShot } = useQuery(
-    `shot-${initialShot.id}`,
+  const { data, refetch } = useQuery(
+    [`shot-${initialShot.id}`],
     () =>
       axios
         .get<{ shot: ShotsPick }>(
-          `/api/projects/${projectId}/predictions/${initialShot.id}`
+          `/api/projects/${projectId}/predictions/${initialShot.id}?upscaled=${fetchUpscaledImage}`
         )
         .then((res) => res.data),
     {
-      refetchInterval: (data) => (enableFetch ? 5000 : false),
+      refetchInterval: (data) =>
+        shouldRefetchImages(data?.shot) ? 5000 : false,
       refetchOnWindowFocus: false,
-      enabled: enableFetch,
+      refetchOnMount: false, // We already have image data on mount
       initialData: { shot: initialShot },
     }
   );
 
-  const shot = data!.shot;
+  const handleUpscaleShot = () => {
+    setFetchUpscaledImage(true);
+    refetch();
+  };
 
+  const shot = data!.shot;
   return (
     <Box key={shot.id} backgroundColor="gray.100" overflow="hidden">
       {shot.status === "failed" && (
@@ -57,15 +85,15 @@ const ShotCard = ({
               // Type script being annoying, i'll figure it out later.
               {...(zoomContentProps as unknown as ZoomContentProps)}
               shot={shot}
-              refetchShot={refetchShot}
+              onUpscale={handleUpscaleShot}
             />
           )}
         >
           <NextImage
             alt={shot.filterName || "Stylized image of your pet"}
             src={getFullShotUrl(shot, shot.upscaledImageUrl ? true : false)}
-            width="512"
-            height="512"
+            width={shot.upscaleId ? 800 : 512}
+            height={shot.upscaleId ? 800 : 512}
           />
         </Zoom>
       ) : (
