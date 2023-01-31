@@ -1,6 +1,13 @@
 import { getFullShotUrl } from "@/core/utils/bucketHelpers";
 import { ShotsPick } from "@/pages/api/projects";
-import { AspectRatio, Box, Center, Spinner, Text } from "@chakra-ui/react";
+import {
+  AspectRatio,
+  Badge,
+  Box,
+  Center,
+  Spinner,
+  Text,
+} from "@chakra-ui/react";
 import axios from "axios";
 import NextImage from "next/image";
 import { memo, useState } from "react";
@@ -89,6 +96,17 @@ const ShotCard = ({
             />
           )}
         >
+          {shot.upscaleId && (
+            <Badge
+              ml={1}
+              mt={1}
+              colorScheme="blue"
+              border="1px solid"
+              position={"absolute"}
+            >
+              HD
+            </Badge>
+          )}
           <NextImage
             alt={shot.filterName || "Stylized image of your pet"}
             src={getFullShotUrl(shot, shot.upscaledImageUrl ? true : false)}
