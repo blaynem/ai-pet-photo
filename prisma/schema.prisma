@@ -86,6 +86,7 @@ model Shot {
   upscaleStatus    String?
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
+  upscaleStatus    String?
   projectId        String?
   /// Standard 512x512 image url, will likely just be {id}.png
   imageUrl         String?

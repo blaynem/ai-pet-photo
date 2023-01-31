@@ -13,8 +13,7 @@ const handler = async (
   try {
     const projectId = req.query.id as string;
     const predictionId = req.query.predictionId as string;
-    const getUpscaledPrediction = req.query.upscaled === "true";
-    console.log(req.query);
+    const upscaledPrediction = req.query.upscaled === "true";
     const session = await getSession({ req });
 
     if (!session?.user) {
@@ -26,7 +25,7 @@ const handler = async (
       where: { projectId: projectId, id: predictionId },
     });
 
-    const fetchId = shot.upscaleId ? shot.upscaleId : shot.replicateId;
+    const fetchId = upscaledPrediction ? shot.upscaleId : shot.replicateId;
     const { data: prediction } = await replicateClient.get<PredictionResponse>(
       `https://api.replicate.com/v1/predictions/${fetchId}`
     );
@@ -36,25 +35,23 @@ const handler = async (
       const updatedShot = await db.shot.update({
         where: { id: shot.id },
         data: {
-          upscaleStatus: prediction.status,
-          upscaleId: null,
+          ...(upscaledPrediction
+            ? { upscaleStatus: prediction.status, upscaleId: null } // reset upscaleId
+            : { status: prediction.status }),
         },
       });
       return res.json({ shot: updatedShot });
     }
 
-    // If the initial shot status changes from the prediction, update the shot in database.
-
-    console.log(shot);
-
-    const checkPredictionStatus = shot.upscaleId
+    const checkPredictionStatus = upscaledPrediction
       ? shot.upscaleStatus !== prediction.status
       : shot.status !== prediction.status;
 
+    // If the initial shot status changes from the prediction, update the shot in database.
     if (checkPredictionStatus) {
       // Depending on the prediction, the output is either a single url or an array of urls.
       // For predictions to the upscaler, the output is a single url.
-      const outputUrl = shot.upscaleId
+      const outputUrl = upscaledPrediction
         ? prediction.output
         : prediction.output?.[0];
 
@@ -64,14 +61,17 @@ const handler = async (
         // Fetch the image and store it in the "shots" bucket.
         const fileName = await fetchImageAndStoreIt(outputUrl, shot);
         // Add data to update the shot with
-        dataToUpdate = shot.upscaleId
-          ? { upscaledImageUrl: fileName, upscaleStatus: prediction.status }
-          : { imageUrl: fileName, status: prediction.status };
+        dataToUpdate = upscaledPrediction
+          ? { upscaledImageUrl: fileName }
+          : { imageUrl: fileName };
       }
       // Update the shot with status, and other data if it exists.
       const updatedShot = await db.shot.update({
         where: { id: shot.id },
         data: {
+          ...(upscaledPrediction
+            ? { upscaleStatus: prediction.status }
+            : { status: prediction.status }),
           ...dataToUpdate,
         },
       });
@@ -80,7 +80,7 @@ const handler = async (
 
     return res.json({ shot });
   } catch (error) {
-    res.status(500).json({ message: "There was an error", shot: null });
+    res.status(401).json({ message: "There was an error", shot: null });
   }
 };
 

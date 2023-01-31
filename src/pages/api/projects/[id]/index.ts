@@ -18,6 +18,7 @@ type ShotsPick = Pick<
   | "projectId"
   | "status"
   | "upscaleId"
+  | "upscaleStatus"
 >;
 
 export type ProjectIdResponse = {
@@ -65,6 +66,7 @@ const handler = async (
             projectId: true,
             status: true,
             upscaleId: true,
+            upscaleStatus: true,
           },
           orderBy: { createdAt: "desc" },
         },

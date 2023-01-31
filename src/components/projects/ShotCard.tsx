@@ -8,6 +8,33 @@ import Zoom from "react-medium-image-zoom";
 import { useQuery } from "react-query";
 import CustomZoomContent, { ZoomContentProps } from "./CustomZoomContent";
 
+/**
+ * Determines if we should attempt to refetch the images while they're processing.
+ *
+ * @param shot
+ * @returns
+ */
+const shouldRefetchImages = (shot?: ShotsPick) => {
+  if (!shot) {
+    return false;
+  }
+  // If we have both image urls, we don't need to get them
+  if (shot.imageUrl && shot.upscaledImageUrl) {
+    return false;
+  }
+  // For standard shots that are loading
+  if (!shot.imageUrl) {
+    return shot.status !== "failed" && shot.status !== "succeeded";
+  }
+  // If we're trying to load upscale shots
+  if (shot.upscaleId && !shot.upscaledImageUrl) {
+    return (
+      shot.upscaleStatus !== "failed" && shot.upscaleStatus !== "succeeded"
+    );
+  }
+  return false;
+};
+
 const ShotCard = ({
   shot: initialShot,
   projectId,
@@ -15,43 +42,33 @@ const ShotCard = ({
   shot: ShotsPick;
   projectId: string;
 }) => {
-  // if shot has failed status, dont refetch,
-  // if shot has upscaleId and no upscaledImageUrl, refetch
-  // if shot has no imageUrl, refetch
-  const [isUpscale, setIsUpscale] = useState(!!initialShot.upscaleId);
-  const enableFetch =
-    initialShot.status !== "failed" &&
-    ((initialShot.upscaleId && !initialShot.upscaledImageUrl) ||
-      !initialShot.imageUrl);
+  const [fetchUpscaledImage, setFetchUpscaledImage] = useState(
+    !!initialShot.upscaleId
+  );
 
-  const makeFetch = (upscale: boolean) => {
-    const params = new URLSearchParams();
-    upscale && params.append("upscaled", upscale.toString());
-    return axios.get<{ shot: ShotsPick }>(
-      `/api/projects/${projectId}/predictions/${
-        initialShot.id
-      }?${params.toString()}`
-    );
-  };
-
-  const { data, refetch: refetchShot } = useQuery(
-    `shot-${initialShot.id}`,
-    () => makeFetch(isUpscale).then((res) => res.data),
+  const { data, refetch } = useQuery(
+    [`shot-${initialShot.id}`],
+    () =>
+      axios
+        .get<{ shot: ShotsPick }>(
+          `/api/projects/${projectId}/predictions/${initialShot.id}?upscaled=${fetchUpscaledImage}`
+        )
+        .then((res) => res.data),
     {
-      refetchInterval: (data) => (enableFetch ? 5000 : false),
+      refetchInterval: (data) =>
+        shouldRefetchImages(data?.shot) ? 5000 : false,
       refetchOnWindowFocus: false,
-      enabled: enableFetch,
+      refetchOnMount: false, // We already have image data on mount
       initialData: { shot: initialShot },
     }
   );
 
-  const handleRefetchForUpscale = () => {
-    refetchShot();
-    setIsUpscale(true);
+  const handleUpscaleShot = () => {
+    setFetchUpscaledImage(true);
+    refetch();
   };
 
   const shot = data!.shot;
-
   return (
     <Box key={shot.id} backgroundColor="gray.100" overflow="hidden">
       {shot.status === "failed" && (
@@ -68,15 +85,15 @@ const ShotCard = ({
               // Type script being annoying, i'll figure it out later.
               {...(zoomContentProps as unknown as ZoomContentProps)}
               shot={shot}
-              refetchShot={handleRefetchForUpscale}
+              onUpscale={handleUpscaleShot}
             />
           )}
         >
           <NextImage
             alt={shot.filterName || "Stylized image of your pet"}
-            src={getFullShotUrl(shot, !!shot.upscaledImageUrl)}
-            width="640"
-            height="640"
+            src={getFullShotUrl(shot, shot.upscaledImageUrl ? true : false)}
+            width={shot.upscaleId ? 800 : 512}
+            height={shot.upscaleId ? 800 : 512}
           />
         </Zoom>
       ) : (
