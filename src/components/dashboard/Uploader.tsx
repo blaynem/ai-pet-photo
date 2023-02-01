@@ -165,8 +165,8 @@ const Uploader = ({ handleOnAdd }: { handleOnAdd: () => void }) => {
   );
 
   const createProject = () => {
-    if (projectName.length < 4) {
-      setErrorMessages(["Model name must be at least 4 characters long"]);
+    if (projectName.length < 1) {
+      setErrorMessages(["Model name must be at least 1 character long"]);
       return;
     }
 
@@ -178,13 +178,14 @@ const Uploader = ({ handleOnAdd }: { handleOnAdd: () => void }) => {
 
     // We lowercase the project name and remove all non-alphabetical characters
     const parsedProjectName = projectName.toLowerCase().replace(/[^a-z]/g, "");
+    const nameEnding = "pet";
 
     const body: CreateProjectBody = {
       urls,
       // We create a unique name by taking the first 4 letters of the project name
       // and adding the instance class qualifier to the end.
       // Note: This does not have to be unique, as all training data will be separated.
-      instanceName: `${parsedProjectName.slice(0, 4)}${
+      instanceName: `${parsedProjectName.slice(0, 4)}${nameEnding}${
         instanceClass.qualifier
       }`,
       instanceClass: instanceClass.value,
@@ -195,7 +196,7 @@ const Uploader = ({ handleOnAdd }: { handleOnAdd: () => void }) => {
   };
 
   const onProjectNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.currentTarget.value.length >= 4) {
+    if (e.currentTarget.value.length >= 1) {
       setErrorMessages([]);
     }
     setProjectName(e.currentTarget.value);

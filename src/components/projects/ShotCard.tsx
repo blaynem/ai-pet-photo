@@ -1,12 +1,46 @@
 import { getFullShotUrl } from "@/core/utils/bucketHelpers";
 import { ShotsPick } from "@/pages/api/projects";
-import { AspectRatio, Box, Center, Spinner, Text } from "@chakra-ui/react";
+import {
+  AspectRatio,
+  Badge,
+  Box,
+  Center,
+  Spinner,
+  Text,
+} from "@chakra-ui/react";
 import axios from "axios";
 import NextImage from "next/image";
-import { memo } from "react";
+import { memo, useState } from "react";
 import Zoom from "react-medium-image-zoom";
 import { useQuery } from "react-query";
 import CustomZoomContent, { ZoomContentProps } from "./CustomZoomContent";
+
+/**
+ * Determines if we should attempt to refetch the images while they're processing.
+ *
+ * @param shot
+ * @returns
+ */
+const shouldRefetchImages = (shot?: ShotsPick) => {
+  if (!shot) {
+    return false;
+  }
+  // If we have both image urls, we don't need to get them
+  if (shot.imageUrl && shot.upscaledImageUrl) {
+    return false;
+  }
+  // For standard shots that are loading
+  if (!shot.imageUrl) {
+    return shot.status !== "failed" && shot.status !== "succeeded";
+  }
+  // If we're trying to load upscale shots
+  if (shot.upscaleId && !shot.upscaledImageUrl) {
+    return (
+      shot.upscaleStatus !== "failed" && shot.upscaleStatus !== "succeeded"
+    );
+  }
+  return false;
+};
 
 const ShotCard = ({
   shot: initialShot,
@@ -15,30 +49,41 @@ const ShotCard = ({
   shot: ShotsPick;
   projectId: string;
 }) => {
-  const { data } = useQuery(
-    `shot-${initialShot.id}`,
+  const [fetchUpscaledImage, setFetchUpscaledImage] = useState(
+    !!initialShot.upscaleId
+  );
+
+  const { data, refetch } = useQuery(
+    [`shot-${initialShot.id}`],
     () =>
       axios
         .get<{ shot: ShotsPick }>(
-          `/api/projects/${projectId}/predictions/${initialShot.id}`
+          `/api/projects/${projectId}/predictions/${initialShot.id}?upscaled=${fetchUpscaledImage}`
         )
         .then((res) => res.data),
     {
-      refetchInterval: (data) => (data?.shot.imageUrl ? false : 5000),
+      refetchInterval: (data) =>
+        shouldRefetchImages(data?.shot) ? 5000 : false,
       refetchOnWindowFocus: false,
-      enabled: !initialShot.imageUrl && initialShot.status !== "failed",
+      refetchOnMount: false, // We already have image data on mount
       initialData: { shot: initialShot },
     }
   );
 
-  const shot = data!.shot;
+  const handleUpscaleShot = () => {
+    setFetchUpscaledImage(true);
+    refetch();
+  };
 
+  const shot = data!.shot;
   return (
     <Box key={shot.id} backgroundColor="gray.100" overflow="hidden">
       {shot.status === "failed" && (
-        <Center height="100%" backgroundColor="gray.100">
-          <Text align="center">{`Failed to Generate :(`}</Text>
-        </Center>
+        <div style={{ height: "512" }}>
+          <Center height="100%" backgroundColor="gray.100">
+            <Text align="center">{`Failed to Generate :(`}</Text>
+          </Center>
+        </div>
       )}
       {shot.imageUrl ? (
         <Zoom
@@ -46,15 +91,27 @@ const ShotCard = ({
             <CustomZoomContent
               // Type script being annoying, i'll figure it out later.
               {...(zoomContentProps as unknown as ZoomContentProps)}
-              description={` Style: ${shot.filterName}`}
+              shot={shot}
+              onUpscale={handleUpscaleShot}
             />
           )}
         >
+          {shot.upscaleId && (
+            <Badge
+              ml={1}
+              mt={1}
+              colorScheme="blue"
+              border="1px solid"
+              position={"absolute"}
+            >
+              HD
+            </Badge>
+          )}
           <NextImage
             alt={shot.filterName || "Stylized image of your pet"}
-            src={getFullShotUrl(shot)}
-            width="512"
-            height="512"
+            src={getFullShotUrl(shot, shot.upscaledImageUrl ? true : false)}
+            width={shot.upscaleId ? 800 : 512}
+            height={shot.upscaleId ? 800 : 512}
           />
         </Zoom>
       ) : (

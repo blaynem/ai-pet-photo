@@ -8,19 +8,19 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   // IF YOU UNCOMMENT THIS, MAKE SURE YOU REPLACE ALL THE DATA, OTHERWISE WE GET DUPLICATES!!
   // REEE!!
-  //   const newFilters: Prisma.FiltersCreateInput[]  = [
-  //     {
-  //       name: "Elvish",
-  //       prompt:
-  //         "A stylized illustration of {instanceName} {instanceClass} as an elf, fantasy concept art, intricate details, detailed armor, majestic background, art by wlop, Greg Rutkowski, digital painting, smooth lighting, looking towards the viewer.",
-  //       exampleUrl:
-  //         "https://replicate.delivery/pbxt/3xE7uudwFeSnDq2uzLZfeS6lawrl77dB6Zs25Lw8JVey3fPBC/out-0.png",
-  //     },
-  //   ];
+  // const newFilters: Prisma.FiltersCreateInput[] = [
+  //   {
+  //     name: "Cyberspace",
+  //     prompt:
+  //       "{instanceName} {instanceClass}  as lonely cybernetic astronaut in jupiter, epic scene, by victo ngai, kilian eng vibrant colours, dynamic lighting, digital art, winning award masterpiece, fantastically beautiful, illustration, aesthetically inspired by beksinski and dan mumford, trending on artstation, art by greg rutkowski, 8 k",
+  //     exampleUrl: "cyberspace_ted.jpg",
+  //     exampleUrl_cat: "cyberspace_vince.jpg",
+  //   },
+  // ];
 
-  //   const data = await db.filters.createMany({
-  //     data: newFilters,
-  //   });
+  // const data = await db.filters.createMany({
+  //   data: newFilters,
+  // });
   res.json(`AHHH DON'T DO THIS. HACKER. STOP!`);
 };
 

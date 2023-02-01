@@ -17,6 +17,8 @@ export type ShotsPick = Pick<
   | "status"
   | "imageUrl"
   | "upscaledImageUrl"
+  | "upscaleId"
+  | "upscaleStatus"
 >;
 
 export type ProjectWithShots = {
@@ -103,6 +105,8 @@ const handler = async (
             upscaledImageUrl: true,
             projectId: true,
             status: true,
+            upscaleId: true,
+            upscaleStatus: true,
           },
           ...(shotAmount && { take: Number(shotAmount) }),
         },
