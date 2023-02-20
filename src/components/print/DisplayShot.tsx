@@ -5,14 +5,12 @@ import {
   Badge,
   Box,
   Center,
-  Checkbox,
   Spinner,
   Text,
 } from "@chakra-ui/react";
 import axios from "axios";
 import NextImage from "next/image";
 import { memo, useState } from "react";
-
 import { useQuery } from "react-query";
 
 /**
@@ -42,16 +40,12 @@ const shouldRefetchImages = (shot?: ShotsPick) => {
   return false;
 };
 
-const ShotCardSelect = ({
+const DisplayShot = ({
   shot: initialShot,
   projectId,
-  selected,
-  handleSelect,
 }: {
   shot: ShotsPick;
   projectId: string;
-  selected: boolean;
-  handleSelect: (shot: ShotsPick) => void;
 }) => {
   const [fetchUpscaledImage, setFetchUpscaledImage] = useState(
     !!initialShot.upscaleId
@@ -71,6 +65,7 @@ const ShotCardSelect = ({
       refetchOnWindowFocus: false,
       refetchOnMount: false, // We already have image data on mount
       initialData: { shot: initialShot },
+      enabled: projectId !== "" ? true : false,
     }
   );
 
@@ -85,7 +80,7 @@ const ShotCardSelect = ({
         </div>
       )}
       {shot.imageUrl ? (
-        <Box onClick={() => handleSelect(shot)}>
+        <>
           {shot.upscaleId && (
             <Badge
               ml={1}
@@ -97,19 +92,13 @@ const ShotCardSelect = ({
               HD
             </Badge>
           )}
-
           <NextImage
-            style={{
-              border: selected ? "2px solid #3182ce" : "none",
-              backgroundColor: selected ? "#000" : "",
-              opacity: selected ? 0.5 : 1,
-            }}
             alt={shot.filterName || "Stylized image of your pet"}
             src={getFullShotUrl(shot, shot.upscaledImageUrl ? true : false)}
-            width={shot.upscaleId ? 800 : 512}
-            height={shot.upscaleId ? 800 : 512}
+            width={200}
+            height={200}
           />
-        </Box>
+        </>
       ) : (
         <AspectRatio ratio={1} height={"100%"}>
           <Center>
@@ -121,4 +110,4 @@ const ShotCardSelect = ({
   );
 };
 
-export default memo(ShotCardSelect);
+export default memo(DisplayShot);

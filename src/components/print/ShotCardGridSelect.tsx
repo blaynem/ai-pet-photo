@@ -10,27 +10,20 @@ import ShotCardSelect from "./ShotCardSelect";
 const ShotCardGridSelect = ({
   projectId,
   shots,
+  selectedShot,
+  setSelectedShot,
 }: {
   projectId: string;
   shots: ShotsPick[];
+  selectedShot: ShotsPick;
+  setSelectedShot: (shot: ShotsPick) => void;
 }) => {
-  const [selectedShots, setSelectedShots] = useState(new Set<string>());
-
-  const handleSelectShot = (shotId: string) => {
-    if (selectedShots.has(shotId)) {
-      selectedShots.delete(shotId);
-    } else {
-      selectedShots.add(shotId);
-    }
-    setSelectedShots(new Set(selectedShots));
-  };
-
   return (
     <SimpleGrid columns={[3, 4]}>
       {shots.map((shot) => (
         <ShotCardSelect
-          handleSelect={handleSelectShot}
-          selected={selectedShots.has(shot.id)}
+          handleSelect={setSelectedShot}
+          selected={shot.id === selectedShot.id}
           key={shot.id}
           shot={shot}
           projectId={projectId}

@@ -4,7 +4,7 @@ import {
   TWITTER_LINK,
 } from "@/core/constants";
 import { getFullShotUrl } from "@/core/utils/bucketHelpers";
-import { ProjectWithShots } from "@/pages/api/projects";
+import { ProjectWithShots, ShotsPick } from "@/pages/api/projects";
 import {
   Accordion,
   AccordionButton,
@@ -24,41 +24,23 @@ import {
 import { Project } from "@prisma/client";
 import axios from "axios";
 import { formatRelative } from "date-fns";
-import Link from "next/link";
-import { useState } from "react";
-import { HiArrowRight } from "react-icons/hi";
-import { IoIosFlash } from "react-icons/io";
 import { useMutation } from "react-query";
 import ShotCardGridSelect from "../print/ShotCardGridSelect";
-import ShotCardGrid from "../studio/ShotCardGrid";
 import FormPayment from "./FormPayment";
 
 const ProjectAccordion = ({
   project,
   handleRefreshProjects,
   showPromotionalPricing,
+  selectedShot,
+  setSelectedShot,
 }: {
   project: ProjectWithShots;
   handleRefreshProjects: () => void;
   showPromotionalPricing?: boolean;
+  selectedShot: ShotsPick;
+  setSelectedShot: (shot: ShotsPick) => void;
 }) => {
-  const {
-    mutate: trainModel,
-    isLoading: isModelLoading,
-    isSuccess,
-  } = useMutation(
-    `train-model-${project.id}`,
-    (project: Project) =>
-      axios.post(`/api/projects/${project.id}/train`, {
-        prompt,
-      }),
-    {
-      onSuccess: () => {
-        handleRefreshProjects();
-      },
-    }
-  );
-
   const isWaitingPayment = !project.stripePaymentId;
   const isWaitingTraining =
     project.stripePaymentId && !project.replicateModelId;
@@ -66,11 +48,6 @@ const ProjectAccordion = ({
   const isReady = project.modelStatus === "succeeded";
   const isTraining =
     project.modelStatus === "processing" || project.modelStatus === "pushing";
-
-  const handleDeleteStudio = async () => {
-    await axios.delete(`/api/projects/${project.id}`);
-    handleRefreshProjects();
-  };
 
   const checkBackTime = formatRelative(
     new Date(new Date(project.createdAt).getTime() + 30 * 60 * 1000),
@@ -221,7 +198,12 @@ const ProjectAccordion = ({
             </Text>
           </Center>
         )}
-        <ShotCardGridSelect projectId={project.id} shots={project.shots} />
+        <ShotCardGridSelect
+          projectId={project.id}
+          shots={project.shots}
+          selectedShot={selectedShot}
+          setSelectedShot={setSelectedShot}
+        />
       </AccordionPanel>
     </AccordionItem>
   );

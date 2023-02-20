@@ -1,0 +1,17 @@
+[
+  {
+    "productName": "lightweight hoodie",
+    "sku": "A-LH-DT97200",
+    "price": 4000
+  },
+  {
+    "productName": "heavyweight hoodie",
+    "sku": "HOOD-DT-99200",
+    "price": 6000
+  },
+  {
+    "productName": "Baseball T-Shirt",
+    "sku": "3-4-TEE-NL-6051",
+    "price": 3500
+  }
+]
