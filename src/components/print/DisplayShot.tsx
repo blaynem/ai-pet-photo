@@ -81,17 +81,6 @@ const DisplayShot = ({
       )}
       {shot.imageUrl ? (
         <>
-          {shot.upscaleId && (
-            <Badge
-              ml={1}
-              mt={1}
-              colorScheme="blue"
-              border="1px solid"
-              position={"absolute"}
-            >
-              HD
-            </Badge>
-          )}
           <NextImage
             alt={shot.filterName || "Stylized image of your pet"}
             src={getFullShotUrl(shot, shot.upscaledImageUrl ? true : false)}

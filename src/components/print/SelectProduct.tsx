@@ -17,6 +17,7 @@ import {
 import axios from "axios";
 import React, { Component } from "react";
 import { useMutation } from "react-query";
+import AddressModal from "./AddressModal";
 
 interface SelectProductProps {
   shot: ShotsPick;
@@ -85,6 +86,7 @@ const SelectProduct: React.FunctionComponent<SelectProductProps> = ({
           />
         ))}
       </SimpleGrid>
+      <AddressModal />
     </>
   );
 };
