@@ -79,6 +79,7 @@ const SelectProduct: React.FunctionComponent<SelectProductProps> = ({
         {products.map((product) => (
           <ProductCard
             name={product.name}
+            sku={product.sku}
             description={product.description}
             price={product.price}
             image={product.image}
@@ -97,12 +98,14 @@ const ProductCard = ({
   price,
   image,
   handlePurchase,
+  sku,
 }: {
   name: string;
   description: string;
   price: number;
   image: string;
   handlePurchase: () => void;
+  sku: string;
 }) => {
   return (
     <Card maxW="sm" backgroundColor={"whiteAlpha.700"}>
@@ -122,6 +125,7 @@ const ProductCard = ({
           <Button onClick={handlePurchase} variant="solid" colorScheme="blue">
             Buy now
           </Button>
+          <AddressModal />
         </ButtonGroup>
       </CardFooter>
     </Card>
