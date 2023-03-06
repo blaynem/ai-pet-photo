@@ -17,11 +17,7 @@ import {
 import axios from "axios";
 import React, { Component } from "react";
 import { useMutation } from "react-query";
-import AddressModal from "./AddressModal";
 
-interface SelectProductProps {
-  shot: ShotsPick;
-}
 // create a list of product objects, like a print, poster, canvas, hoodie, etc.
 const products = [
   {
@@ -54,9 +50,13 @@ const products = [
   },
 ];
 // create a component that takes a list of products and displays them in a grid, with a button to select the product with chakra-ui and a card component
-
+interface SelectProductProps {
+  shot: ShotsPick;
+  handleBuyProduct: (sku: string) => void;
+}
 const SelectProduct: React.FunctionComponent<SelectProductProps> = ({
   shot,
+  handleBuyProduct,
 }) => {
   const { mutate: mutatePurchase } = useMutation(
     `upscale-shot-${shot.id}`,
@@ -83,11 +83,10 @@ const SelectProduct: React.FunctionComponent<SelectProductProps> = ({
             description={product.description}
             price={product.price}
             image={product.image}
-            handlePurchase={handlePurchase}
+            handlePurchase={handleBuyProduct}
           />
         ))}
       </SimpleGrid>
-      <AddressModal />
     </>
   );
 };
@@ -104,7 +103,7 @@ const ProductCard = ({
   description: string;
   price: number;
   image: string;
-  handlePurchase: () => void;
+  handlePurchase: (sku: string) => void;
   sku: string;
 }) => {
   return (
@@ -122,10 +121,13 @@ const ProductCard = ({
       <Divider />
       <CardFooter>
         <ButtonGroup spacing="2">
-          <Button onClick={handlePurchase} variant="solid" colorScheme="blue">
+          <Button
+            onClick={() => handlePurchase(sku)}
+            variant="solid"
+            colorScheme="blue"
+          >
             Buy now
           </Button>
-          <AddressModal />
         </ButtonGroup>
       </CardFooter>
     </Card>

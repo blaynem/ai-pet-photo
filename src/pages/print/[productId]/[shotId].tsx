@@ -19,21 +19,43 @@ import GenerateStudioModal from "@/components/studio/GenerateStudioModal";
 import { useRouter } from "next/router";
 import { reloadSession } from "@/core/utils/reloadSession";
 import axios from "axios";
-import { FC } from "react";
+import { FC, useReducer } from "react";
 import { useMutation, useQuery } from "react-query";
 import { ProjectIdResponse } from "@/pages/api/projects/[id]";
 import {
   PredictionsBody,
   PredictionsResponse,
 } from "@/pages/api/projects/[id]/predictions";
-import { AddressForm } from "@/components/print/AddressModal";
+import { AddressForm } from "@/components/print/AddressForm";
 
 type StudioPageProps = {
   projectId: string;
 };
 
+export type Address = {
+  firstName: string;
+  lastName: string;
+  address1: string;
+  address2: string;
+  city: string;
+  state: string;
+  zip: string;
+};
+
 const StudioPage: FC<StudioPageProps> = ({ projectId }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [addressInputs, setAddressInputs] = useReducer(
+    (state: Address, newState: Address) => ({ ...state, ...newState }),
+    {
+      firstName: "",
+      lastName: "",
+      address1: "",
+      address2: "",
+      city: "",
+      state: "",
+      zip: "",
+    }
+  );
   const router = useRouter();
   useSession({
     required: true,
@@ -77,7 +99,10 @@ const StudioPage: FC<StudioPageProps> = ({ projectId }) => {
 
   return (
     <PageContainer>
-      <AddressForm></AddressForm>
+      <AddressForm
+        addressInput={addressInputs}
+        setAddressInput={setAddressInputs}
+      />
     </PageContainer>
   );
 };

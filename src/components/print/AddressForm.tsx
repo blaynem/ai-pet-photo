@@ -17,82 +17,89 @@ import {
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
-
-export default function AddressModal() {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  return (
-    <>
-      <Button onClick={onOpen}>Open Modal</Button>
-
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Address</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <AddressForm />
-          </ModalBody>
-
-          <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onClose}>
-              Close
-            </Button>
-            <Button variant="ghost">Secondary Action</Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-    </>
-  );
-}
+import { Address } from "@/pages/print/[productId]/[shotId]";
 
 // create a form to collect the address information with chakra-ui
 
-export const AddressForm = () => {
+export const AddressForm = ({
+  addressInput,
+  setAddressInput,
+}: {
+  addressInput: Address;
+  setAddressInput: (address: Address) => void;
+}) => {
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log(e);
+    console.log("submit");
+  };
   return (
     <form>
       <VStack spacing={3}>
         <FormControl>
-          <FormLabel htmlFor="name">Name</FormLabel>
-          <Input type="text" name="name" />
+          <FormLabel htmlFor="firstName">First Name</FormLabel>
+          <Input
+            onChange={(e) =>
+              setAddressInput({ ...addressInput, firstName: e.target.value })
+            }
+            type="text"
+            name="firstName"
+          />
+        </FormControl>
+        <FormControl>
+          <FormLabel htmlFor="lastName">Last Name</FormLabel>
+          <Input
+            onChange={(e) =>
+              setAddressInput({ ...addressInput, lastName: e.target.value })
+            }
+            type="text"
+            name="lastName"
+          />
         </FormControl>
         <FormControl>
           <FormLabel htmlFor="address">Address</FormLabel>
-          <Input type="text" name="address" />
+          <Input
+            onChange={(e) =>
+              setAddressInput({ ...addressInput, address1: e.target.value })
+            }
+            type="text"
+            name="address"
+          />
         </FormControl>
         <FormControl>
           <FormLabel htmlFor="address2">Address Line 2</FormLabel>
-          <Input type="text" name="address2" />
+          <Input
+            onChange={(e) =>
+              setAddressInput({ ...addressInput, address2: e.target.value })
+            }
+            type="text"
+            name="address2"
+          />
         </FormControl>
         <FormControl>
           <FormLabel htmlFor="city">City</FormLabel>
-          <Input type="text" name="city" />
+          <Input
+            onChange={(e) =>
+              setAddressInput({ ...addressInput, city: e.target.value })
+            }
+            type="text"
+            name="city"
+          />
         </FormControl>
-        <FormControl>{StateSelect()}</FormControl>
+        <StateSelect address={addressInput} setAddressInput={setAddressInput} />
         <FormControl>
           <FormLabel htmlFor="zip">Zip</FormLabel>
-          <Input type="text" name="zip" />
+          <Input
+            onChange={(e) =>
+              setAddressInput({ ...addressInput, city: e.target.value })
+            }
+            type="text"
+            name="zip"
+          />
         </FormControl>
-        <FormControl>
-          <FormLabel htmlFor="country">Country</FormLabel>
-          <Input type="text" name="country" />
-        </FormControl>
+        <Button onClick={() => console.log(addressInput)}>Submit</Button>
       </VStack>
     </form>
-  );
-};
-
-const StateSelect = () => {
-  return (
-    <FormControl>
-      <FormLabel htmlFor="state">State</FormLabel>
-      <Select placeholder="Select option">
-        {states.map((state) => (
-          <option key={state.abbreviation} value={state.abbreviation}>
-            {state.name}
-          </option>
-        ))}
-      </Select>
-    </FormControl>
   );
 };
 
@@ -147,3 +154,27 @@ const states = [
   { name: "Wisconsin", abbreviation: "WI" },
   { name: "Wyoming", abbreviation: "WY" },
 ];
+
+const StateSelect = ({
+  address,
+  setAddressInput,
+}: {
+  address: Address;
+  setAddressInput: (address: Address) => void;
+}) => {
+  return (
+    <FormControl>
+      <FormLabel htmlFor="state">State</FormLabel>
+      <Select
+        placeholder="Select option"
+        onChange={(e) => setAddressInput({ ...address, state: e.target.value })}
+      >
+        {states.map((state) => (
+          <option key={state.abbreviation} value={state.abbreviation}>
+            {state.name}
+          </option>
+        ))}
+      </Select>
+    </FormControl>
+  );
+};

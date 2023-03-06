@@ -87,6 +87,15 @@ export default function Home() {
     }
   );
 
+  const handleBuyProduct = (sku: string) => {
+    if (selectedShot.id === "") {
+      alert("Please select a shot to print");
+      return;
+    }
+
+    router.push(`/print/${sku}/${selectedShot.id}}`);
+  };
+
   return (
     <PageContainer>
       <Box mt={10}>
@@ -117,7 +126,6 @@ export default function Home() {
         )}
 
         <VStack spacing={10} width="100%">
-          {" "}
           <SelectShotModal
             isOpen={isOpen}
             onClose={onClose}
@@ -126,7 +134,10 @@ export default function Home() {
             selectedShot={selectedShot}
             refetchProjects={refetchProjects}
           />
-          <SelectProduct shot={selectedShot} />
+          <SelectProduct
+            shot={selectedShot}
+            handleBuyProduct={handleBuyProduct}
+          />
         </VStack>
       </Box>
     </PageContainer>
