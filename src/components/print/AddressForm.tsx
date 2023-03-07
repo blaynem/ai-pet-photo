@@ -91,7 +91,7 @@ export const AddressForm = ({
           <FormLabel htmlFor="zip">Zip</FormLabel>
           <Input
             onChange={(e) =>
-              setAddressInput({ ...addressInput, city: e.target.value })
+              setAddressInput({ ...addressInput, zip: e.target.value })
             }
             type="text"
             name="zip"

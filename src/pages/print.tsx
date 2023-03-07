@@ -90,6 +90,7 @@ export default function Home() {
   const handleBuyProduct = (sku: string) => {
     if (selectedShot.id === "") {
       alert("Please select a shot to print");
+      onOpen();
       return;
     }
 
@@ -117,13 +118,6 @@ export default function Home() {
             projectId={selectedShot.projectId!}
           />
         </HStack>
-
-        {isLoading && (
-          <Center width="100%" textAlign="center">
-            <Spinner mr={3} size="sm" speed="1s" />
-            <Text>Loading Products</Text>
-          </Center>
-        )}
 
         <VStack spacing={10} width="100%">
           <SelectShotModal
