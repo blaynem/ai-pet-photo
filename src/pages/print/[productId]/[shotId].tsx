@@ -4,6 +4,7 @@ import {
   Button,
   Divider,
   Flex,
+  Heading,
   Spacer,
   Text,
   useDisclosure,
@@ -27,9 +28,11 @@ import {
   PredictionsResponse,
 } from "@/pages/api/projects/[id]/predictions";
 import { AddressForm } from "@/components/print/AddressForm";
+import { PricingPackage } from "@/core/constants";
 
 type StudioPageProps = {
-  projectId: string;
+  shotId: string;
+  productId: string;
 };
 
 export type Address = {
@@ -42,8 +45,9 @@ export type Address = {
   zip: string;
 };
 
-const StudioPage: FC<StudioPageProps> = ({ projectId }) => {
+const StudioPage: FC<StudioPageProps> = ({ shotId, productId }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+
   const [addressInputs, setAddressInputs] = useReducer(
     (state: Address, newState: Address) => ({ ...state, ...newState }),
     {
@@ -56,7 +60,9 @@ const StudioPage: FC<StudioPageProps> = ({ projectId }) => {
       zip: "",
     }
   );
+
   const router = useRouter();
+
   useSession({
     required: true,
     onUnauthenticated() {
@@ -64,41 +70,20 @@ const StudioPage: FC<StudioPageProps> = ({ projectId }) => {
     },
   });
 
-  const {
-    data: project,
-    isLoading: projectLoading,
-    isError,
-    refetch: refetchProject,
-  } = useQuery(
-    `projects-${projectId}`,
-    () =>
-      axios
-        .get<ProjectIdResponse>(`/api/projects/${projectId}`)
-        .then((response) => response.data?.project),
-    {
-      retry: false,
-    }
-  );
-
-  const { mutate: createPrediction } = useMutation(
-    "create-prediction",
-    (body: PredictionsBody) =>
-      axios.post<PredictionsResponse>(
-        `/api/projects/${projectId}/predictions`,
-        body
-      ),
-    {
-      onSuccess: () => {
-        // Refetch the project to update the shots.
-        refetchProject();
-        // Reload the session to update the credits amount.
-        reloadSession();
-      },
-    }
-  );
+  const handlePurchase = (packages: PricingPackage[]) => {
+    router.isReady &&
+      router.push(
+        `/api/checkout/session?ppi=${shotId}&packageIds=${packages
+          .map((pack: PricingPackage) => pack.id)
+          .join(",")}`
+      );
+  };
 
   return (
-    <PageContainer>
+    <PageContainer title="Shipping Address">
+      <Heading as="h2" mb={4} fontWeight="semibold" fontSize="2xl">
+        Enter Shipping Address
+      </Heading>
       <AddressForm
         addressInput={addressInputs}
         setAddressInput={setAddressInputs}

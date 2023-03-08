@@ -5,6 +5,10 @@ export enum PricingPackageId {
   HUNDRED_CREDIT = "hundred-credit-package",
   PROMOTION_STUDIO = "promotion-studio-package",
   STANDARD_STUDIO = "studio-standard-package",
+  PRINT = "print-package",
+  CANVAS = "canvas-package",
+  POSTER = "poster-package",
+  HOODIE = "hoodie-package",
 }
 
 export type PricingPackage = {
@@ -57,6 +61,54 @@ export const HUNDRED_CREDIT_PACKAGE: PricingPackage = {
   displayName: "100 Credits",
 };
 
+export enum MerchPricingPackageId {
+  HOODIE = "fifty-credit-package",
+  HUNDRED_CREDIT = "hundred-credit-package",
+  PROMOTION_STUDIO = "promotion-studio-package",
+  STANDARD_STUDIO = "studio-standard-package",
+}
+
+export const HOODIE_PACKAGE: PricingPackage = {
+  id: PricingPackageId.PRINT,
+  totalCredits: 0,
+  price: 4999,
+  credits: 0,
+  bonusCredits: 0,
+  purchaseType: PurchaseType.CREDIT_PURCHASE,
+  displayName: "Hoodie",
+};
+// make pricing packages for print, canvas, and poster
+
+export const PRINT_PACKAGE: PricingPackage = {
+  id: PricingPackageId.PRINT,
+  totalCredits: 0,
+  price: 4999,
+  credits: 0,
+  bonusCredits: 0,
+  purchaseType: PurchaseType.CREDIT_PURCHASE,
+  displayName: "Print",
+};
+
+export const CANVAS_PACKAGE: PricingPackage = {
+  id: PricingPackageId.CANVAS,
+  totalCredits: 0,
+  price: 4999,
+  credits: 0,
+  bonusCredits: 0,
+  purchaseType: PurchaseType.CREDIT_PURCHASE,
+  displayName: "Canvas",
+};
+
+export const POSTER_PACKAGE: PricingPackage = {
+  id: PricingPackageId.POSTER,
+  totalCredits: 0,
+  price: 4999,
+  credits: 0,
+  bonusCredits: 0,
+  purchaseType: PurchaseType.CREDIT_PURCHASE,
+  displayName: "Poster",
+};
+
 /**
  * Available options for purchasing credits
  */
@@ -64,3 +116,5 @@ export const creditsPackageOptions = [
   FIFTY_CREDIT_PACKAGE,
   HUNDRED_CREDIT_PACKAGE,
 ];
+
+export const merchPackageOptions = [HOODIE_PACKAGE, PRINT_PACKAGE];
